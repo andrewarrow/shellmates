@@ -3,8 +3,8 @@ import { useAuth } from '../hooks/useAuth'
 
 // Traffic Slider component
 const TrafficSlider = ({ userCount, setUserCount }) => {
-  // Log scale conversion for smoother slider experience
-  const logMax = Math.log10(1000000);
+  // Log scale conversion for smoother slider experience - now up to 100M
+  const logMax = Math.log10(100000000);
   const logMin = Math.log10(1);
   
   const logToLinear = (logValue) => {
@@ -18,20 +18,31 @@ const TrafficSlider = ({ userCount, setUserCount }) => {
   const logValue = linearToLog(userCount);
   
   const handleSliderChange = (e) => {
+    // When manually changing the slider, pause the auto-growth
+    if (autoGrowth) {
+      setAutoGrowth(false);
+    }
+    
     const newLogValue = parseFloat(e.target.value);
     setUserCount(logToLinear(newLogValue));
+    
+    // Reset CPU if moving to a much lower value
+    if (logToLinear(newLogValue) < 10 && serverCpu > 50) {
+      setServerCpu(15);
+      setServerStatus('normal');
+    }
   };
   
   // Format user count with K or M suffix
   const formatUserCount = (count) => {
-    if (count >= 1000000) return '1M';
+    if (count >= 1000000) return `${(count/1000000).toFixed(count >= 10000000 ? 0 : 1)}M`;
     if (count >= 1000) return `${(count/1000).toFixed(count >= 100000 ? 0 : 1)}K`;
     return count.toString();
   };
   
   return (
-    <div className="flex items-center space-x-2 min-w-[300px]">
-      <span className="text-xs text-gray-500">1</span>
+    <div className="flex items-center space-x-2 flex-grow mx-4">
+      <span className="text-xs text-gray-500 shrink-0">1</span>
       <input
         type="range"
         min={logMin}
@@ -39,18 +50,20 @@ const TrafficSlider = ({ userCount, setUserCount }) => {
         step={0.01}
         value={logValue}
         onChange={handleSliderChange}
-        className="flex-grow h-2 rounded-lg appearance-none cursor-pointer bg-gradient-to-r from-green-200 via-blue-300 to-red-300"
+        className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-gradient-to-r from-green-200 via-blue-300 to-red-300"
         style={{
           accentColor: userCount < 1000 ? '#10B981' : 
                       userCount < 100000 ? '#3B82F6' : 
-                      '#EF4444'
+                      userCount < 10000000 ? '#EF4444' :
+                      '#9F1239'
         }}
       />
-      <span className="text-xs text-gray-500">1M</span>
-      <span className={`ml-1 text-sm font-medium px-2 py-0.5 rounded-md min-w-[50px] text-center
+      <span className="text-xs text-gray-500 shrink-0">100M</span>
+      <span className={`ml-1 text-sm font-medium px-2 py-0.5 rounded-md min-w-[50px] text-center shrink-0
         ${userCount < 1000 ? 'bg-green-50 text-green-700' : 
           userCount < 100000 ? 'bg-blue-50 text-blue-700' : 
-          'bg-red-50 text-red-700'}`}>
+          userCount < 10000000 ? 'bg-red-50 text-red-700' :
+          'bg-rose-100 text-rose-900'}`}>
         {formatUserCount(userCount)}
       </span>
     </div>
@@ -277,7 +290,13 @@ function Dashboard() {
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [selectedTimeWindow, setSelectedTimeWindow] = useState('4h')
   const [alertsCount, setAlertsCount] = useState({ critical: 3, warning: 7, info: 12 })
-  const [userCount, setUserCount] = useState(1000000) // Start with 1M users
+  const [userCount, setUserCount] = useState(1) // Start with 1 user
+  const [autoGrowth, setAutoGrowth] = useState(true) // Auto-increase traffic
+  const [simulationTime, setSimulationTime] = useState(0) // Simulation time in seconds
+  const [serverCpu, setServerCpu] = useState(15) // Single server CPU usage
+  const [serverMemory, setServerMemory] = useState(20) // Single server memory usage
+  const [serverStatus, setServerStatus] = useState('normal') // Server status
+  const [systemDown, setSystemDown] = useState(false) // System down state
   
   // Generate random system statistics
   const [stats, setStats] = useState({
@@ -391,92 +410,169 @@ function Dashboard() {
         { name: 'Database (Postgres)', status: 'normal', cpu: '65', memory: '70', instances: '2', region: 'us-west-2' },
         { name: 'Cache Service', status: 'normal', cpu: '42', memory: '56', instances: '2', region: 'us-west-2' },
       ]);
-    } else {
-      // Full scale deployment
+    } else if (userCount <= 10000000) {
+      // Enterprise scale deployment
       setServices([
         { name: 'Auth Service', status: 'normal', cpu: '45', memory: '62', instances: '6', region: 'us-west-2' },
         { name: 'User Service', status: 'normal', cpu: '38', memory: '51', instances: '4', region: 'us-west-2' },
-        { name: 'Content API', status: userCount > 800000 ? 'warning' : 'normal', cpu: '78', memory: '73', instances: '12', region: 'us-west-2' },
+        { name: 'Content API', status: userCount > 5000000 ? 'warning' : 'normal', cpu: '78', memory: '73', instances: '12', region: 'us-west-2' },
         { name: 'Recommendations', status: 'normal', cpu: '65', memory: '70', instances: '8', region: 'us-east-1' },
         { name: 'Search Service', status: 'normal', cpu: '42', memory: '56', instances: '6', region: 'us-east-1' },
-        { name: 'Notification Service', status: userCount > 900000 ? 'critical' : 'normal', cpu: '92', memory: '87', instances: '5', region: 'eu-west-1' },
+        { name: 'Notification Service', status: userCount > 8000000 ? 'critical' : 'normal', cpu: '92', memory: '87', instances: '5', region: 'eu-west-1' },
         { name: 'Analytics Engine', status: 'normal', cpu: '71', memory: '65', instances: '4', region: 'eu-west-1' },
+      ]);
+    } else {
+      // Hyperscale deployment
+      setServices([
+        { name: 'Auth Service Cluster', status: 'normal', cpu: '68', memory: '72', instances: '24', region: 'Global' },
+        { name: 'User Service Cluster', status: 'normal', cpu: '72', memory: '65', instances: '18', region: 'Global' },
+        { name: 'Content API Cluster', status: userCount > 50000000 ? 'warning' : 'normal', cpu: '88', memory: '82', instances: '36', region: 'Global' },
+        { name: 'Recommendations AI', status: 'normal', cpu: '75', memory: '80', instances: '22', region: 'Global' },
+        { name: 'Search Cluster', status: 'normal', cpu: '82', memory: '76', instances: '20', region: 'Global' },
+        { name: 'Notification Pipeline', status: userCount > 80000000 ? 'critical' : 'normal', cpu: '94', memory: '91', instances: '28', region: 'Global' },
+        { name: 'Analytics Platform', status: 'normal', cpu: '86', memory: '79', instances: '16', region: 'Global' },
+        { name: 'Media Processing', status: userCount > 90000000 ? 'warning' : 'normal', cpu: '91', memory: '88', instances: '30', region: 'Global' },
+        { name: 'Distributed Cache', status: 'normal', cpu: '78', memory: '83', instances: '64', region: 'Global' },
       ]);
     }
     
   }, [userCount]);
   
-  // Update data periodically to simulate real-time updates
+  // Traffic growth and system stress simulation
+  useEffect(() => {
+    if (!autoGrowth) return;
+    
+    // One second interval for the simulation
+    const interval = setInterval(() => {
+      // Increase simulation time
+      setSimulationTime(prevTime => {
+        const newTime = prevTime + 1;
+        
+        // Check for system down condition at 2 minutes (120 seconds)
+        if (newTime >= 120 && serverCpu >= 95) {
+          setSystemDown(true);
+          setAutoGrowth(false);
+        }
+        
+        return newTime;
+      });
+      
+      // Calculate traffic increase based on simulation time (exponential growth)
+      // Complete in about 2 minutes
+      const progressRatio = Math.min(1, simulationTime / 100); // 0 to 1 over ~100 seconds
+      const newUserCount = Math.max(1, Math.floor(Math.pow(10, progressRatio * 3))); // 1 to 1000 exponentially
+      
+      // Increase CPU load faster than user count (non-linear)
+      // CPU should hit high levels around 70-90 seconds
+      const cpuLoadFactor = Math.min(1, Math.pow(progressRatio * 1.4, 1.8));
+      const newCpuUsage = Math.min(99, Math.floor(15 + 84 * cpuLoadFactor));
+      
+      // Memory grows more slowly than CPU
+      const newMemoryUsage = Math.min(95, Math.floor(20 + 60 * progressRatio));
+      
+      // Set CPU status based on load
+      let newStatus = 'normal';
+      if (newCpuUsage > 90) newStatus = 'critical';
+      else if (newCpuUsage > 75) newStatus = 'warning';
+      
+      // Generate a warning alert if CPU crosses a threshold
+      if ((newCpuUsage >= 75 && serverCpu < 75) || (newCpuUsage >= 90 && serverCpu < 90)) {
+        const alertMessage = newCpuUsage >= 90 
+          ? 'CRITICAL: EC2 instance CPU usage above 90%' 
+          : 'WARNING: EC2 instance CPU usage above 75%';
+          
+        const alertLevel = newCpuUsage >= 90 ? 'error' : 'warning';
+        
+        setAlerts(prev => [
+          {
+            level: alertLevel,
+            message: alertMessage,
+            time: 'just now'
+          },
+          ...prev.slice(0, 4)
+        ]);
+        
+        // Update alert counts
+        setAlertsCount(prev => {
+          const newCounts = {...prev};
+          if (alertLevel === 'error') newCounts.critical = prev.critical + 1;
+          if (alertLevel === 'warning') newCounts.warning = prev.warning + 1;
+          return newCounts;
+        });
+      }
+      
+      // Update state
+      setUserCount(newUserCount);
+      setServerCpu(newCpuUsage);
+      setServerMemory(newMemoryUsage);
+      setServerStatus(newStatus);
+      
+      // Update service with new CPU value
+      setServices(prev => {
+        if (prev.length === 0 || prev[0].name !== 'EC2 Instance') return prev;
+        
+        return [
+          { 
+            ...prev[0], 
+            cpu: newCpuUsage.toString(), 
+            memory: newMemoryUsage.toString(),
+            status: newStatus
+          },
+          ...prev.slice(1)
+        ];
+      });
+      
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, [autoGrowth, simulationTime, serverCpu]);
+  
+  // Update charts and other data periodically
   useEffect(() => {
     const interval = setInterval(() => {
-      // Skip updates for single user mode
-      if (userCount <= 1) return;
-      
       // Update time series data
-      setTimeSeriesData(prev => ({
-        userActivity: [...prev.userActivity.slice(1), generateRandomData(Math.max(10, 5000 * userCount/1000000), Math.max(20, 15000 * userCount/1000000))],
-        cpuUsage: [...prev.cpuUsage.slice(1), generateRandomData(Math.max(5, 45 * userCount/1000000), Math.max(10, 85 * userCount/1000000))],
-        memoryUsage: [...prev.memoryUsage.slice(1), generateRandomData(Math.max(5, 55 * userCount/1000000), Math.max(10, 78 * userCount/1000000))],
-        responseTime: [...prev.responseTime.slice(1), generateRandomData(Math.max(20, 150 * userCount/1000000), Math.max(30, 220 * userCount/1000000))],
-        errorRate: [...prev.errorRate.slice(1), generateRandomData(0, Math.max(1, 3 * userCount/1000000))],
-        throughput: [...prev.throughput.slice(1), generateRandomData(Math.max(10, 2000 * userCount/1000000), Math.max(20, 5000 * userCount/1000000))],
-        redisLatency: [...prev.redisLatency.slice(1), generateRandomData(Math.max(1, 2 * userCount/1000000), Math.max(2, 12 * userCount/1000000))],
-        networkTraffic: [...prev.networkTraffic.slice(1), generateRandomData(Math.max(5, 120 * userCount/1000000), Math.max(10, 350 * userCount/1000000))],
-        diskIO: [...prev.diskIO.slice(1), generateRandomData(Math.max(1, 10 * userCount/1000000), Math.max(5, 85 * userCount/1000000))],
-        cacheHitRate: [...prev.cacheHitRate.slice(1), generateRandomData(Math.max(90, 70 * userCount/1000000), Math.max(95, 95 * userCount/1000000))],
-        queueDepth: [...prev.queueDepth.slice(1), generateRandomData(Math.max(0, 5 * userCount/1000000), Math.max(1, 35 * userCount/1000000))],
-        authRequests: [...prev.authRequests.slice(1), generateRandomData(Math.max(1, 100 * userCount/1000000), Math.max(5, 450 * userCount/1000000))],
-      }));
-      
-      // Only update service metrics and alerts for higher user counts
-      if (userCount > 100) {
-        // Update service metrics randomly
-        setServices(prev => prev.map(service => ({
-          ...service,
-          cpu: Math.min(99, Math.max(10, parseInt(service.cpu) + generateRandomData(-5, 5))).toString(),
-          memory: Math.min(99, Math.max(20, parseInt(service.memory) + generateRandomData(-3, 3))).toString(),
-          status: Math.random() > 0.95 && userCount > 500000
-            ? ['normal', 'warning', 'critical'][generateRandomData(0, 2)] 
-            : service.status
-        })));
+      setTimeSeriesData(prev => {
+        // For single EC2 instance, make CPU chart match the server CPU
+        const newCpuValue = userCount <= 100 ? serverCpu : Math.min(99, Math.max(10, serverCpu + generateRandomData(-5, 5)));
         
-        // Sometimes add a new alert for higher user counts
-        if (Math.random() > 0.8 && userCount > 10000) {
-          const alertTypes = [
-            { level: 'info', message: 'Auto-scaling event triggered' },
-            { level: 'info', message: 'New deployment started' },
-            { level: 'warning', message: 'Increased error rate detected' },
-            { level: 'warning', message: 'High latency detected' },
-            { level: 'error', message: 'Service unavailable in region' },
-            { level: 'success', message: 'Deployment completed successfully' }
-          ];
+        return {
+          userActivity: [...prev.userActivity.slice(1), userCount],
+          cpuUsage: [...prev.cpuUsage.slice(1), newCpuValue],
+          memoryUsage: [...prev.memoryUsage.slice(1), userCount <= 100 ? serverMemory : Math.min(95, Math.max(20, serverMemory + generateRandomData(-3, 3)))],
+          responseTime: [...prev.responseTime.slice(1), Math.min(500, Math.max(50, 50 + 450 * (serverCpu / 100)))],
+          errorRate: [...prev.errorRate.slice(1), serverCpu > 90 ? generateRandomData(5, 15) : serverCpu > 80 ? generateRandomData(1, 5) : generateRandomData(0, 1)],
+          throughput: [...prev.throughput.slice(1), Math.max(userCount * 2, generateRandomData(userCount * 1.5, userCount * 2.5))],
+          redisLatency: [...prev.redisLatency.slice(1), generateRandomData(Math.max(1, 2 * userCount/1000000), Math.max(2, 12 * userCount/1000000))],
+          networkTraffic: [...prev.networkTraffic.slice(1), Math.max(userCount / 10, generateRandomData(userCount / 15, userCount / 5))],
+          diskIO: [...prev.diskIO.slice(1), serverCpu > 85 ? generateRandomData(70, 95) : generateRandomData(10, 60)],
+          cacheHitRate: [...prev.cacheHitRate.slice(1), serverCpu > 85 ? generateRandomData(50, 70) : generateRandomData(70, 95)],
+          queueDepth: [...prev.queueDepth.slice(1), serverCpu > 90 ? generateRandomData(20, 40) : serverCpu > 80 ? generateRandomData(5, 20) : generateRandomData(0, 5)],
+          authRequests: [...prev.authRequests.slice(1), Math.max(1, userCount / 10)],
+        };
+      });
+      
+      // Only update complex service metrics for higher user counts
+      if (userCount > 100 && !systemDown) {
+        // Update service metrics randomly
+        setServices(prev => {
+          // Skip updating EC2 instance as it's handled in the primary simulation
+          if (prev.length === 1 && prev[0].name === 'EC2 Instance') return prev;
           
-          const newAlert = alertTypes[generateRandomData(0, alertTypes.length - 1)];
-          
-          setAlerts(prev => [
-            {
-              level: newAlert.level,
-              message: newAlert.message,
-              time: 'just now'
-            },
-            ...prev.slice(0, 4)
-          ]);
-          
-          // Update alert counts
-          setAlertsCount(prev => {
-            const newCounts = {...prev};
-            if (newAlert.level === 'error') newCounts.critical = prev.critical + 1;
-            if (newAlert.level === 'warning') newCounts.warning = prev.warning + 1;
-            if (newAlert.level === 'info' || newAlert.level === 'success') newCounts.info = prev.info + 1;
-            return newCounts;
-          });
-        }
+          return prev.map(service => ({
+            ...service,
+            cpu: Math.min(99, Math.max(10, parseInt(service.cpu) + generateRandomData(-5, 5))).toString(),
+            memory: Math.min(99, Math.max(20, parseInt(service.memory) + generateRandomData(-3, 3))).toString(),
+            status: Math.random() > 0.95 && userCount > 500000
+              ? ['normal', 'warning', 'critical'][generateRandomData(0, 2)] 
+              : service.status
+          }));
+        });
       }
       
     }, 3000);
     
     return () => clearInterval(interval);
-  }, [userCount]);
+  }, [userCount, serverCpu, serverMemory, serverStatus, systemDown]);
 
   const handleLogout = () => {
     setIsLoggingOut(true)
@@ -486,16 +582,135 @@ function Dashboard() {
     }, 500)
   }
 
+  // Action handlers for remediation
+  const handleRefactorDatabase = (dbType) => {
+    // Stop auto-growth and reset CPU usage
+    setAutoGrowth(false);
+    setServerCpu(Math.max(30, serverCpu - 40));
+    setServerStatus('normal');
+    
+    // Update infrastructure text
+    if (dbType === 'mysql') {
+      setAlerts(prev => [
+        {
+          level: 'success',
+          message: 'Successfully migrated from SQLite to MySQL',
+          time: 'just now'
+        },
+        ...prev.slice(0, 4)
+      ]);
+    } else if (dbType === 'postgres') {
+      setAlerts(prev => [
+        {
+          level: 'success',
+          message: 'Successfully migrated from SQLite to PostgreSQL',
+          time: 'just now'
+        },
+        ...prev.slice(0, 4)
+      ]);
+    } else if (dbType === 'dynamodb') {
+      setAlerts(prev => [
+        {
+          level: 'success',
+          message: 'Successfully migrated from SQLite to DynamoDB',
+          time: 'just now'
+        },
+        ...prev.slice(0, 4)
+      ]);
+    }
+    
+    // Resume auto-growth but slower
+    setTimeout(() => {
+      setAutoGrowth(true);
+    }, 5000);
+  };
+  
+  const handleAddInstance = () => {
+    // Stop auto-growth and reset CPU usage
+    setAutoGrowth(false);
+    setServerCpu(Math.max(30, serverCpu - 40));
+    setServerStatus('normal');
+    
+    // Add load balancer service
+    setServices(prev => [
+      { name: 'Load Balancer', status: 'normal', cpu: '25', memory: '30', instances: '1', region: 'us-west-2' },
+      { name: 'EC2 Instance 1', status: 'normal', cpu: Math.floor(serverCpu / 2).toString(), memory: serverMemory.toString(), instances: '1', region: 'us-west-2' },
+      { name: 'EC2 Instance 2', status: 'normal', cpu: Math.floor(serverCpu / 2).toString(), memory: serverMemory.toString(), instances: '1', region: 'us-west-2' },
+    ]);
+    
+    setAlerts(prev => [
+      {
+        level: 'success',
+        message: 'Added second EC2 instance with load balancer',
+        time: 'just now'
+      },
+      ...prev.slice(0, 4)
+    ]);
+    
+    // Resume auto-growth but slower
+    setTimeout(() => {
+      setAutoGrowth(true);
+    }, 5000);
+  };
+  
+  const handleMoveToK8s = () => {
+    // Stop auto-growth and reset CPU usage
+    setAutoGrowth(false);
+    setServerCpu(Math.max(20, serverCpu - 60));
+    setServerStatus('normal');
+    
+    // Add k8s services
+    setServices(prev => [
+      { name: 'K8s Master', status: 'normal', cpu: '35', memory: '40', instances: '1', region: 'us-west-2' },
+      { name: 'K8s Worker 1', status: 'normal', cpu: Math.floor(serverCpu / 3).toString(), memory: serverMemory.toString(), instances: '1', region: 'us-west-2' },
+      { name: 'K8s Worker 2', status: 'normal', cpu: Math.floor(serverCpu / 3).toString(), memory: serverMemory.toString(), instances: '1', region: 'us-west-2' },
+      { name: 'K8s Worker 3', status: 'normal', cpu: Math.floor(serverCpu / 3).toString(), memory: serverMemory.toString(), instances: '1', region: 'us-west-2' },
+    ]);
+    
+    setAlerts(prev => [
+      {
+        level: 'success',
+        message: 'Successfully migrated to Kubernetes cluster',
+        time: 'just now'
+      },
+      ...prev.slice(0, 4)
+    ]);
+    
+    // Resume auto-growth but slower
+    setTimeout(() => {
+      setAutoGrowth(true);
+    }, 5000);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 relative">
+      {/* System Down Overlay */}
+      {systemDown && (
+        <div className="fixed inset-0 bg-red-600 bg-opacity-90 z-50 flex flex-col items-center justify-center">
+          <div className="text-white text-5xl font-bold mb-4">SYSTEM DOWN</div>
+          <div className="text-white text-xl mb-8">Server overloaded due to excessive traffic</div>
+          <button 
+            onClick={() => {
+              setSystemDown(false);
+              setServerCpu(50);
+              setServerStatus('normal');
+              setSimulationTime(0);
+              setTimeout(() => setAutoGrowth(true), 1000);
+            }}
+            className="px-6 py-3 bg-white text-red-600 font-bold rounded-lg hover:bg-gray-100"
+          >
+            Restart Simulation
+          </button>
+        </div>
+      )}
+      
       {/* Header with navbar */}
       <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="px-4 sm:px-6 py-3 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <h1 className="text-xl font-bold text-primary-800">traffic</h1>
-            <div className="hidden md:flex">
-              <TrafficSlider userCount={userCount} setUserCount={setUserCount} />
-            </div>
+        <div className="px-4 sm:px-6 py-3 flex items-center">
+          <h1 className="text-xl font-bold text-primary-800 whitespace-nowrap">traffic</h1>
+          
+          <div className="flex-grow hidden md:flex">
+            <TrafficSlider userCount={userCount} setUserCount={setUserCount} />
           </div>
           
           <div className="flex items-center space-x-4">
@@ -522,35 +737,161 @@ function Dashboard() {
             </div>
           </div>
         </div>
+        
+        {/* Mobile slider - only visible on small screens */}
+        <div className="px-4 pb-3 md:hidden">
+          <TrafficSlider userCount={userCount} setUserCount={setUserCount} />
+        </div>
       </header>
 
       {/* Main dashboard content */}
       <main className="p-4">
         {/* Infrastructure description based on user count */}
         <div className="mb-4 bg-white rounded-lg shadow-sm p-3 border border-gray-200">
-          <h3 className="text-sm font-medium mb-2">Infrastructure Overview</h3>
-          {userCount <= 1 ? (
-            <p className="text-sm text-gray-600">
-              Single User Mode: 1 EC2 instance with SQLite database. Minimal infrastructure for personal or development use.
-            </p>
-          ) : userCount <= 100 ? (
-            <p className="text-sm text-gray-600">
-              Small Scale: Single-server deployment with SQLite database. Suitable for small teams or testing environments.
-            </p>
-          ) : userCount <= 10000 ? (
-            <p className="text-sm text-gray-600">
-              Medium Scale: Multi-server deployment with MySQL database and basic caching. Suitable for small-to-medium businesses.
-            </p>
-          ) : userCount <= 100000 ? (
-            <p className="text-sm text-gray-600">
-              Large Scale: Multi-region deployment with PostgreSQL database, dedicated service instances, and caching layer. Suitable for medium-to-large businesses.
-            </p>
-          ) : (
-            <p className="text-sm text-gray-600">
-              Enterprise Scale: Global multi-region deployment with microservices architecture, distributed databases, Redis clusters, Kafka streams, and container orchestration. Suitable for large enterprises and high-traffic applications.
-            </p>
-          )}
+          <div className="flex justify-between items-start">
+            <div className="flex-grow">
+              <h3 className="text-sm font-medium mb-2">Infrastructure Overview</h3>
+              {userCount <= 1 ? (
+                <p className="text-sm text-gray-600">
+                  Single User Mode: 1 EC2 instance with SQLite database. Minimal infrastructure for personal or development use.
+                </p>
+              ) : userCount <= 100 ? (
+                <p className="text-sm text-gray-600">
+                  Small Scale: Single-server deployment with SQLite database. Suitable for small teams or testing environments.
+                </p>
+              ) : userCount <= 10000 ? (
+                <p className="text-sm text-gray-600">
+                  Medium Scale: Multi-server deployment with MySQL database and basic caching. Suitable for small-to-medium businesses.
+                </p>
+              ) : userCount <= 100000 ? (
+                <p className="text-sm text-gray-600">
+                  Large Scale: Multi-region deployment with PostgreSQL database, dedicated service instances, and caching layer. Suitable for medium-to-large businesses.
+                </p>
+              ) : userCount <= 10000000 ? (
+                <p className="text-sm text-gray-600">
+                  Enterprise Scale: Global multi-region deployment with microservices architecture, distributed databases, Redis clusters, Kafka streams, and container orchestration. Suitable for large enterprises and high-traffic applications.
+                </p>
+              ) : (
+                <p className="text-sm text-gray-600">
+                  Hyperscale: Massive multi-region infrastructure with thousands of nodes, sharded databases, redundant caching layers, real-time data pipelines, AI-powered scaling, and global CDN distribution. Suitable for the world's largest platforms with hundreds of millions of users.
+                </p>
+              )}
+            </div>
+            
+            {/* Simulation time display */}
+            <div className={`font-mono text-sm py-1 px-3 rounded ${
+              simulationTime > 100 ? 'bg-red-100 text-red-800' : 
+              simulationTime > 70 ? 'bg-yellow-100 text-yellow-800' : 
+              'bg-blue-100 text-blue-800'
+            }`}>
+              {Math.floor(simulationTime / 60)}:{(simulationTime % 60).toString().padStart(2, '0')}
+            </div>
+          </div>
         </div>
+        
+        {/* Action buttons panel - Only show in single EC2 mode with high CPU */}
+        {serverCpu > 50 && services.length <= 1 && (
+          <div className={`mb-4 p-3 border rounded-lg ${
+            serverCpu > 90 ? 'bg-red-50 border-red-200' :
+            serverCpu > 75 ? 'bg-yellow-50 border-yellow-200' :
+            'bg-blue-50 border-blue-200'
+          }`}>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className={`text-sm font-medium ${
+                serverCpu > 90 ? 'text-red-800' :
+                serverCpu > 75 ? 'text-yellow-800' :
+                'text-blue-800'
+              }`}>Infrastructure Scaling Options</h3>
+              <span className={`text-xs font-medium px-2 py-0.5 rounded ${
+                serverCpu > 90 ? 'bg-red-200 text-red-800' :
+                serverCpu > 75 ? 'bg-yellow-200 text-yellow-800' :
+                'bg-blue-200 text-blue-800'
+              }`}>
+                CPU: {serverCpu}%
+              </span>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="border border-gray-200 rounded-md p-3 bg-white">
+                <h4 className="text-sm font-medium mb-2 text-gray-700">Database Options</h4>
+                <div className="flex flex-wrap gap-2">
+                  <button 
+                    onClick={() => handleRefactorDatabase('mysql')}
+                    className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded border border-blue-200 hover:bg-blue-100"
+                  >
+                    MySQL
+                  </button>
+                  <button 
+                    onClick={() => handleRefactorDatabase('postgres')}
+                    className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded border border-blue-200 hover:bg-blue-100"
+                  >
+                    PostgreSQL
+                  </button>
+                  <button 
+                    onClick={() => handleRefactorDatabase('dynamodb')}
+                    className="text-xs px-2 py-1 bg-yellow-50 text-yellow-700 rounded border border-yellow-200 hover:bg-yellow-100"
+                  >
+                    DynamoDB
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">Refactor off SQLite to a more scalable database</p>
+              </div>
+              
+              <div className="border border-gray-200 rounded-md p-3 bg-white">
+                <h4 className="text-sm font-medium mb-2 text-gray-700">Server Options</h4>
+                <button 
+                  onClick={handleAddInstance}
+                  className="text-xs px-2 py-1 bg-green-50 text-green-700 rounded border border-green-200 hover:bg-green-100"
+                >
+                  Add EC2 Instance + Load Balancer
+                </button>
+                <p className="text-xs text-gray-500 mt-2">Scale horizontally with multiple servers</p>
+              </div>
+              
+              <div className="border border-gray-200 rounded-md p-3 bg-white">
+                <h4 className="text-sm font-medium mb-2 text-gray-700">Container Options</h4>
+                <button 
+                  onClick={handleMoveToK8s}
+                  className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded border border-blue-200 hover:bg-blue-100"
+                >
+                  Move to Kubernetes
+                </button>
+                <p className="text-xs text-gray-500 mt-2">Deploy on container orchestration platform</p>
+              </div>
+              
+              <div className="border border-gray-200 rounded-md p-3 bg-white">
+                <h4 className="text-sm font-medium mb-2 text-gray-700">Simulation</h4>
+                <div className="space-y-2">
+                  <button 
+                    onClick={() => setAutoGrowth(!autoGrowth)}
+                    className={`text-xs px-2 py-1 rounded border w-full ${
+                      autoGrowth 
+                        ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100' 
+                        : 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
+                    }`}
+                  >
+                    {autoGrowth ? 'Pause Traffic Growth' : 'Resume Traffic Growth'}
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setSimulationTime(0);
+                      setUserCount(1);
+                      setServerCpu(15);
+                      setServerMemory(20);
+                      setServerStatus('normal');
+                      setServices([
+                        { name: 'EC2 Instance', status: 'normal', cpu: '15', memory: '20', instances: '1', region: 'us-west-2' },
+                      ]);
+                    }}
+                    className="text-xs px-2 py-1 bg-gray-50 text-gray-700 rounded border border-gray-200 hover:bg-gray-100 w-full"
+                  >
+                    Reset Simulation
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         
         {/* Time window selector */}
         <div className="mb-4 flex justify-between items-center">

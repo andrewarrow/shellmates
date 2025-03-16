@@ -19,3 +19,14 @@ The slider should start all the way to the right side. As the user slides the sl
 the number of users should go down and down. As the number of users goes down so does the
 complexity of the UI. When you get to all the way to the left side of the slider and just 1 user
 the UI should be only for a single ec2 instance with sqlite as the database and nothing else.
+
+now start with the slider at just 1 user and slowly increase the traffic over a period of
+two minutes. The single ec2 box should cpu should start to grow and eventually get to 99% red.
+As we get closer and closer to 99% colors should change and the user should be subtlely 
+alerted but no modals. The idea is the user needs to look at the UI carefully and start
+to notice little details about what's getting hot. There should be some buttons like
+"refactor off sqlite" and the user can choose postgres or mysql or dynamodb or many other choices.
+There should also be a button for "add ec2 instance" which will require a load balancer.
+There should be a button for "move to k8s" or other container systems. If the user doesn't
+make any choices within 2 mins the whole site should turn RED with a big DOWN message.
+
