@@ -11,3 +11,11 @@ make the charts smaller and with a single thin line
 
 the charts are the perfect size now but the blue line goes below the bottom. Also the blue line is
    still think and pixated.
+
+replace the top nav where it says Dashboard, Content, Users, Analytics, Infrastructure to
+a slider that has number of users as it's data. The first item "Forums" can stay but change to
+the name "traffic". On the left side of the slider should be 1 user and on the right 1 million.
+The slider should start all the way to the right side. As the user slides the slider to the left
+the number of users should go down and down. As the number of users goes down so does the
+complexity of the UI. When you get to all the way to the left side of the slider and just 1 user
+the UI should be only for a single ec2 instance with sqlite as the database and nothing else.
