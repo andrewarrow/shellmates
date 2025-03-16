@@ -1,3 +1,8 @@
 Start with a splash page with login and regsiter buttons for a site called "traffic" that helps engineers learn how to handle scaling issue in a simulator. Give me a test user username "andrewarrow" password "testing". Once logged in have a logout button.
 
-After
+Make the logged in root page a very complicated UI throwing the user right into the deep end
+of running a major site like reddit (call it something generic like forums) with millions of users.
+There should be some core graphs like number of redis cluster nodes, their cpu %, number
+of pods, their memory and cpu %, and all sorts of bells and whistles. There should be a
+time window display of "last 4 hours" that can change to various other times. Data should constantly
+be flowing in and changing. 
