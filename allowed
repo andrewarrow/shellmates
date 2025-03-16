@@ -1,0 +1,13 @@
+      "allowedTools": [
+        "Bash(rm:*)",
+        "Bash(sqlite3:*)",
+        "WebFetchTool(domain:www.youtube.com)",
+        "Bash(cd:*)",
+        "Bash(cp:*)",
+        "Bash(find:*)",
+        "Bash(ls:*)",
+        "Bash(mkdir:*)",
+        "Bash(npm create:*)",
+        "Bash(npm init:*)",
+        "Bash(npm install:*)"
+      ],

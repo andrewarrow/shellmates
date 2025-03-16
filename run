@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Quick start script for Traffic Simulator
+
+# Install dependencies if node_modules doesn't exist
+if [ ! -d "node_modules" ] || [ ! -d "client/node_modules" ] || [ ! -d "server/node_modules" ]; then
+  echo "Installing dependencies..."
+  npm run install:all
+fi
+
+# Start the development server
+echo "Starting Traffic Simulator..."
+npm run dev
