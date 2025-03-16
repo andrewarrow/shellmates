@@ -63,31 +63,55 @@ const StatCard = ({ title, value, change, status = 'normal', icon }) => {
   );
 };
 
-// Line chart component (simplified visual representation)
-const LineChart = ({ data, title, subtitle, height = 120 }) => {
+// Line chart component (simplified visual representation with mini sparkline style)
+const LineChart = ({ data, title, subtitle, height = 30 }) => {
   const canvasRef = useRef(null);
   
   useEffect(() => {
     if (!canvasRef.current) return;
     
     const canvas = canvasRef.current;
+    // Get the device pixel ratio
+    const dpr = window.devicePixelRatio || 1;
+    
+    // Set actual size in memory (scaled to account for extra pixel density)
+    canvas.width = canvas.offsetWidth * dpr;
+    canvas.height = canvas.offsetHeight * dpr;
+    
     const ctx = canvas.getContext('2d');
+    
+    // Scale up the context to match the device pixel ratio
+    ctx.scale(dpr, dpr);
+    
+    // Set display size (CSS)
+    canvas.style.width = canvas.offsetWidth + 'px';
+    canvas.style.height = canvas.offsetHeight + 'px';
+    
     const maxValue = Math.max(...data);
     const minValue = Math.min(...data);
     const range = maxValue - minValue;
     
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Add some extra vertical padding
+    const verticalPadding = 4;
+    const effectiveHeight = canvas.offsetHeight - (verticalPadding * 2);
     
-    // Draw line
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    
+    // Enable antialiasing
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    
+    // Draw line - very thin
     ctx.beginPath();
     ctx.strokeStyle = '#3b82f6';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 0.5; // Extra thin line
     
     data.forEach((value, index) => {
-      const x = (index / (data.length - 1)) * canvas.width;
+      const x = (index / (data.length - 1)) * canvas.offsetWidth;
       const normalizedValue = range === 0 ? 0.5 : (value - minValue) / range;
-      const y = canvas.height - (normalizedValue * (canvas.height - 20)) - 10;
+      // Add padding at the bottom to prevent line going below chart area
+      const y = canvas.offsetHeight - verticalPadding - (normalizedValue * effectiveHeight);
       
       if (index === 0) {
         ctx.moveTo(x, y);
@@ -97,38 +121,25 @@ const LineChart = ({ data, title, subtitle, height = 120 }) => {
     });
     
     ctx.stroke();
-    
-    // Add gradient fill
-    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
-    gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
-    
-    ctx.lineTo(canvas.width, canvas.height);
-    ctx.lineTo(0, canvas.height);
-    ctx.fillStyle = gradient;
-    ctx.fill();
-    
   }, [data]);
   
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 border border-gray-100">
-      <div className="flex justify-between items-start mb-3">
-        <div>
-          <h3 className="text-sm font-medium">{title}</h3>
-          <p className="text-xs text-gray-500">{subtitle}</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="text-xs font-medium px-2 py-1 bg-green-100 text-green-700 rounded">
-            +{generateRandomData(2, 15)}%
-          </div>
+    <div className="bg-white rounded-lg shadow-sm p-2 border border-gray-100">
+      <div className="flex justify-between items-center mb-1">
+        <h3 className="text-xs font-medium">{title}</h3>
+        <div className="text-[10px] font-medium px-1 py-0.5 bg-green-100 text-green-700 rounded-sm">
+          +{generateRandomData(2, 15)}%
         </div>
       </div>
-      <canvas 
-        ref={canvasRef} 
-        width="100%" 
-        height={height}
-        className="w-full"
-      ></canvas>
+      <div className="text-[10px] text-gray-500 mb-1">{subtitle}</div>
+      <div className="h-[30px]">
+        <canvas 
+          ref={canvasRef} 
+          width="100%" 
+          height={height}
+          className="w-full"
+        ></canvas>
+      </div>
     </div>
   );
 };
@@ -236,6 +247,12 @@ function Dashboard() {
     responseTime: generateTimeSeriesData(50, 150, 220),
     errorRate: generateTimeSeriesData(50, 0, 3),
     throughput: generateTimeSeriesData(50, 2000, 5000),
+    redisLatency: generateTimeSeriesData(50, 2, 12),
+    networkTraffic: generateTimeSeriesData(50, 120, 350),
+    diskIO: generateTimeSeriesData(50, 10, 85),
+    cacheHitRate: generateTimeSeriesData(50, 70, 95),
+    queueDepth: generateTimeSeriesData(50, 5, 35),
+    authRequests: generateTimeSeriesData(50, 100, 450),
   })
   
   // Mock alerts
@@ -269,6 +286,12 @@ function Dashboard() {
         responseTime: [...prev.responseTime.slice(1), generateRandomData(150, 220)],
         errorRate: [...prev.errorRate.slice(1), generateRandomData(0, 3)],
         throughput: [...prev.throughput.slice(1), generateRandomData(2000, 5000)],
+        redisLatency: [...prev.redisLatency.slice(1), generateRandomData(2, 12)],
+        networkTraffic: [...prev.networkTraffic.slice(1), generateRandomData(120, 350)],
+        diskIO: [...prev.diskIO.slice(1), generateRandomData(10, 85)],
+        cacheHitRate: [...prev.cacheHitRate.slice(1), generateRandomData(70, 95)],
+        queueDepth: [...prev.queueDepth.slice(1), generateRandomData(5, 35)],
+        authRequests: [...prev.authRequests.slice(1), generateRandomData(100, 450)],
       }));
       
       // Update service metrics randomly
@@ -433,41 +456,82 @@ function Dashboard() {
           />
         </div>
         
-        {/* Charts row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        {/* Redis Cluster Stats Header */}
+        <div className="flex items-center text-sm font-semibold text-red-600 mb-2 mt-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+          </svg>
+          Redis Cluster Metrics 
+          <span className="text-xs bg-red-100 text-red-800 py-0.5 px-1.5 rounded ml-2">
+            {stats.redisNodes} nodes
+          </span>
+          <div className="flex-grow"></div>
+          <button className="text-xs px-2 py-0.5 border border-red-300 text-red-600 rounded hover:bg-red-50">
+            View Details
+          </button>
+        </div>
+        
+        {/* Charts in a more compact grid - many small charts */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 mb-4">
           <LineChart 
             data={timeSeriesData.userActivity} 
             title="User Activity" 
-            subtitle="Active user sessions per minute" 
+            subtitle="Sessions/min" 
           />
           <LineChart 
             data={timeSeriesData.cpuUsage} 
-            title="System CPU Usage" 
-            subtitle="Average across all services" 
+            title="CPU Usage" 
+            subtitle="All services" 
           />
           <LineChart 
             data={timeSeriesData.memoryUsage} 
-            title="Memory Usage" 
-            subtitle="Average across all pods" 
+            title="Memory" 
+            subtitle="All pods" 
           />
-        </div>
-        
-        {/* Second row of charts */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           <LineChart 
             data={timeSeriesData.responseTime} 
             title="Response Time" 
-            subtitle="Average API response (ms)" 
+            subtitle="API (ms)" 
           />
           <LineChart 
             data={timeSeriesData.errorRate} 
             title="Error Rate" 
-            subtitle="Percentage of failed requests" 
+            subtitle="Failed requests" 
           />
           <LineChart 
             data={timeSeriesData.throughput} 
             title="Throughput" 
-            subtitle="Requests per second" 
+            subtitle="Req/sec" 
+          />
+          <LineChart 
+            data={timeSeriesData.redisLatency} 
+            title="Redis Latency" 
+            subtitle="ms" 
+          />
+          <LineChart 
+            data={timeSeriesData.networkTraffic} 
+            title="Network Traffic" 
+            subtitle="MB/s" 
+          />
+          <LineChart 
+            data={timeSeriesData.diskIO} 
+            title="Disk I/O" 
+            subtitle="IOPS" 
+          />
+          <LineChart 
+            data={timeSeriesData.cacheHitRate} 
+            title="Cache Hit Rate" 
+            subtitle="%" 
+          />
+          <LineChart 
+            data={timeSeriesData.queueDepth} 
+            title="Queue Depth" 
+            subtitle="Tasks" 
+          />
+          <LineChart 
+            data={timeSeriesData.authRequests} 
+            title="Auth Requests" 
+            subtitle="Req/min" 
           />
         </div>
         

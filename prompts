@@ -6,3 +6,8 @@ There should be some core graphs like number of redis cluster nodes, their cpu %
 of pods, their memory and cpu %, and all sorts of bells and whistles. There should be a
 time window display of "last 4 hours" that can change to various other times. Data should constantly
 be flowing in and changing. 
+
+make the charts smaller and with a single thin line
+
+the charts are the perfect size now but the blue line goes below the bottom. Also the blue line is
+   still think and pixated.
