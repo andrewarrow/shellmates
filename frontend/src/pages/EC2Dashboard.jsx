@@ -22,7 +22,7 @@ function EC2Dashboard() {
         <div className="flex items-center justify-between px-4 py-2">
           {/* Left Side - Logo & Service Menu */}
           <div className="flex items-center space-x-6">
-            <div className="text-xl font-bold">Traffic</div>
+            <div className="text-xl font-bold cursor-pointer" onClick={() => window.location.href = '/dashboard'}>Traffic</div>
             
             {/* Service Menu */}
             <div className="relative">
@@ -129,7 +129,7 @@ function EC2Dashboard() {
       <main className="flex-1 p-0">
         <div className="flex h-full">
           {/* Left side menu - 20% of screen */}
-          <div className="w-1/5 bg-gray-50 border-r border-gray-200 py-4 h-full">
+          <div className="w-1/5 bg-gray-50 border-r border-gray-200 py-4 h-full overflow-y-auto">
             <div className="px-4 pb-4 mb-2 border-b border-gray-200">
               <h2 className="font-medium text-lg">EC2 Dashboard</h2>
             </div>
@@ -142,47 +142,164 @@ function EC2Dashboard() {
                 </li>
                 <li>
                   <a href="#" className="flex items-center px-2 py-2 text-sm rounded-md hover:bg-gray-100">
+                    EC2 Global View
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-2 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Events
+                  </a>
+                </li>
+                
+                {/* Instances Section */}
+                <li className="mt-4">
+                  <div className="px-2 py-1 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Instances
+                  </div>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
                     Instances
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="flex items-center px-2 py-2 text-sm rounded-md hover:bg-gray-100">
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Instance Types
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Launch Templates
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Spot Requests
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Savings Plans
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Reserved Instances
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Dedicated Hosts
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Capacity Reservations
+                  </a>
+                </li>
+                
+                {/* Images Section */}
+                <li className="mt-4">
+                  <div className="px-2 py-1 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Images
+                  </div>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    AMIs
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    AMI Catalog
+                  </a>
+                </li>
+                
+                {/* Elastic Block Store Section */}
+                <li className="mt-4">
+                  <div className="px-2 py-1 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Elastic Block Store
+                  </div>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
                     Volumes
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="flex items-center px-2 py-2 text-sm rounded-md hover:bg-gray-100">
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Snapshots
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Lifecycle Manager
+                  </a>
+                </li>
+                
+                {/* Network & Security Section */}
+                <li className="mt-4">
+                  <div className="px-2 py-1 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Network & Security
+                  </div>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
                     Security Groups
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="flex items-center px-2 py-2 text-sm rounded-md hover:bg-gray-100">
-                    Load Balancers
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="flex items-center px-2 py-2 text-sm rounded-md hover:bg-gray-100">
-                    Auto Scaling Groups
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="flex items-center px-2 py-2 text-sm rounded-md hover:bg-gray-100">
-                    Key Pairs
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="flex items-center px-2 py-2 text-sm rounded-md hover:bg-gray-100">
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
                     Elastic IPs
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="flex items-center px-2 py-2 text-sm rounded-md hover:bg-gray-100">
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
                     Placement Groups
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="flex items-center px-2 py-2 text-sm rounded-md hover:bg-gray-100">
-                    Capacity Reservations
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Key Pairs
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Network Interfaces
+                  </a>
+                </li>
+                
+                {/* Load Balancing Section */}
+                <li className="mt-4">
+                  <div className="px-2 py-1 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Load Balancing
+                  </div>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Load Balancers
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Target Groups
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Trust Stores
+                  </a>
+                </li>
+                
+                {/* Auto Scaling Section */}
+                <li className="mt-4">
+                  <div className="px-2 py-1 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Auto Scaling
+                  </div>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                    Auto Scaling Groups
                   </a>
                 </li>
               </ul>
