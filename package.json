@@ -3,12 +3,12 @@
   "version": "0.0.1",
   "description": "Traffic - A system scaling simulator",
   "scripts": {
-    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
-    "client": "cd client && npm run dev",
-    "server": "cd server && npm run dev",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "npm run build:client",
-    "build:client": "cd client && npm run build"
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "frontend": "cd frontend && npm run dev",
+    "backend": "cd backend && npm run dev",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "build": "npm run build:frontend",
+    "build:frontend": "cd frontend && npm run build"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
