@@ -6,6 +6,8 @@ function Dashboard() {
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showServiceMenu, setShowServiceMenu] = useState(false)
+  const [currentView, setCurrentView] = useState('dashboard')
+  const [sideMenuActive, setSideMenuActive] = useState('')
 
   const handleLogout = () => {
     setIsLoggingOut(true)

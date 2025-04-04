@@ -6,6 +6,8 @@ function EC2Dashboard() {
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showServiceMenu, setShowServiceMenu] = useState(false)
+  const [currentView, setCurrentView] = useState('dashboard')
+  const [activeMenuItem, setActiveMenuItem] = useState('dashboard')
 
   const handleLogout = () => {
     setIsLoggingOut(true)
@@ -136,17 +138,39 @@ function EC2Dashboard() {
             <nav className="px-2">
               <ul className="space-y-1">
                 <li>
-                  <a href="#" className="flex items-center px-2 py-2 text-sm rounded-md bg-blue-50 text-blue-700">
+                  <a 
+                    href="#" 
+                    className={`flex items-center px-2 py-2 text-sm rounded-md ${activeMenuItem === 'dashboard' ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-100'}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentView('dashboard');
+                      setActiveMenuItem('dashboard');
+                    }}
+                  >
                     Dashboard
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="flex items-center px-2 py-2 text-sm rounded-md hover:bg-gray-100">
+                  <a 
+                    href="#" 
+                    className={`flex items-center px-2 py-2 text-sm rounded-md ${activeMenuItem === 'ec2-global' ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-100'}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveMenuItem('ec2-global');
+                    }}
+                  >
                     EC2 Global View
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="flex items-center px-2 py-2 text-sm rounded-md hover:bg-gray-100">
+                  <a 
+                    href="#" 
+                    className={`flex items-center px-2 py-2 text-sm rounded-md ${activeMenuItem === 'events' ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-100'}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveMenuItem('events');
+                    }}
+                  >
                     Events
                   </a>
                 </li>
@@ -158,7 +182,15 @@ function EC2Dashboard() {
                   </div>
                 </li>
                 <li>
-                  <a href="#" className="flex items-center px-4 py-2 text-sm rounded-md hover:bg-gray-100">
+                  <a 
+                    href="#" 
+                    className={`flex items-center px-4 py-2 text-sm rounded-md ${activeMenuItem === 'instances' ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-100'}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentView('instances');
+                      setActiveMenuItem('instances');
+                    }}
+                  >
                     Instances
                   </a>
                 </li>
@@ -310,106 +342,286 @@ function EC2Dashboard() {
           <div className="w-4/5 flex flex-col">
             {/* Main content area - 75% of right side */}
             <div className="h-3/4 p-6 overflow-y-auto">
-              {/* Resources Card */}
-              <div className="bg-white shadow rounded-lg mb-6">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="font-medium text-lg">Resources</h2>
-                </div>
-                <div className="p-6">
-                  <p className="mb-4">You are using the following Amazon EC2 resources in the United States (N. Virginia) Region:</p>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                      <span className="text-gray-600">Instances (running)</span>
-                      <span className="font-medium">18</span>
+              {currentView === 'dashboard' && (
+                <>
+                  {/* Resources Card */}
+                  <div className="bg-white shadow rounded-lg mb-6">
+                    <div className="px-6 py-4 border-b border-gray-200">
+                      <h2 className="font-medium text-lg">Resources</h2>
                     </div>
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                      <span className="text-gray-600">Auto Scaling Groups</span>
-                      <span className="font-medium">2</span>
-                    </div>
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                      <span className="text-gray-600">Capacity Reservations</span>
-                      <span className="font-medium">0</span>
-                    </div>
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                      <span className="text-gray-600">Dedicated Hosts</span>
-                      <span className="font-medium">0</span>
-                    </div>
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                      <span className="text-gray-600">Elastic IPs</span>
-                      <span className="font-medium">1</span>
-                    </div>
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                      <span className="text-gray-600">Instances</span>
-                      <span className="font-medium">18</span>
-                    </div>
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                      <span className="text-gray-600">Key pairs</span>
-                      <span className="font-medium">4</span>
-                    </div>
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                      <span className="text-gray-600">Load balancers</span>
-                      <span className="font-medium">13</span>
-                    </div>
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                      <span className="text-gray-600">Placement groups</span>
-                      <span className="font-medium">0</span>
-                    </div>
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                      <span className="text-gray-600">Security groups</span>
-                      <span className="font-medium">63</span>
-                    </div>
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                      <span className="text-gray-600">Snapshots</span>
-                      <span className="font-medium">4</span>
-                    </div>
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                      <span className="text-gray-600">Volumes</span>
-                      <span className="font-medium">36</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Instance Status Card */}
-              <div className="bg-white shadow rounded-lg mb-6">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="font-medium text-lg">Instance Status</h2>
-                </div>
-                <div className="p-6">
-                  <div className="flex mb-4">
-                    <div className="w-1/3 px-2">
-                      <div className="text-center p-4 bg-green-50 rounded-lg">
-                        <div className="text-3xl font-bold text-green-600">18</div>
-                        <div className="text-sm text-gray-600">Running</div>
-                      </div>
-                    </div>
-                    <div className="w-1/3 px-2">
-                      <div className="text-center p-4 bg-gray-50 rounded-lg">
-                        <div className="text-3xl font-bold text-gray-400">0</div>
-                        <div className="text-sm text-gray-600">Stopped</div>
-                      </div>
-                    </div>
-                    <div className="w-1/3 px-2">
-                      <div className="text-center p-4 bg-gray-50 rounded-lg">
-                        <div className="text-3xl font-bold text-gray-400">0</div>
-                        <div className="text-sm text-gray-600">Terminated</div>
+                    <div className="p-6">
+                      <p className="mb-4">You are using the following Amazon EC2 resources in the United States (N. Virginia) Region:</p>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2 cursor-pointer" onClick={() => {
+                          setCurrentView('instances');
+                          setActiveMenuItem('instances');
+                        }}>
+                          <span className="text-gray-600 hover:text-blue-600">Instances (running)</span>
+                          <span className="font-medium">18</span>
+                        </div>
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                          <span className="text-gray-600">Auto Scaling Groups</span>
+                          <span className="font-medium">2</span>
+                        </div>
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                          <span className="text-gray-600">Capacity Reservations</span>
+                          <span className="font-medium">0</span>
+                        </div>
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                          <span className="text-gray-600">Dedicated Hosts</span>
+                          <span className="font-medium">0</span>
+                        </div>
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                          <span className="text-gray-600">Elastic IPs</span>
+                          <span className="font-medium">1</span>
+                        </div>
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                          <span className="text-gray-600">Instances</span>
+                          <span className="font-medium">18</span>
+                        </div>
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                          <span className="text-gray-600">Key pairs</span>
+                          <span className="font-medium">4</span>
+                        </div>
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                          <span className="text-gray-600">Load balancers</span>
+                          <span className="font-medium">13</span>
+                        </div>
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                          <span className="text-gray-600">Placement groups</span>
+                          <span className="font-medium">0</span>
+                        </div>
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                          <span className="text-gray-600">Security groups</span>
+                          <span className="font-medium">63</span>
+                        </div>
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                          <span className="text-gray-600">Snapshots</span>
+                          <span className="font-medium">4</span>
+                        </div>
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                          <span className="text-gray-600">Volumes</span>
+                          <span className="font-medium">36</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              
-              {/* Events Card */}
-              <div className="bg-white shadow rounded-lg">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="font-medium text-lg">Recent Events</h2>
-                </div>
-                <div className="p-6">
-                  <div className="text-center text-gray-500 py-8">
-                    <p>No recent events to display</p>
+                  
+                  {/* Instance Status Card */}
+                  <div className="bg-white shadow rounded-lg mb-6">
+                    <div className="px-6 py-4 border-b border-gray-200">
+                      <h2 className="font-medium text-lg">Instance Status</h2>
+                    </div>
+                    <div className="p-6">
+                      <div className="flex mb-4">
+                        <div className="w-1/3 px-2">
+                          <div className="text-center p-4 bg-green-50 rounded-lg">
+                            <div className="text-3xl font-bold text-green-600">18</div>
+                            <div className="text-sm text-gray-600">Running</div>
+                          </div>
+                        </div>
+                        <div className="w-1/3 px-2">
+                          <div className="text-center p-4 bg-gray-50 rounded-lg">
+                            <div className="text-3xl font-bold text-gray-400">0</div>
+                            <div className="text-sm text-gray-600">Stopped</div>
+                          </div>
+                        </div>
+                        <div className="w-1/3 px-2">
+                          <div className="text-center p-4 bg-gray-50 rounded-lg">
+                            <div className="text-3xl font-bold text-gray-400">0</div>
+                            <div className="text-sm text-gray-600">Terminated</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Events Card */}
+                  <div className="bg-white shadow rounded-lg">
+                    <div className="px-6 py-4 border-b border-gray-200">
+                      <h2 className="font-medium text-lg">Recent Events</h2>
+                    </div>
+                    <div className="p-6">
+                      <div className="text-center text-gray-500 py-8">
+                        <p>No recent events to display</p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {currentView === 'instances' && (
+                <div className="bg-white shadow rounded-lg">
+                  <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                    <h2 className="font-medium text-lg">Instances (18)</h2>
+                    <div className="text-sm text-gray-500">
+                      Last updated less than a minute ago
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Instance ID</th>
+                            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Instance state</th>
+                            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Launch time</th>
+                            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Private IP address</th>
+                            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image ID</th>
+                            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Host ID</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          <tr className="hover:bg-gray-50">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">clearsquare</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">i-0f9da420d12d1a406</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Running</span>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">2022/06/02 09:37 GMT-7</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">172.16.0.153</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">ami-0022f774911c1d690</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">–</td>
+                          </tr>
+                          <tr className="hover:bg-gray-50">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">Acme Host</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">i-0d6721b41ab2e6198</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Running</span>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">2025/02/05 12:35 GMT-8</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">10.0.8.96</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">ami-08cd3264cae2f34f2</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">–</td>
+                          </tr>
+                          <tr className="hover:bg-gray-50">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">bwh-test</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">i-0c963b105b5af8491</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Running</span>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">2025/01/14 10:36 GMT-8</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">10.0.8.211</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">ami-05576a079321f21f8</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">–</td>
+                          </tr>
+                          <tr className="hover:bg-gray-50">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">deloitte-netsuite-odbc</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">i-0d7c4bac69907f7a3</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Running</span>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">2025/04/02 13:39 GMT-7</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">172.31.27.91</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">ami-0f9de6e2d2f067fca</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">–</td>
+                          </tr>
+                          <tr className="hover:bg-gray-50">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">karpenter</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">i-0075a29ddb6c76ac2</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Running</span>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">2025/04/03 14:45 GMT-7</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">10.0.29.66</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">ami-025937694f223a136</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">–</td>
+                          </tr>
+                          <tr className="hover:bg-gray-50">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">Batman</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">i-0e292a441305bb88b</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Running</span>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">2025/03/31 10:11 GMT-7</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">10.0.10.223</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">ami-04fc8130419d4b24a</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">–</td>
+                          </tr>
+                          <tr className="hover:bg-gray-50">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">karpenter</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">i-0f7c0b4298a2b5c23</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Running</span>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">2025/04/04 08:37 GMT-7</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">10.0.25.217</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">ami-025937694f223a136</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">–</td>
+                          </tr>
+                          <tr className="hover:bg-gray-50">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm"></td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">i-073a4df807db2269e</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Running</span>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">2025/03/26 16:07 GMT-7</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">10.0.30.35</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">ami-088c76cb634d5f491</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">–</td>
+                          </tr>
+                          <tr className="hover:bg-gray-50">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">Other Batman</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">i-006c205b968a85f09</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Running</span>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">2025/03/31 10:11 GMT-7</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">10.0.12.91</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">ami-04fc8130419d4b24a</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">–</td>
+                          </tr>
+                          <tr className="hover:bg-gray-50">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">karpenter</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">i-064cfc8c5d7085043</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Running</span>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">2025/04/04 10:30 GMT-7</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">10.0.30.72</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">ami-025937694f223a136</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">–</td>
+                          </tr>
+                          <tr className="hover:bg-gray-50">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">karpenter</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">i-0ef418b498508dd14</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Running</span>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">2025/04/04 10:30 GMT-7</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">10.0.29.79</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">ami-025937694f223a136</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">–</td>
+                          </tr>
+                          <tr className="hover:bg-gray-50">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">karpenter</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">i-03e5b3bf156a22c56</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Running</span>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">2025/04/04 10:30 GMT-7</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">10.0.31.241</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">ami-025937694f223a136</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">–</td>
+                          </tr>
+                          <tr className="hover:bg-gray-50">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">karpenter</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">i-0cc58fca31ff9ce46</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Running</span>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">2025/04/04 10:30 GMT-7</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">10.0.30.227</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">ami-025937694f223a136</td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm">–</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
             
             {/* Bottom content area - 25% of right side */}
