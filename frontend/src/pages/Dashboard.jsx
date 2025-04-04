@@ -45,7 +45,7 @@ function Dashboard() {
                   </div>
                   <div className="p-2">
                     <div className="font-bold px-2 py-1 text-sm text-gray-600">Recently visited</div>
-                    <div className="flex items-start p-2 hover:bg-gray-100 rounded-md cursor-pointer">
+                    <div className="flex items-start p-2 hover:bg-gray-100 rounded-md cursor-pointer" onClick={() => window.location.href = '/ec2'}>
                       <span className="text-xl mr-2">🖥️</span>
                       <div>
                         <div className="font-medium">EC2</div>
@@ -151,7 +151,7 @@ function Dashboard() {
               </div>
               <div className="p-6">
                 <div className="space-y-4">
-                  <div className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer">
+                  <div className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer" onClick={() => window.location.href = '/ec2'}>
                     <span className="text-xl">🖥️</span>
                     <span>EC2</span>
                   </div>
@@ -179,7 +179,7 @@ function Dashboard() {
               </div>
               <div className="p-6">
                 <div className="space-y-4">
-                  <div className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer">
+                  <div className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer" onClick={() => window.location.href = '/ec2'}>
                     <span className="text-xl">🖥️</span>
                     <span>EC2</span>
                   </div>

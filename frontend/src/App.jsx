@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import SplashPage from './pages/SplashPage'
 import Dashboard from './pages/Dashboard'
+import EC2Dashboard from './pages/EC2Dashboard'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 
@@ -16,6 +17,10 @@ function App() {
       <Route 
         path="/dashboard" 
         element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} 
+      />
+      <Route 
+        path="/ec2" 
+        element={isAuthenticated ? <EC2Dashboard /> : <Navigate to="/login" />} 
       />
     </Routes>
   )
