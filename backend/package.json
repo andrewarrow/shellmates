@@ -5,10 +5,14 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "node src/index.js",
-    "watch": "nodemon src/index.js"
+    "watch": "nodemon src/index.js",
+    "migrate": "node -e \"require('./src/database/db.js').db.migrate()\"",
+    "seed": "node -e \"require('./src/database/db.js').db.seed()\"",
+    "reset-db": "rm -f data/traffic.db && npm run migrate && npm run seed"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "better-sqlite3": "^11.9.1",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
