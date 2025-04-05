@@ -257,13 +257,34 @@ function SingleServer() {
                                 wget https://github.com/firecracker-microvm/firecracker/releases/download/v1.11.0/firecracker-v1.11.0-x86_64.tgz<br/>
                                 gunzip firecracker-v1.11.0-x86_64.tgz<br/>
                                 tar -xf firecracker-v1.11.0-x86_64.tar<br/>
+                                cd release-v1.11.0-x86_64<br/>
                                 </pre>
                               )}
                               {index === 1 && (
-                                <p>Copy your public SSH key to the clipboard. On macOS, run <code>cat ~/.ssh/id_rsa.pub | pbcopy</code>. On Linux, use <code>cat ~/.ssh/id_rsa.pub | xclip -selection clipboard</code>.</p>
+                                <pre>
+                                cp firecracker-v1.11.0-x86_64 /usr/local/bin/firecracker<br/>
+                                cp jailer-v1.11.0-x86_64 /usr/local/bin/jailer<br/>
+                                cd ..<br/>
+                                {'setfacl -m u:${USER}:rw /dev/kvm<br/>'}
+                                {'[ $(stat -c "%G" /dev/kvm) = kvm ] && sudo usermod -aG kvm ${USER} && echo "Access granted."'}<br/>
+                                {'[ -r /dev/kvm ] && [ -w /dev/kvm ] && echo "OK" || echo "FAIL"<br/>'}<br/>
+                                {'ARCH="$(uname -m)"'}<br/>
+                                release_url="https://github.com/firecracker-microvm/firecracker/releases"<br/>
+                                {'CI_VERSION=${latest_version%.*}'}<br/>
+                                {'latest_kernel_key=$(curl "http://spec.ccfc.min.s3.amazonaws.com/?prefix=firecracker-ci/$CI_VERSION/$ARCH/vmlinux-&list-type=2" | grep -oP "(?<=<Key>)(firecracker-ci/$CI_VERSION/$ARCH/vmlinux-[0-9]+\.[0-9]+\.[0-9]{1,3})(?=</Key>)" | sort -V | tail -1)'}<br/>
+                                {'wget "https://s3.amazonaws.com/spec.ccfc.min/${latest_kernel_key}"'}<br/>
+                                </pre>
                               )}
                               {index === 2 && (
-                                <p>Navigate to the server management console and locate the SSH key management section. Add your public key and save the changes.</p>
+                                <pre>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                </pre>
                               )}
                               {index === 3 && (
                                 <p>Connect to the server using <code>ssh username@{server?.ip_address || 'server-ip-address'}</code>. Replace username with your assigned username.</p>
