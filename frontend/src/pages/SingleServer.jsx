@@ -158,7 +158,7 @@ function SingleServer() {
                       <h2 className="text-lg font-medium">Server Spots</h2>
                       <button 
                         onClick={() => navigate(`/dashboard?showAddSpotModal=true&serverId=${id}`)}
-                        className="px-3 py-1 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 text-sm"
+                        className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
                       >
                         Add Spot +
                       </button>
@@ -181,7 +181,7 @@ function SingleServer() {
                         {spots.map(spot => (
                           <div
                             key={spot.id}
-                            className="p-4 bg-teal-100 text-gray-700 rounded-md hover:bg-teal-200 transition-colors"
+                            className="p-4 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
                           >
                             <div className="flex justify-between items-start">
                               <div>
@@ -206,7 +206,7 @@ function SingleServer() {
                               </div>
                               <div className="flex space-x-2">
                                 <button 
-                                  className="px-3 py-1 bg-teal-600 text-white rounded-md hover:bg-teal-700 text-xs"
+                                  className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs"
                                   onClick={() => navigate(`/spot/${spot.id}`)}
                                 >
                                   View Details
@@ -217,6 +217,43 @@ function SingleServer() {
                         ))}
                       </div>
                     )}
+                  </div>
+                  
+                  <div className="mt-8">
+                    <h2 className="text-lg font-medium mb-4">SSH Steps</h2>
+                    <div className="space-y-2">
+                      {[...Array(9)].map((_, index) => (
+                        <div key={index} className="border border-gray-300 rounded-md overflow-hidden">
+                          <div 
+                            className="flex justify-between items-center p-3 bg-gray-100 cursor-pointer"
+                            onClick={(e) => {
+                              const content = e.currentTarget.nextElementSibling;
+                              const caret = e.currentTarget.querySelector('.caret');
+                              if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+                                // Closing
+                                content.style.maxHeight = '0px';
+                                caret.style.transform = 'rotate(0deg)';
+                              } else {
+                                // Opening
+                                content.style.maxHeight = content.scrollHeight + 'px';
+                                caret.style.transform = 'rotate(90deg)';
+                              }
+                            }}
+                          >
+                            <h3 className="font-medium">Step {index + 1}</h3>
+                            <span className="caret inline-block transform transition-transform duration-200">▶</span>
+                          </div>
+                          <div 
+                            className="bg-white overflow-hidden transition-all duration-300" 
+                            style={{ maxHeight: '0' }}
+                          >
+                            <div className="p-4">
+                              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                   
                   <div className="mt-8">

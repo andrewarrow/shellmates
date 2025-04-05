@@ -100,7 +100,7 @@ function seed() {
   
   if (seedFiles.length > 0) {
     console.log(`Running ${seedFiles.length} seed files...`);
-    seedFiles.forEach(runSeed);
+    //seedFiles.forEach(runSeed);
     console.log('Seeding completed.');
   } else {
     console.log('No seed files found.');
