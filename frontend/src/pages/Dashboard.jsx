@@ -30,6 +30,8 @@ function Dashboard() {
     hard_drive_size: ''
   })
   const [editingServer, setEditingServer] = useState(null)
+  const [editingSpot, setEditingSpot] = useState(null)
+  const [showEditSpotModal, setShowEditSpotModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [spotsLoading, setSpotsLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -129,6 +131,54 @@ function Dashboard() {
     setNewSpot(prev => ({ ...prev, [name]: value }))
   }
 
+  const handleEditSpotInputChange = (e) => {
+    const { name, value } = e.target
+    
+    // If changing the server, we need to update server_name and ip_address
+    if (name === 'server_id') {
+      const selectedServer = servers.find(server => server.id === parseInt(value) || server.id === value)
+      if (selectedServer) {
+        setEditingSpot(prev => ({ 
+          ...prev, 
+          [name]: value,
+          server_name: selectedServer.name,
+          ip_address: selectedServer.ip_address
+        }))
+        return
+      }
+    }
+    
+    // Handle other field updates normally
+    setEditingSpot(prev => ({ ...prev, [name]: value }))
+  }
+
+  const openEditSpotModal = (spot) => {
+    // Find the server ID based on the server_name if it's not already in the spot object
+    let server_id = spot.server_id;
+    
+    // If server_id isn't already set properly
+    if (!server_id || typeof server_id !== 'number') {
+      // Try to find the server based on name or IP address
+      const matchingServer = servers.find(
+        server => server.name === spot.server_name || server.ip_address === spot.ip_address
+      );
+      
+      if (matchingServer) {
+        server_id = matchingServer.id;
+      }
+    }
+    
+    // Make sure we preserve server_name and ip_address when editing
+    setEditingSpot({
+      ...spot,
+      server_id: server_id,
+      // Ensure these properties are preserved for display after update
+      server_name: spot.server_name,
+      ip_address: spot.ip_address
+    })
+    setShowEditSpotModal(true)
+  }
+
   const handleAddSpot = async (e) => {
     e.preventDefault()
     try {
@@ -144,6 +194,38 @@ function Dashboard() {
     } catch (err) {
       console.error('Error adding spot:', err)
       setSpotsError('Failed to add spot')
+    }
+  }
+  
+  const handleEditSpot = async (e) => {
+    e.preventDefault()
+    try {
+      // Create a copy of editingSpot to send to the server
+      const spotToUpdate = {...editingSpot}
+      
+      // Store server_name, ip_address, and server_id for the updated spot
+      const server_name = editingSpot.server_name
+      const ip_address = editingSpot.ip_address
+      const server_id = editingSpot.server_id
+      
+      const response = await axios.put(`/api/spots/${editingSpot.id}`, spotToUpdate)
+      
+      // Merge the response with stored display values
+      const updatedSpot = {
+        ...response.data,
+        server_name,
+        ip_address,
+        server_id
+      }
+      
+      setSpots(prev => prev.map(spot => 
+        spot.id === editingSpot.id ? updatedSpot : spot
+      ))
+      setEditingSpot(null)
+      setShowEditSpotModal(false)
+    } catch (err) {
+      console.error('Error updating spot:', err)
+      setSpotsError('Failed to update spot')
     }
   }
 
@@ -710,6 +792,111 @@ function Dashboard() {
                 </div>
               </div>
             )}
+
+            {/* Edit Spot Modal */}
+            {showEditSpotModal && editingSpot && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium">Edit Spot</h3>
+                    <button 
+                      onClick={() => {
+                        setShowEditSpotModal(false);
+                        setEditingSpot(null);
+                      }}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  
+                  <form onSubmit={handleEditSpot}>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Select Server
+                        </label>
+                        <select
+                          name="server_id"
+                          value={editingSpot.server_id}
+                          onChange={handleEditSpotInputChange}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        >
+                          <option value="">Select a server...</option>
+                          {servers.map(server => (
+                            <option key={server.id} value={server.id}>
+                              {server.name} ({server.ip_address})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Memory
+                        </label>
+                        <input
+                          type="text"
+                          name="memory"
+                          value={editingSpot.memory || ''}
+                          onChange={handleEditSpotInputChange}
+                          placeholder="e.g. 8GB"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          CPU Cores
+                        </label>
+                        <input
+                          type="number"
+                          name="cpu_cores"
+                          value={editingSpot.cpu_cores || ''}
+                          onChange={handleEditSpotInputChange}
+                          placeholder="e.g. 4"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Hard Drive Size
+                        </label>
+                        <input
+                          type="text"
+                          name="hard_drive_size"
+                          value={editingSpot.hard_drive_size || ''}
+                          onChange={handleEditSpotInputChange}
+                          placeholder="e.g. 256GB"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="mt-6 flex justify-end space-x-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowEditSpotModal(false);
+                          setEditingSpot(null);
+                        }}
+                        className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
             
             {/* My Spots Card */}
             <div className="bg-white shadow rounded-lg overflow-hidden">
@@ -761,6 +948,15 @@ function Dashboard() {
                           </div>
                         </div>
                         <div className="flex space-x-2">
+                          <button 
+                            className="text-xs text-blue-600 hover:text-blue-800"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEditSpotModal(spot);
+                            }}
+                          >
+                            Edit
+                          </button>
                           <button 
                             className="text-xs text-gray-600 hover:text-gray-800"
                             onClick={(e) => {
