@@ -303,9 +303,9 @@ function SingleServer() {
                               )}
                               {index === 4 && (
                                 <pre>
-                                {''}<br/>
-                                {''}<br/>
-                                {''}<br/>
+                                {'API_SOCKET="${JAIL_ROOT}/run/api.sock"'}<br/>
+                                {'curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"kernel_image_path\": \"vmlinux-6.1.102\", \"boot_args\": \"console=ttyS0 reboot=k panic=1 pci=off\" }" "http://localhost/boot-source"'}<br/>
+                                {'curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"drive_id\": \"rootfs\", \"path_on_host\": \"/rootfs/ubuntu-24.04.ext4\", \"is_root_device\": true, \"is_read_only\": false }" "http://localhost/drives/rootfs"'}<br/>
                                 {''}<br/>
                                 </pre>
                               )}
