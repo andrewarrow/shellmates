@@ -285,18 +285,24 @@ function SingleServer() {
                                 cp -v id_rsa.pub squashfs-root/root/.ssh/authorized_keys<br/>
                                 {'mv -v id_rsa ./ubuntu-$ubuntu_version.id_rsa'}<br/>
                                 {'sudo chown -R root:root squashfs-root'}<br/>
-                                {''}<br/>
-                                {''}<br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
+                                {'truncate -s 200G ubuntu-$ubuntu_version.ext4'}<br/>
+                                {'sudo mkfs.ext4 -d squashfs-root -F ubuntu-$ubuntu_version.ext4'}<br/>
                                 </pre>
                               )}
                               {index === 3 && (
-                                <p>Connect to the server using <code>ssh username@{server?.ip_address || 'server-ip-address'}</code>. Replace username with your assigned username.</p>
+                                <pre>
+                                {'JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"'}<br/>
+                                {'mkdir -p ${JAIL_ROOT}/rootfs'}<br/>
+                                {'cp vmlinux-6.1.102 ${JAIL_ROOT}'}<br/>
+                                {'cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs'}<br/>
+                                {'chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs'}<br/>
+                                {'jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file firecracker -- --api-sock /run/api.sock'}<br/>
+                                {''}<br/>
+                                {''}<br/>
+                                {''}<br/>
+                                {''}<br/>
+                                {''}<br/>
+                                </pre>
                               )}
                               {index === 4 && (
                                 <p>If this is your first time connecting, you'll see a fingerprint warning. Verify the fingerprint is correct before typing "yes" to continue.</p>
