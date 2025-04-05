@@ -24,7 +24,7 @@ function Dashboard() {
         <div className="flex items-center justify-between px-4 py-2">
           {/* Left Side - Logo & Service Menu */}
           <div className="flex items-center space-x-6">
-            <div className="text-xl font-bold">Traffic</div>
+            <div className="text-xl font-bold">shellmates</div>
             
             {/* Service Menu */}
             <div className="relative">
@@ -119,9 +119,6 @@ function Dashboard() {
 
       {/* Secondary Navigation - Breadcrumbs, Help */}
       <div className="bg-gray-800 text-white px-4 py-1 flex justify-between text-sm">
-        <div>
-          <span className="text-gray-300">Traffic Console</span> / <span>Home</span>
-        </div>
         <div className="flex space-x-4">
           <button className="hover:underline">Support</button>
           <button className="hover:underline">Documentation</button>
@@ -130,26 +127,13 @@ function Dashboard() {
 
       <main className="flex-1 p-6">
         <div className="max-w-7xl mx-auto">
-          {/* Welcome Section */}
-          <div className="bg-white shadow rounded-lg p-6 mb-6">
-            <h1 className="text-2xl font-semibold mb-2">Welcome to Traffic</h1>
-            <p className="text-gray-600">Complete the following tasks to get started in the cloud.</p>
-            
-            {/* Getting Started Progress */}
-            <div className="mt-4 flex items-center">
-              <div className="w-2/3 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full bg-green-500 w-3/4"></div>
-              </div>
-              <span className="ml-2 text-sm text-gray-600">75% complete</span>
-            </div>
-          </div>
           
           {/* Dashboard Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Recently Visited */}
             <div className="bg-white shadow rounded-lg overflow-hidden">
               <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-                <h2 className="font-medium">Recently visited</h2>
+                <h2 className="font-medium">My Servers</h2>
               </div>
               <div className="p-6">
                 <div className="space-y-4">
@@ -176,8 +160,7 @@ function Dashboard() {
             {/* Favorites */}
             <div className="bg-white shadow rounded-lg overflow-hidden">
               <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-                <h2 className="font-medium">Favorites</h2>
-                <button className="text-sm text-blue-600 hover:underline">Edit</button>
+                <h2 className="font-medium">Spots Open</h2>
               </div>
               <div className="p-6">
                 <div className="space-y-4">
@@ -200,7 +183,7 @@ function Dashboard() {
             {/* CloudWatch Metrics */}
             <div className="bg-white shadow rounded-lg overflow-hidden">
               <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-                <h2 className="font-medium">CloudWatch metrics</h2>
+                <h2 className="font-medium">My Shells</h2>
               </div>
               <div className="p-6 flex justify-center items-center h-48">
                 <div className="text-center text-gray-500">
@@ -210,61 +193,6 @@ function Dashboard() {
               </div>
             </div>
             
-            {/* Cost Management */}
-            <div className="bg-white shadow rounded-lg overflow-hidden">
-              <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-                <h2 className="font-medium">Cost management</h2>
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <div className="text-sm text-gray-500">Month-to-date spend</div>
-                    <div className="text-xl font-medium">$0.00</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500">Forecasted</div>
-                    <div className="text-xl font-medium">$0.00</div>
-                  </div>
-                </div>
-                <div className="h-20 bg-gray-100 rounded-md"></div>
-              </div>
-            </div>
-            
-            {/* Health */}
-            <div className="bg-white shadow rounded-lg overflow-hidden">
-              <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-                <h2 className="font-medium">Health</h2>
-              </div>
-              <div className="p-6">
-                <div className="flex items-center space-x-2 text-green-600">
-                  <span className="text-xl">✓</span>
-                  <span>All services operational</span>
-                </div>
-              </div>
-            </div>
-            
-            {/* Build something */}
-            <div className="bg-white shadow rounded-lg overflow-hidden">
-              <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-                <h2 className="font-medium">Build a solution</h2>
-              </div>
-              <div className="p-6">
-                <div className="space-y-3">
-                  <button className="w-full px-4 py-2 text-left bg-gray-50 hover:bg-gray-100 rounded-md flex items-center">
-                    <span className="mr-2">🚀</span>
-                    <span>Launch a virtual machine</span>
-                  </button>
-                  <button className="w-full px-4 py-2 text-left bg-gray-50 hover:bg-gray-100 rounded-md flex items-center">
-                    <span className="mr-2">🌐</span>
-                    <span>Host a static website</span>
-                  </button>
-                  <button className="w-full px-4 py-2 text-left bg-gray-50 hover:bg-gray-100 rounded-md flex items-center">
-                    <span className="mr-2">🔄</span>
-                    <span>Deploy a containerized application</span>
-                  </button>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </main>
@@ -272,7 +200,7 @@ function Dashboard() {
       {/* Footer */}
       <footer className="bg-gray-100 border-t border-gray-200 py-4 px-6 text-sm text-gray-600 mt-auto">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-2 md:mb-0">© 2025, Traffic, Inc. or its affiliates. All rights reserved.</div>
+          <div className="mb-2 md:mb-0">© 2025 shellmates or its affiliates. All rights reserved.</div>
           <div className="flex space-x-4">
             <a href="#" className="hover:underline">Privacy Policy</a>
             <a href="#" className="hover:underline">Terms of Use</a>

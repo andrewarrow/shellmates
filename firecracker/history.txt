@@ -1,0 +1,144 @@
+   1  apt-get update
+    2  apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+    3  curl -fsSL https://download.kata-containers.io/stable/ubuntu/dists/jammy/kata-containers.asc | sudo apt-key add -
+    4  wget https://github.com/kata-containers/kata-containers/releases/download/3.15.0/kata-static-3.15.0-amd64.tar.xz
+    5  tar -xf kata-static-3.15.0-amd64.tar.xz
+    6  apt-get install -y docker.io
+    7  ls
+    8  cp -r ~/kata-containers/opt/kata /opt/
+    9  cp -r ~/opt/kata /opt/
+   10  ln -sf /opt/kata/bin/containerd-shim-kata-v2 /usr/bin/containerd-shim-kata-v2
+   11  mkdir -p /etc/docker
+   12  cat << EOF | sudo tee /etc/docker/daemon.json
+{
+  "runtimes": {
+    "kata-runtime": {
+      "path": "/opt/kata/bin/kata-runtime"
+    }
+  }
+}
+EOF
+
+   13  systemctl restart docker
+   14  sudo docker run --runtime=kata-runtime -d --name kata-container1 ubuntu sleep infinity
+   15  docker info
+   16  docker run --runtime=kata-runtime -d --name kata-test ubuntu sleep infinity
+   17  /opt/kata/bin/kata-runtime --version
+   18  /opt/kata/bin/kata-runtime kata-check
+   19  docker rm -f kata-container1 kata-container2 2>/dev/null
+   20  docker run --runtime=kata-runtime -d --name kata-container1 ubuntu sleep infinity
+   21  cp /etc/docker/daemon.json /etc/docker/daemon.json.bak
+   22  cat << EOF | sudo tee /etc/docker/daemon.json
+{
+  "runtimes": {
+  }
+}
+EOF
+
+   23  systemctl restart docker
+   24  docker run -d --name test-container ubuntu sleep infinity
+   25  docker run --security-opt seccomp=default --security-opt no-new-privileges   -d --name secure-test ubuntu sleep infinity
+   26  historyapt install -y cpu-checker
+   27  apt install -y cpu-checker
+   28  kvm-ok
+   29  apt install -y wget curl qemu-utils util-linux
+   30  ls
+   31  rm -rf opt/
+   32  rm kata-static-3.15.0-amd64.tar.xz 
+   33  ls
+   34  mkdir -p ~/firecracker && cd ~/firecracker
+   35  wget https://github.com/firecracker-microvm/firecracker/releases/download/v1.4.0/firecracker-v1.4.0-x86_64.tgz
+   36  tar -xvf firecracker-v1.4.0-x86_64.tgz
+   37  mv release-v1.4.0-x86_64/firecracker-v1.4.0-x86_64 /usr/local/bin/firecracker
+   38  chmod +x /usr/local/bin/firecracker
+   39  wget https://s3.amazonaws.com/spec.ccfc.min/img/quickstart_guide/x86_64/kernels/vmlinux.bin
+   40  wget https://s3.amazonaws.com/spec.ccfc.min/img/quickstart_guide/x86_64/rootfs/bionic.rootfs.ext4
+
+wget https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64-root.tar.xz
+dd if=/dev/zero of=new-rootfs.ext4 bs=1M count=1024
+mkfs.ext4 new-rootfs.ext4
+sudo mkdir -p /mnt/new-rootfs
+sudo mount -o loop new-rootfs.ext4 /mnt/new-rootfs
+sudo tar -xf bionic-server-cloudimg-amd64-root.tar.xz -C /mnt/new-rootfs
+
+sudo cp /etc/resolv.conf /mnt/new-rootfs/etc/
+sudo chroot /mnt/new-rootfs
+apt update && apt install -y iputils-ping iproute2 curl wget netcat
+exit
+sudo umount /mnt/new-rootfs
+
+   41  sudo ip tuntap add tap0 mode tap
+   42  sudo ip addr add 172.16.0.1/24 dev tap0
+   43  sudo ip link set tap0 up
+   44  cat > vm_config.json << EOF
+{
+  "boot-source": {
+    "kernel_image_path": "vmlinux.bin",
+    "boot_args": "console=ttyS0 reboot=k panic=1 pci=off"
+  },
+  "drives": [
+    {
+      "drive_id": "rootfs",
+      "path_on_host": "bionic.rootfs.ext4",
+      "is_root_device": true,
+      "is_read_only": false
+    }
+  ],
+  "machine-config": {
+    "vcpu_count": 1,
+    "mem_size_mib": 512,
+    "ht_enabled": false
+  },
+  "network-interfaces": [
+    {
+      "iface_id": "eth0",
+      "guest_mac": "AA:FC:00:00:00:01",
+      "host_dev_name": "tap0"
+    }
+  ]
+}
+EOF
+
+   45  firecracker --api-sock /tmp/firecracker.socket --config-file vm_config.json
+   46  ls
+   47  vi vm_config.json 
+   48  firecracker --api-sock /tmp/firecracker.socket --config-file vm_config.json
+   49  ps awx | grep fire
+   50  rm /tmp/firecracker.socket 
+   51  firecracker --api-sock /tmp/firecracker.socket --config-file vm_config.json
+   52  history
+   53  vi vm_config.json
+   54  cat vm_config.json | jq .
+   55  apt install jq
+   56  cat vm_config.json | jq .
+   57  cat vm_config.json | jq . > t
+   58  mv t vm_config.json 
+   59  cat vm_config.json 
+   60  sysctl -w net.ipv4.ip_forward=1
+   61  sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+   62  sudo iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+   63  sudo iptables -A FORWARD -i tap0 -o eth0 -j ACCEPT
+   64  history
+   65  ls /tmp/
+   66  rm /tmp/firecracker.socket 
+   67  firecracker --api-sock /tmp/firecracker.socket --config-file vm_config.json
+   68  ls
+   69  ls -l
+   70  df
+   71  df -h
+   72  qemu-img resize bionic.rootfs.ext4 350G
+   73  ls -l
+   74  df -h
+   75  ls -lh
+   76  vi vm_config.json 
+   77  firecracker --api-sock /tmp/firecracker.socket --config-file vm_config.json
+   78  rm /tmp/firecracker.socket; firecracker --api-sock /tmp/firecracker.socket --config-file vm_config.json
+
+
+    9  sudo sysctl -w net.ipv4.ip_forward=1
+   10  sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+   11  # Make sure forwarding is allowed
+   12  sudo iptables -A FORWARD -i tap0 -o eth0 -j ACCEPT
+   13  sudo iptables -A FORWARD -i eth0 -o tap0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+   14  sudo ip link set tap0 up
+   15  sudo ip addr show tap0 

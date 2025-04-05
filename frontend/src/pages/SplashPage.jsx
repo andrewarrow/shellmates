@@ -34,11 +34,11 @@ function SplashPage() {
             </div>
             <div className="text-center">
               <h3 className="text-xl font-semibold mb-2"><a class="link" href="https://us.ovhcloud.com/bare-metal/rise/">OHV Rise</a></h3>
-              <p>32 GB RAM, Intel Xeon-E 2386G - 6c/12t - 3.5GHz/4.7GHz, 2x 4TB HDD, for $66.50</p>
+              <p>32 GB RAM, Intel Xeon-E 2386G - 6c/12t - 3.5GHz/4.7GHz, 2x 4TB HDD for $66.50</p>
             </div>
             <div className="text-center">
               <h3 className="text-xl font-semibold mb-2"><a class="link" href="https://www.liquidweb.com/dedicated-server-hosting/bare-metal/">liquidweb</a></h3>
-              <p>16 GB memory, Intel E-2134 4 core @ 3.5 GHz, 2×480 GB SSD, for $44.00</p>
+              <p>16 GB memory, Intel E-2134 4 core @ 3.5 GHz, 2×480 GB SSD for $44.00</p>
             </div>
           </div>
         </div>

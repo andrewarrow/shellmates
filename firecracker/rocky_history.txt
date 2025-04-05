@@ -1,0 +1,219 @@
+ 1  ls
+    2  ls -l
+    3  uptime
+    4  htop
+    5  dnf install htop
+    6  dnf update
+    7  dnf install epel-release
+    8  htp[
+    9  htop
+   10  dnf install htop
+   11  htop
+   12  dnf install golang
+   13  curl -LOJ https://github.com/firecracker-microvm/firecracker/releases/download/v0.14.0/firecracker-v0.14.0
+   14  ls
+   15  ls -l
+   16  mv firecracker-v0.14.0 firecracker
+   17  chmod +x firecracker
+   18  ./firecracker -version
+   19  ./firecracker --version
+   20  curl -LOJ https://github.com/firecracker-microvm/firecracker/releases/download/v1.11.0/firecracker-v1.11.0
+   21  ls
+   22  ls -l
+   23  wget https://github.com/firecracker-microvm/firecracker/releases/download/v1.11.0/firecracker-v1.11.0-x86_64.tgz
+   24  ls
+   25  ls -l
+   26  gunzip firecracker
+   27  gunzip firecracker-v1.11.0
+   28  gunzip firecracker-v1.11.0-x86_64.tgz 
+   29  ls
+   30  rm firecracker-v1.11.0
+   31  ls
+   32  mkdir foo
+   33  mv firecracker-v1.11.0-x86_64.tar foo
+   34  cd foo/
+   35  ls
+   36  tar -xfv firecracker-v1.11.0-x86_64.tar 
+   37  dnf install tar
+   38  tar -xfv firecracker-v1.11.0-x86_64.tar 
+   39  ls
+   40  tar -xf firecracker-v1.11.0-x86_64.tar 
+   41  ls
+   42  cd release-v1.11.0-x86_64/
+   43  ls
+   44  ./firecracker-v1.11.0-x86_64 --version
+   45  cp ./firecracker-v1.11.0-x86_64 ../../firecracker 
+   46  cd ..
+   47  ls
+   48  ./firecracker --version
+   49  which firecracker
+   50  cp firecracker /usr/bin/
+   51  which firecracker
+   52  setfacl -m u:${USER}:rw /dev/kvm
+   53  firecracker -V
+   54  firecracker
+   55  lsmod | grep kvm
+   56  getent group kvm
+   57  ls -l /dev/kvm
+   58  groups
+   59  [ $(stat -c "%G" /dev/kvm) = kvm ] && sudo usermod -aG kvm ${USER} && echo "Access granted."
+   60  [ -r /dev/kvm ] && [ -w /dev/kvm ] && echo "OK" || echo "FAIL"
+   61  ARCH="$(uname -m)"
+   62  release_url="https://github.com/firecracker-microvm/firecracker/releases"
+   63  latest_version=$(basename $(curl -fsSLI -o /dev/null -w  %{url_effective} ${release_url}/latest))
+   64  CI_VERSION=${latest_version%.*}
+   65  latest_kernel_key=$(curl "http://spec.ccfc.min.s3.amazonaws.com/?prefix=firecracker-ci/$CI_VERSION/$ARCH/vmlinux-&list-type=2" \
+    | grep -oP "(?<=<Key>)(firecracker-ci/$CI_VERSION/$ARCH/vmlinux-[0-9]+\.[0-9]+\.[0-9]{1,3})(?=</Key>)" \
+    | sort -V | tail -1)
+   66  ls
+   67  echo $latest_kernel_key
+   68  wget "https://s3.amazonaws.com/spec.ccfc.min/${latest_kernel_key}"
+   69  ls
+   70  ls -l
+   71  latest_ubuntu_key=$(curl "http://spec.ccfc.min.s3.amazonaws.com/?prefix=firecracker-ci/$CI_VERSION/$ARCH/ubuntu-&list-type=2" \
+    | grep -oP "(?<=<Key>)(firecracker-ci/$CI_VERSION/$ARCH/ubuntu-[0-9]+\.[0-9]+\.squashfs)(?=</Key>)" \
+    | sort -V | tail -1)
+   72  ubuntu_version=$(basename $latest_ubuntu_key .sqashfs | grep -oE '[0-9]+\.[0-9]+')
+   73  ls
+   74  ubuntu_version=$(basename $latest_ubuntu_key .sqashfs | grep -oE '[0-9]+\.[0-9]+')
+   75  echo $ubuntu_version
+   76  wget -O ubuntu-$ubuntu_version.squashfs.upstream "https://s3.amazonaws.com/spec.ccfc.min/$latest_ubuntu_key"
+   77  ls
+   78  ls -l
+   79  unsquashfs ubuntu-$ubuntu_version.squashfs.upstream
+   80  ssh-keygen -f id_rsa -N ""
+   81  cp -v id_rsa.pub squashfs-root/root/.ssh/authorized_keys
+   82  mv -v id_rsa ./ubuntu-$ubuntu_version.id_rsa
+   83  sudo chown -R root:root squashfs-root
+   84  truncate -s 400M ubuntu-$ubuntu_version.ext4
+   85  sudo mkfs.ext4 -d squashfs-root -F ubuntu-$ubuntu_version.ext4
+   86  ls
+   87  ls -l
+   88  ls -lh
+   89  echo "Kernel: $(ls vmlinux-* | tail -1)"
+   90  echo "Rootfs: $(ls *.ext4 | tail -1)"
+   91  echo "SSH Key: $(ls *.id_rsa | tail -1)"
+   92  API_SOCKET="/tmp/firecracker.socket"
+   93  # Remove API unix socket
+   94  sudo rm -f $API_SOCKET
+   95  # Run firecracker
+   96  sudo ./firecracker --api-sock "${API_SOCKET}"
+   97  history
+   98  ls /srv/jailer/firecracker/hello-fc/root/run/api.sock
+   99  AP_DEV="tap0"
+  100  TAP_IP="172.16.0.1"
+  101  MASK_SHORT="/30"
+  102  # Setup network interface
+  103  sudo ip link del "$TAP_DEV" 2> /dev/null || true
+  104  sudo ip tuntap add dev "$TAP_DEV" mode tap
+  105  sudo ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
+  106  sudo ip link set dev "$TAP_DEV" up
+  107  # Enable ip forwarding
+  108  sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+  109  sudo iptables -P FORWARD ACCEPT
+  110  # This tries to determine the name of the host network interface to forward
+  111  # VM's outbound network traffic through. If outbound traffic doesn't work,
+  112  # double check this returns the correct interface!
+  113  HOST_IFACE=$(ip -j route list default |jq -r '.[0].dev')
+  114  # Set up microVM internet access
+  115  sudo iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+  116  TAP_DEV="tap0"
+  117  TAP_IP="172.16.0.1"
+  118  MASK_SHORT="/30"
+  119  # Setup network interface
+  120  sudo ip link del "$TAP_DEV" 2> /dev/null || true
+  121  sudo ip tuntap add dev "$TAP_DEV" mode tap
+  122  sudo ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
+  123  sudo ip link set dev "$TAP_DEV" up
+  124  sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+  125  sudo iptables -P FORWARD ACCEPT
+  126  HOST_IFACE=$(ip -j route list default |jq -r '.[0].dev')
+  127  sudo iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+  128  iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
+  129  iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+  130  API_SOCKET="/srv/jailer/firecracker/hello-fc/root/run/api.sock"
+  131  LOGFILE="./firecracker.log"
+  132  touch $LOGFILE
+  133  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+        \"log_path\": \"${LOGFILE}\",
+        \"level\": \"Debug\",
+        \"show_level\": true,
+        \"show_log_origin\": true
+    }"     "http://localhost/logger"
+  134  KERNEL="./$(ls vmlinux* | tail -1)"
+  135  KERNEL_BOOT_ARGS="console=ttyS0 reboot=k panic=1 pci=off"
+  136  ARCH=$(uname -m)
+  137  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+        \"kernel_image_path\": \"${KERNEL}\",
+        \"boot_args\": \"${KERNEL_BOOT_ARGS}\"
+    }"     "http://localhost/boot-source"
+  138  find /srv/. | grep vmlinux-6.1.102
+  139  KERNEL="/srv/jailer/firecracker/vmlinux-6.1.102"
+  140  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+        \"kernel_image_path\": \"${KERNEL}\",
+        \"boot_args\": \"${KERNEL_BOOT_ARGS}\"
+    }"     "http://localhost/boot-source"
+  141  cd /srv/jailer/firecracker/
+  142  ls
+  143  ls root/
+  144  ls -l root/
+  145  cd hello-fc/
+  146  ls
+  147  cd ..
+  148  cp vmlinux-6.1.102 hello-fc/root/
+  149  cp ubuntu-24.04.ext4  hello-fc/root/
+  150  cp ubuntu-24.04.id_rsa hello-fc/root/
+  151  KERNEL="./vmlinux-6.1.102"
+  152  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+        \"kernel_image_path\": \"${KERNEL}\",
+        \"boot_args\": \"${KERNEL_BOOT_ARGS}\"
+    }"     "http://localhost/boot-source"
+  153  ROOTFS="./$(ls *.ext4 | tail -1)"
+  154  echo $ROOTFS
+  155  ls
+  156  pwd
+  157  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+        \"drive_id\": \"rootfs\",
+        \"path_on_host\": \"${ROOTFS}\",
+        \"is_root_device\": true,
+        \"is_read_only\": false
+    }"     "http://localhost/drives/rootfs"
+  158  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+        \"kernel_image_path\": \"${KERNEL}\",
+        \"boot_args\": \"${KERNEL_BOOT_ARGS}\"
+    }"     "http://localhost/boot-source"
+  159  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+        \"kernel_image_path\": \"${KERNEL}\",
+        \"boot_args\": \"${KERNEL_BOOT_ARGS}\"
+    }"     "http://localhost/boot-source"
+  160  echo $ROOTFS
+  161  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+        \"drive_id\": \"rootfs\",
+        \"path_on_host\": \"${ROOTFS}\",
+        \"is_root_device\": true,
+        \"is_read_only\": false
+    }"     "http://localhost/drives/rootfs"
+  162  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+        \"kernel_image_path\": \"${KERNEL}\",
+        \"boot_args\": \"${KERNEL_BOOT_ARGS}\"
+    }"     "http://localhost/boot-source"
+  163  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+        \"drive_id\": \"rootfs\",
+        \"path_on_host\": \"/rootfs/ubuntu-24.04.ext4\",
+        \"is_root_device\": true,
+        \"is_read_only\": false
+    }"     "http://localhost/drives/rootfs"
+  164  FC_MAC="06:00:AC:10:00:02"
+  165  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+        \"iface_id\": \"net1\",
+        \"guest_mac\": \"$FC_MAC\",
+        \"host_dev_name\": \"$TAP_DEV\"
+    }"     "http://localhost/network-interfaces/net1"
+  166  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+        \"action_type\": \"InstanceStart\"
+    }"     "http://localhost/actions"
+  167  KEY_NAME=./$(ls *.id_rsa | tail -1)
+  168  echo $KEY_NAME 
+  169  ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
+  170  ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+  171  ssh -i $KEY_NAME root@172.16.0.2

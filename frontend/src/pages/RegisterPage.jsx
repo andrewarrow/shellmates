@@ -49,7 +49,7 @@ function RegisterPage() {
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-primary-800">Create an Account</h1>
-          <p className="text-gray-600 mt-2">Join Traffic and start learning</p>
+          <p className="text-gray-600 mt-2">Join shellmates</p>
         </div>
         
         {error && (
