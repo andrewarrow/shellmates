@@ -306,11 +306,32 @@ function SingleServer() {
                                 {'API_SOCKET="${JAIL_ROOT}/run/api.sock"'}<br/>
                                 {'curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"kernel_image_path\": \"vmlinux-6.1.102\", \"boot_args\": \"console=ttyS0 reboot=k panic=1 pci=off\" }" "http://localhost/boot-source"'}<br/>
                                 {'curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"drive_id\": \"rootfs\", \"path_on_host\": \"/rootfs/ubuntu-24.04.ext4\", \"is_root_device\": true, \"is_read_only\": false }" "http://localhost/drives/rootfs"'}<br/>
-                                {''}<br/>
+                                {'TAP_DEV="tap0"'}<br/>
+                                {'TAP_IP="172.16.0.1"'}<br/>
+                                {'MASK_SHORT="/30"'}<br/>
+                                {'ip link del "$TAP_DEV" 2> /dev/null || true'}<br/>
+                                {'ip tuntap add dev "$TAP_DEV" mode tap'}<br/>
+                                {'ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"'}<br/>
+                                {'ip link set dev "$TAP_DEV" up'}<br/>
+                                {'sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"'}<br/>
+                                {'iptables -P FORWARD ACCEPT'}<br/>
+                                {'HOST_IFACE=$(ip -j route list default |jq -r ".[0].dev")'}<br/>
+                                {'iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true'}<br/>
+                                {'iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE'}<br/>
+                                {'curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"iface_id\": \"net1\", \"guest_mac\": \"06:00:AC:10:00:02\", \"host_dev_name\": \"$TAP_DEV\" }"     "http://localhost/network-interfaces/net1"'}<br/>
                                 </pre>
                               )}
                               {index === 5 && (
-                                <p>Once connected, update the server packages with <code>sudo apt update && sudo apt upgrade -y</code> (for Ubuntu/Debian) or <code>sudo yum update -y</code> (for CentOS/RHEL).</p>
+                                <pre>
+                                {''}<br/>
+                                {''}<br/>
+                                {''}<br/>
+                                {''}<br/>
+                                {''}<br/>
+                                {''}<br/>
+                                {''}<br/>
+                                {''}<br/>
+                                </pre>
                               )}
                               {index === 6 && (
                                 <p>Set up your environment by installing any required packages. For web servers, you might run <code>sudo apt install nginx</code> or similar commands based on your needs.</p>
