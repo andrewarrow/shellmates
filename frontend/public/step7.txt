@@ -1,0 +1,1 @@
+Configure the firewall if needed. For example, to allow HTTP/HTTPS traffic: sudo ufw allow http and sudo ufw allow https.

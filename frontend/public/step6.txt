@@ -1,0 +1,1 @@
+Set up your environment by installing any required packages. For web servers, you might run sudo apt install nginx or similar commands based on your needs.

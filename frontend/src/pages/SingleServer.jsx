@@ -224,127 +224,15 @@ function SingleServer() {
                     <div className="space-y-2">
                       {[...Array(9)].map((_, index) => (
                         <div key={index} className="border border-gray-300 rounded-md overflow-hidden">
-                          <div 
-                            className="flex justify-between items-center p-3 bg-gray-100 cursor-pointer"
-                            onClick={(e) => {
-                              const content = e.currentTarget.nextElementSibling;
-                              const caret = e.currentTarget.querySelector('.caret');
-                              if (content.style.maxHeight && content.style.maxHeight !== '0px') {
-                                // Closing
-                                content.style.maxHeight = '0px';
-                                caret.style.transform = 'rotate(0deg)';
-                              } else {
-                                // Opening
-                                content.style.maxHeight = content.scrollHeight + 'px';
-                                caret.style.transform = 'rotate(90deg)';
-                              }
-                            }}
+                          <a 
+                            href={`/step${index}.txt`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex justify-between items-center p-3 bg-gray-100 cursor-pointer hover:bg-gray-200"
                           >
                             <h3 className="font-medium">Step {index + 1}</h3>
-                            <span className="caret inline-block transform transition-transform duration-200">▶</span>
-                          </div>
-                          <div 
-                            className="bg-white overflow-hidden transition-all duration-300" 
-                            style={{ maxHeight: '0' }}
-                          >
-                            <div className="p-4">
-                              {index === 0 && (
-                                <pre>
-                                dnf install epel-release -y<br/>
-                                dnf install htop tar -y<br/>
-                                mkdir fc<br/>
-                                cd fc<br/>
-                                wget https://github.com/firecracker-microvm/firecracker/releases/download/v1.11.0/firecracker-v1.11.0-x86_64.tgz<br/>
-                                gunzip firecracker-v1.11.0-x86_64.tgz<br/>
-                                tar -xf firecracker-v1.11.0-x86_64.tar<br/>
-                                cd release-v1.11.0-x86_64<br/>
-                                </pre>
-                              )}
-                              {index === 1 && (
-                                <pre>
-                                cp firecracker-v1.11.0-x86_64 /usr/local/bin/firecracker<br/>
-                                cp jailer-v1.11.0-x86_64 /usr/local/bin/jailer<br/>
-                                cd ..<br/>
-                                {'setfacl -m u:${USER}:rw /dev/kvm<br/>'}
-                                {'[ $(stat -c "%G" /dev/kvm) = kvm ] && sudo usermod -aG kvm ${USER} && echo "Access granted."'}<br/>
-                                {'[ -r /dev/kvm ] && [ -w /dev/kvm ] && echo "OK" || echo "FAIL"<br/>'}<br/>
-                                {'ARCH="$(uname -m)"'}<br/>
-                                release_url="https://github.com/firecracker-microvm/firecracker/releases"<br/>
-                                {'CI_VERSION=${latest_version%.*}'}<br/>
-                                {'latest_kernel_key=$(curl "http://spec.ccfc.min.s3.amazonaws.com/?prefix=firecracker-ci/$CI_VERSION/$ARCH/vmlinux-&list-type=2" | grep -oP "(?<=<Key>)(firecracker-ci/$CI_VERSION/$ARCH/vmlinux-[0-9]+\.[0-9]+\.[0-9]{1,3})(?=</Key>)" | sort -V | tail -1)'}<br/>
-                                {'wget "https://s3.amazonaws.com/spec.ccfc.min/${latest_kernel_key}"'}<br/>
-                                </pre>
-                              )}
-                              {index === 2 && (
-                                <pre>
-                                {'latest_ubuntu_key=$(curl "http://spec.ccfc.min.s3.amazonaws.com/?prefix=firecracker-ci/$CI_VERSION/$ARCH/ubuntu-&list-type=2" | grep -oP "(?<=<Key>)(firecracker-ci/$CI_VERSION/$ARCH/ubuntu-[0-9]+\.[0-9]+\.squashfs)(?=</Key>)" | sort -V | tail -1)'}<br/>
-                                {'ubuntu_version=$(basename $latest_ubuntu_key .sqashfs | grep -oE "[0-9]+\.[0-9]+")'}<br/>
-                                {'wget -O ubuntu-$ubuntu_version.squashfs.upstream "https://s3.amazonaws.com/spec.ccfc.min/$latest_ubuntu_key"'}<br/>
-                                {'unsquashfs ubuntu-$ubuntu_version.squashfs.upstream'}<br/>
-                                {'ssh-keygen -f id_rsa -N ""'}<br/>
-                                cp -v id_rsa.pub squashfs-root/root/.ssh/authorized_keys<br/>
-                                {'mv -v id_rsa ./ubuntu-$ubuntu_version.id_rsa'}<br/>
-                                {'sudo chown -R root:root squashfs-root'}<br/>
-                                {'truncate -s 200G ubuntu-$ubuntu_version.ext4'}<br/>
-                                {'sudo mkfs.ext4 -d squashfs-root -F ubuntu-$ubuntu_version.ext4'}<br/>
-                                </pre>
-                              )}
-                              {index === 3 && (
-                                <pre>
-                                {'useradd -r -s /bin/false fc_user'}<br/>
-                                {'JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"'}<br/>
-                                {'mkdir -p ${JAIL_ROOT}/rootfs'}<br/>
-                                {'cp vmlinux-6.1.102 ${JAIL_ROOT}'}<br/>
-                                {'cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs'}<br/>
-                                {'cp ubuntu-24.04.id_rsa ${JAIL_ROOT}/rootfs'}<br/>
-                                {'chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs'}<br/>
-                                {'jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock'}<br/>
-                                </pre>
-                              )}
-                              {index === 4 && (
-                                <pre>
-                                {'API_SOCKET="${JAIL_ROOT}/run/api.sock"'}<br/>
-                                {'curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"kernel_image_path\": \"vmlinux-6.1.102\", \"boot_args\": \"console=ttyS0 reboot=k panic=1 pci=off\" }" "http://localhost/boot-source"'}<br/>
-                                {'curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"drive_id\": \"rootfs\", \"path_on_host\": \"/rootfs/ubuntu-24.04.ext4\", \"is_root_device\": true, \"is_read_only\": false }" "http://localhost/drives/rootfs"'}<br/>
-                                {'TAP_DEV="tap0"'}<br/>
-                                {'TAP_IP="172.16.0.1"'}<br/>
-                                {'MASK_SHORT="/30"'}<br/>
-                                {'ip link del "$TAP_DEV" 2> /dev/null || true'}<br/>
-                                {'ip tuntap add dev "$TAP_DEV" mode tap'}<br/>
-                                {'ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"'}<br/>
-                                {'ip link set dev "$TAP_DEV" up'}<br/>
-                                {'sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"'}<br/>
-                                {'iptables -P FORWARD ACCEPT'}<br/>
-                                {'HOST_IFACE=$(ip -j route list default |jq -r ".[0].dev")'}<br/>
-                                {'iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true'}<br/>
-                                {'iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE'}<br/>
-                                {'curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"iface_id\": \"net1\", \"guest_mac\": \"06:00:AC:10:00:02\", \"host_dev_name\": \"$TAP_DEV\" }"     "http://localhost/network-interfaces/net1"'}<br/>
-
-
-                                </pre>
-                              )}
-                              {index === 5 && (
-                                <pre>
-                                {'curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"action_type\": \"InstanceStart\" }" "http://localhost/actions"'}<br/> 
-                                {'KEY_NAME=ubuntu-24.04.id_rsa'}<br/>
-                                {'ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"'}<br/>
-                                {`ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"`}<br/>
-                                {''}<br/>
-                                {''}<br/>
-                                {''}<br/>
-                                </pre>
-                              )}
-                              {index === 6 && (
-                                <p>Set up your environment by installing any required packages. For web servers, you might run <code>sudo apt install nginx</code> or similar commands based on your needs.</p>
-                              )}
-                              {index === 7 && (
-                                <p>Configure the firewall if needed. For example, to allow HTTP/HTTPS traffic: <code>sudo ufw allow http</code> and <code>sudo ufw allow https</code>.</p>
-                              )}
-                              {index === 8 && (
-                                <p>For better security, disable password authentication and root login by editing <code>/etc/ssh/sshd_config</code>. Set PasswordAuthentication and PermitRootLogin to no, then restart SSH with <code>sudo systemctl restart sshd</code>.</p>
-                              )}
-                            </div>
-                          </div>
+                            <span className="text-blue-600">View Instructions</span>
+                          </a>
                         </div>
                       ))}
                     </div>

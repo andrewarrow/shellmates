@@ -1,0 +1,8 @@
+                                {'useradd -r -s /bin/false fc_user'}<br/>
+                                {'JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"'}<br/>
+                                {'mkdir -p ${JAIL_ROOT}/rootfs'}<br/>
+                                {'cp vmlinux-6.1.102 ${JAIL_ROOT}'}<br/>
+                                {'cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs'}<br/>
+                                {'cp ubuntu-24.04.id_rsa ${JAIL_ROOT}/rootfs'}<br/>
+                                {'chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs'}<br/>
+                                {'jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock'}<br/>

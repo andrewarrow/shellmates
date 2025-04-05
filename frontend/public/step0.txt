@@ -1,0 +1,9 @@
+
+                                dnf install epel-release -y<br/>
+                                dnf install htop tar -y<br/>
+                                mkdir fc<br/>
+                                cd fc<br/>
+                                wget https://github.com/firecracker-microvm/firecracker/releases/download/v1.11.0/firecracker-v1.11.0-x86_64.tgz<br/>
+                                gunzip firecracker-v1.11.0-x86_64.tgz<br/>
+                                tar -xf firecracker-v1.11.0-x86_64.tar<br/>
+                                cd release-v1.11.0-x86_64<br/>
