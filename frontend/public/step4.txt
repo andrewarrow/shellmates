@@ -13,4 +13,4 @@
     HOST_IFACE=$(ip -j route list default |jq -r ".[0].dev")
     iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
     iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
-    curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "iface_id": "net1", "guest_mac": "06:00:AC:10:00:02", "host_dev_name": "$TAP_DEV" }' "http://localhost/network-interfaces/net1"
+    curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "iface_id": "net1", "guest_mac": "06:00:AC:10:00:02", "host_dev_name": "tap0" }' "http://localhost/network-interfaces/net1"
