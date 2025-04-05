@@ -128,6 +128,34 @@ const db = {
       return stmt.get(username, password, new Date().toISOString());
     }
   },
+  servers: {
+    findByUserId: (userId) => {
+      const stmt = sqlite.prepare('SELECT * FROM servers WHERE user_id = ?');
+      return stmt.all(userId);
+    },
+    findById: (id) => {
+      const stmt = sqlite.prepare('SELECT * FROM servers WHERE id = ?');
+      return stmt.get(id);
+    },
+    create: (serverData) => {
+      const stmt = sqlite.prepare(
+        `INSERT INTO servers (
+          name, ip_address, latitude, longitude, user_id
+        ) VALUES (?, ?, ?, ?, ?) RETURNING *`
+      );
+      return stmt.get(
+        serverData.name,
+        serverData.ip_address,
+        serverData.latitude,
+        serverData.longitude,
+        serverData.user_id
+      );
+    },
+    delete: (id) => {
+      const stmt = sqlite.prepare('DELETE FROM servers WHERE id = ?');
+      return stmt.run(id);
+    }
+  },
   ec2_instances: {
     findByUserId: (userId) => {
       const stmt = sqlite.prepare('SELECT * FROM ec2_instances WHERE user_id = ?');

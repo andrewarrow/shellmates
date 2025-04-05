@@ -9,6 +9,7 @@ dotenv.config();
 // Import routes
 const authRoutes = require('./routes/auth');
 const ec2Routes = require('./routes/ec2');
+const serverRoutes = require('./routes/servers');
 
 // Database initialization
 const db = require('./database/db');
@@ -24,6 +25,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/ec2', ec2Routes);
+app.use('/api/servers', serverRoutes);
 
 // Serve static frontend in production
 if (process.env.NODE_ENV === 'production') {
