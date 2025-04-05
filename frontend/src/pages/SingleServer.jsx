@@ -248,7 +248,41 @@ function SingleServer() {
                             style={{ maxHeight: '0' }}
                           >
                             <div className="p-4">
-                              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                              {index === 0 && (
+                                <pre>
+                                dnf install epel-release -y<br/>
+                                dnf install htop tar -y<br/>
+                                mkdir fc<br/>
+                                cd fc<br/>
+                                wget https://github.com/firecracker-microvm/firecracker/releases/download/v1.11.0/firecracker-v1.11.0-x86_64.tgz<br/>
+                                gunzip firecracker-v1.11.0-x86_64.tgz<br/>
+                                tar -xf firecracker-v1.11.0-x86_64.tar<br/>
+                                </pre>
+                              )}
+                              {index === 1 && (
+                                <p>Copy your public SSH key to the clipboard. On macOS, run <code>cat ~/.ssh/id_rsa.pub | pbcopy</code>. On Linux, use <code>cat ~/.ssh/id_rsa.pub | xclip -selection clipboard</code>.</p>
+                              )}
+                              {index === 2 && (
+                                <p>Navigate to the server management console and locate the SSH key management section. Add your public key and save the changes.</p>
+                              )}
+                              {index === 3 && (
+                                <p>Connect to the server using <code>ssh username@{server?.ip_address || 'server-ip-address'}</code>. Replace username with your assigned username.</p>
+                              )}
+                              {index === 4 && (
+                                <p>If this is your first time connecting, you'll see a fingerprint warning. Verify the fingerprint is correct before typing "yes" to continue.</p>
+                              )}
+                              {index === 5 && (
+                                <p>Once connected, update the server packages with <code>sudo apt update && sudo apt upgrade -y</code> (for Ubuntu/Debian) or <code>sudo yum update -y</code> (for CentOS/RHEL).</p>
+                              )}
+                              {index === 6 && (
+                                <p>Set up your environment by installing any required packages. For web servers, you might run <code>sudo apt install nginx</code> or similar commands based on your needs.</p>
+                              )}
+                              {index === 7 && (
+                                <p>Configure the firewall if needed. For example, to allow HTTP/HTTPS traffic: <code>sudo ufw allow http</code> and <code>sudo ufw allow https</code>.</p>
+                              )}
+                              {index === 8 && (
+                                <p>For better security, disable password authentication and root login by editing <code>/etc/ssh/sshd_config</code>. Set PasswordAuthentication and PermitRootLogin to no, then restart SSH with <code>sudo systemctl restart sshd</code>.</p>
+                              )}
                             </div>
                           </div>
                         </div>
