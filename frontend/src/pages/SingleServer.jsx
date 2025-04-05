@@ -319,15 +319,16 @@ function SingleServer() {
                                 {'iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true'}<br/>
                                 {'iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE'}<br/>
                                 {'curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"iface_id\": \"net1\", \"guest_mac\": \"06:00:AC:10:00:02\", \"host_dev_name\": \"$TAP_DEV\" }"     "http://localhost/network-interfaces/net1"'}<br/>
+
+
                                 </pre>
                               )}
                               {index === 5 && (
                                 <pre>
-                                {''}<br/>
-                                {''}<br/>
-                                {''}<br/>
-                                {''}<br/>
-                                {''}<br/>
+                                {'curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"action_type\": \"InstanceStart\" }" "http://localhost/actions"'}<br/> 
+                                {'KEY_NAME=ubuntu-24.04.id_rsa'}<br/>
+                                {'ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"'}<br/>
+                                {`ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"`}<br/>
                                 {''}<br/>
                                 {''}<br/>
                                 {''}<br/>
