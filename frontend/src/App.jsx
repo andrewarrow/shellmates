@@ -4,6 +4,7 @@ import SplashPage from './pages/SplashPage'
 import Dashboard from './pages/Dashboard'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import SingleServer from './pages/SingleServer'
 
 function App() {
   const { isAuthenticated } = useAuth()
@@ -18,8 +19,12 @@ function App() {
         element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} 
       />
       <Route 
-        path="/my-server/:id" 
-        element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} 
+        path="/server/:id" 
+        element={isAuthenticated ? <SingleServer /> : <Navigate to="/login" />} 
+      />
+      <Route 
+        path="/spot/:id" 
+        element={isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} 
       />
     </Routes>
   )

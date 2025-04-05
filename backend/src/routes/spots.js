@@ -15,6 +15,31 @@ router.get('/', authMiddleware, (req, res) => {
   }
 });
 
+// Get spots by server ID
+router.get('/server/:serverId', authMiddleware, (req, res) => {
+  try {
+    // Check if server exists and belongs to the user
+    const server = db.servers.findById(req.params.serverId);
+    if (!server || server.user_id !== req.userId) {
+      return res.status(404).json({ message: 'Server not found' });
+    }
+    
+    const spots = db.spots.findByServerId(req.params.serverId);
+    
+    // Add server info to each spot
+    const spotsWithServerInfo = spots.map(spot => ({
+      ...spot,
+      server_name: server.name,
+      ip_address: server.ip_address
+    }));
+    
+    res.json(spotsWithServerInfo);
+  } catch (error) {
+    console.error('Error fetching spots for server:', error);
+    res.status(500).json({ message: 'Failed to fetch spots for server' });
+  }
+});
+
 // Get spot by ID
 router.get('/:id', authMiddleware, (req, res) => {
   try {
