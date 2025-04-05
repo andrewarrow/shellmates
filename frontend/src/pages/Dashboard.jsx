@@ -10,17 +10,32 @@ function Dashboard() {
   const [currentView, setCurrentView] = useState('dashboard')
   const [sideMenuActive, setSideMenuActive] = useState('')
   const [showAddServerModal, setShowAddServerModal] = useState(false)
+  const [showEditServerModal, setShowEditServerModal] = useState(false)
+  const [showAddSpotModal, setShowAddSpotModal] = useState(false)
   const [servers, setServers] = useState([])
+  const [spots, setSpots] = useState([])
   const [newServer, setNewServer] = useState({
     name: '',
     ip_address: '',
     latitude: '',
-    longitude: ''
+    longitude: '',
+    memory: '',
+    cpu_cores: '',
+    hard_drive_size: ''
   })
+  const [newSpot, setNewSpot] = useState({
+    server_id: '',
+    memory: '',
+    cpu_cores: '',
+    hard_drive_size: ''
+  })
+  const [editingServer, setEditingServer] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [spotsLoading, setSpotsLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [spotsError, setSpotsError] = useState(null)
 
-  // Fetch user's servers on component mount
+  // Fetch user's servers and spots on component mount
   useEffect(() => {
     const fetchServers = async () => {
       try {
@@ -34,7 +49,20 @@ function Dashboard() {
       }
     }
 
+    const fetchSpots = async () => {
+      try {
+        const response = await axios.get('/api/spots')
+        setSpots(response.data)
+        setSpotsLoading(false)
+      } catch (err) {
+        console.error('Error fetching spots:', err)
+        setSpotsError('Failed to load spots')
+        setSpotsLoading(false)
+      }
+    }
+
     fetchServers()
+    fetchSpots()
   }, [])
 
   const handleLogout = () => {
@@ -59,12 +87,63 @@ function Dashboard() {
         name: '',
         ip_address: '',
         latitude: '',
-        longitude: ''
+        longitude: '',
+        memory: '',
+        cpu_cores: '',
+        hard_drive_size: ''
       })
       setShowAddServerModal(false)
     } catch (err) {
       console.error('Error adding server:', err)
       setError('Failed to add server')
+    }
+  }
+
+  const openEditModal = (server) => {
+    setEditingServer({...server})
+    setShowEditServerModal(true)
+  }
+
+  const handleEditInputChange = (e) => {
+    const { name, value } = e.target
+    setEditingServer(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleEditServer = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await axios.put(`/api/servers/${editingServer.id}`, editingServer)
+      setServers(prev => prev.map(server => 
+        server.id === editingServer.id ? response.data : server
+      ))
+      setEditingServer(null)
+      setShowEditServerModal(false)
+    } catch (err) {
+      console.error('Error updating server:', err)
+      setError('Failed to update server')
+    }
+  }
+
+  const handleSpotInputChange = (e) => {
+    const { name, value } = e.target
+    setNewSpot(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleAddSpot = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await axios.post('/api/spots', newSpot)
+      setSpots(prev => [...prev, response.data])
+      setNewSpot({
+        server_id: '',
+        memory: '',
+        cpu_cores: '',
+        hard_drive_size: ''
+      })
+      setShowAddSpotModal(false)
+    } catch (err) {
+      console.error('Error adding spot:', err)
+      setSpotsError('Failed to add spot')
     }
   }
 
@@ -204,13 +283,51 @@ function Dashboard() {
                     {servers.map(server => (
                       <div
                         key={server.id}
-                        className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer"
-                        onClick={() => window.location.href = `/my-server/${server.id}`}
+                        className="flex items-start justify-between space-x-3 p-3 hover:bg-gray-50 rounded-md border-b border-gray-100"
                       >
-                        <span className="text-xl">🖥️</span>
-                        <div>
-                          <div className="font-medium">{server.name}</div>
-                          <div className="text-sm text-gray-500">{server.ip_address}</div>
+                        <div className="flex items-start space-x-3">
+                          <span className="text-xl mt-1">🖥️</span>
+                          <div>
+                            <div className="font-medium">{server.name}</div>
+                            <div className="text-sm text-gray-600">IP: {server.ip_address}</div>
+                            <div className="mt-1 space-y-1">
+                              {server.memory && (
+                                <div className="text-xs text-gray-500">
+                                  <span className="font-medium">Memory:</span> {server.memory}
+                                </div>
+                              )}
+                              {server.cpu_cores && (
+                                <div className="text-xs text-gray-500">
+                                  <span className="font-medium">CPU:</span> {server.cpu_cores} cores
+                                </div>
+                              )}
+                              {server.hard_drive_size && (
+                                <div className="text-xs text-gray-500">
+                                  <span className="font-medium">Storage:</span> {server.hard_drive_size}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button 
+                            className="text-xs text-blue-600 hover:text-blue-800"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEditModal(server);
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            className="text-xs text-gray-600 hover:text-gray-800"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.location.href = `/my-server/${server.id}`;
+                            }}
+                          >
+                            View
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -290,6 +407,48 @@ function Dashboard() {
                           />
                         </div>
                       </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Memory
+                        </label>
+                        <input
+                          type="text"
+                          name="memory"
+                          value={newServer.memory}
+                          onChange={handleInputChange}
+                          placeholder="e.g. 8GB"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          CPU Cores
+                        </label>
+                        <input
+                          type="number"
+                          name="cpu_cores"
+                          value={newServer.cpu_cores}
+                          onChange={handleInputChange}
+                          placeholder="e.g. 4"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Hard Drive Size
+                        </label>
+                        <input
+                          type="text"
+                          name="hard_drive_size"
+                          value={newServer.hard_drive_size}
+                          onChange={handleInputChange}
+                          placeholder="e.g. 256GB"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
                     </div>
                     
                     <div className="mt-6 flex justify-end space-x-3">
@@ -311,19 +470,311 @@ function Dashboard() {
                 </div>
               </div>
             )}
+
+            {/* Edit Server Modal */}
+            {showEditServerModal && editingServer && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium">Edit Server</h3>
+                    <button 
+                      onClick={() => {
+                        setShowEditServerModal(false);
+                        setEditingServer(null);
+                      }}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  
+                  <form onSubmit={handleEditServer}>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Server Name
+                        </label>
+                        <input
+                          type="text"
+                          name="name"
+                          value={editingServer.name}
+                          onChange={handleEditInputChange}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          IP Address
+                        </label>
+                        <input
+                          type="text"
+                          name="ip_address"
+                          value={editingServer.ip_address}
+                          onChange={handleEditInputChange}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Latitude
+                          </label>
+                          <input
+                            type="text"
+                            name="latitude"
+                            value={editingServer.latitude || ''}
+                            onChange={handleEditInputChange}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Longitude
+                          </label>
+                          <input
+                            type="text"
+                            name="longitude"
+                            value={editingServer.longitude || ''}
+                            onChange={handleEditInputChange}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Memory
+                        </label>
+                        <input
+                          type="text"
+                          name="memory"
+                          value={editingServer.memory || ''}
+                          onChange={handleEditInputChange}
+                          placeholder="e.g. 8GB"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          CPU Cores
+                        </label>
+                        <input
+                          type="number"
+                          name="cpu_cores"
+                          value={editingServer.cpu_cores || ''}
+                          onChange={handleEditInputChange}
+                          placeholder="e.g. 4"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Hard Drive Size
+                        </label>
+                        <input
+                          type="text"
+                          name="hard_drive_size"
+                          value={editingServer.hard_drive_size || ''}
+                          onChange={handleEditInputChange}
+                          placeholder="e.g. 256GB"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="mt-6 flex justify-end space-x-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowEditServerModal(false);
+                          setEditingServer(null);
+                        }}
+                        className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* Add Spot Modal */}
+            {showAddSpotModal && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium">Add New Spot</h3>
+                    <button 
+                      onClick={() => setShowAddSpotModal(false)}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  
+                  <form onSubmit={handleAddSpot}>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Select Server
+                        </label>
+                        <select
+                          name="server_id"
+                          value={newSpot.server_id}
+                          onChange={handleSpotInputChange}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        >
+                          <option value="">Select a server...</option>
+                          {servers.map(server => (
+                            <option key={server.id} value={server.id}>
+                              {server.name} ({server.ip_address})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Memory
+                        </label>
+                        <input
+                          type="text"
+                          name="memory"
+                          value={newSpot.memory}
+                          onChange={handleSpotInputChange}
+                          placeholder="e.g. 8GB"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          CPU Cores
+                        </label>
+                        <input
+                          type="number"
+                          name="cpu_cores"
+                          value={newSpot.cpu_cores}
+                          onChange={handleSpotInputChange}
+                          placeholder="e.g. 4"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Hard Drive Size
+                        </label>
+                        <input
+                          type="text"
+                          name="hard_drive_size"
+                          value={newSpot.hard_drive_size}
+                          onChange={handleSpotInputChange}
+                          placeholder="e.g. 256GB"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="mt-6 flex justify-end space-x-3">
+                      <button
+                        type="button"
+                        onClick={() => setShowAddSpotModal(false)}
+                        className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                      >
+                        Add Spot
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
             
-            {/* Favorites */}
+            {/* My Spots Card */}
             <div className="bg-white shadow rounded-lg overflow-hidden">
               <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-                <h2 className="font-medium">Spots Open</h2>
+                <h2 className="font-medium">My Spots</h2>
+                <button 
+                  className="text-sm text-blue-600 hover:underline"
+                  onClick={() => setShowAddSpotModal(true)}
+                >
+                  Add New +
+                </button>
               </div>
               <div className="p-6">
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer" onClick={() => window.location.href = '/ec2'}>
-                    <span className="text-xl">🖥️</span>
-                    <span>17.33.12.22</span>
+                {spotsLoading ? (
+                  <div className="text-center py-4">Loading...</div>
+                ) : spotsError ? (
+                  <div className="text-center py-4 text-red-500">{spotsError}</div>
+                ) : spots.length === 0 ? (
+                  <div className="text-center py-4 text-gray-500">No spots added yet</div>
+                ) : (
+                  <div className="space-y-4">
+                    {spots.map(spot => (
+                      <div
+                        key={spot.id}
+                        className="flex items-start justify-between space-x-3 p-3 hover:bg-gray-50 rounded-md border-b border-gray-100"
+                      >
+                        <div className="flex items-start space-x-3">
+                          <span className="text-xl mt-1">☁️</span>
+                          <div>
+                            <div className="font-medium">{spot.server_name}</div>
+                            <div className="text-sm text-gray-600">IP: {spot.ip_address}</div>
+                            <div className="mt-1 space-y-1">
+                              {spot.memory && (
+                                <div className="text-xs text-gray-500">
+                                  <span className="font-medium">Memory:</span> {spot.memory}
+                                </div>
+                              )}
+                              {spot.cpu_cores && (
+                                <div className="text-xs text-gray-500">
+                                  <span className="font-medium">CPU:</span> {spot.cpu_cores} cores
+                                </div>
+                              )}
+                              {spot.hard_drive_size && (
+                                <div className="text-xs text-gray-500">
+                                  <span className="font-medium">Storage:</span> {spot.hard_drive_size}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button 
+                            className="text-xs text-gray-600 hover:text-gray-800"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.location.href = `/spot/${spot.id}`;
+                            }}
+                          >
+                            View
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
+                )}
               </div>
             </div>
             

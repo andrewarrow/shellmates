@@ -20,14 +20,17 @@ module.exports = {
         ip_address: '44.44.12.34',
         latitude: 37.7749,
         longitude: -122.4194,
+        memory: '8GB',
+        cpu_cores: 4,
+        hard_drive_size: '256GB',
         user_id: userId
       }
     ];
 
     // Insert servers
     const insertStmt = db.prepare(`
-      INSERT INTO servers (name, ip_address, latitude, longitude, user_id)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO servers (name, ip_address, latitude, longitude, memory, cpu_cores, hard_drive_size, user_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     // Use a transaction for bulk insert
@@ -38,6 +41,9 @@ module.exports = {
           server.ip_address,
           server.latitude,
           server.longitude,
+          server.memory,
+          server.cpu_cores,
+          server.hard_drive_size,
           server.user_id
         );
       }

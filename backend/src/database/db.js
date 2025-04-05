@@ -140,15 +140,42 @@ const db = {
     create: (serverData) => {
       const stmt = sqlite.prepare(
         `INSERT INTO servers (
-          name, ip_address, latitude, longitude, user_id
-        ) VALUES (?, ?, ?, ?, ?) RETURNING *`
+          name, ip_address, latitude, longitude, user_id,
+          memory, cpu_cores, hard_drive_size
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`
       );
       return stmt.get(
         serverData.name,
         serverData.ip_address,
         serverData.latitude,
         serverData.longitude,
-        serverData.user_id
+        serverData.user_id,
+        serverData.memory || null,
+        serverData.cpu_cores || null,
+        serverData.hard_drive_size || null
+      );
+    },
+    update: (id, serverData) => {
+      const stmt = sqlite.prepare(
+        `UPDATE servers SET 
+          name = ?, 
+          ip_address = ?, 
+          latitude = ?, 
+          longitude = ?,
+          memory = ?,
+          cpu_cores = ?,
+          hard_drive_size = ?
+        WHERE id = ? RETURNING *`
+      );
+      return stmt.get(
+        serverData.name,
+        serverData.ip_address,
+        serverData.latitude,
+        serverData.longitude,
+        serverData.memory || null,
+        serverData.cpu_cores || null,
+        serverData.hard_drive_size || null,
+        id
       );
     },
     delete: (id) => {
@@ -186,6 +213,63 @@ const db = {
         instanceData.host_id,
         instanceData.user_id
       );
+    }
+  },
+  spots: {
+    findByUserId: (userId) => {
+      const stmt = sqlite.prepare(`
+        SELECT s.*, srv.name as server_name, srv.ip_address 
+        FROM spots s
+        JOIN servers srv ON s.server_id = srv.id
+        WHERE s.user_id = ?
+      `);
+      return stmt.all(userId);
+    },
+    findByServerId: (serverId) => {
+      const stmt = sqlite.prepare('SELECT * FROM spots WHERE server_id = ?');
+      return stmt.all(serverId);
+    },
+    findById: (id) => {
+      const stmt = sqlite.prepare(`
+        SELECT s.*, srv.name as server_name, srv.ip_address 
+        FROM spots s
+        JOIN servers srv ON s.server_id = srv.id
+        WHERE s.id = ?
+      `);
+      return stmt.get(id);
+    },
+    create: (spotData) => {
+      const stmt = sqlite.prepare(
+        `INSERT INTO spots (
+          server_id, user_id, memory, cpu_cores, hard_drive_size
+        ) VALUES (?, ?, ?, ?, ?) RETURNING *`
+      );
+      return stmt.get(
+        spotData.server_id,
+        spotData.user_id,
+        spotData.memory || null,
+        spotData.cpu_cores || null,
+        spotData.hard_drive_size || null
+      );
+    },
+    update: (id, spotData) => {
+      const stmt = sqlite.prepare(
+        `UPDATE spots SET 
+          memory = ?,
+          cpu_cores = ?,
+          hard_drive_size = ?
+        WHERE id = ? RETURNING *`
+      );
+      return stmt.get(
+        spotData.memory || null,
+        spotData.cpu_cores || null,
+        spotData.hard_drive_size || null,
+        id
+      );
+    },
+    delete: (id) => {
+      const stmt = sqlite.prepare('DELETE FROM spots WHERE id = ?');
+      return stmt.run(id);
     }
   }
 };

@@ -34,7 +34,7 @@ router.get('/:id', authMiddleware, (req, res) => {
 // Create a new server
 router.post('/', authMiddleware, (req, res) => {
   try {
-    const { name, ip_address, latitude, longitude } = req.body;
+    const { name, ip_address, latitude, longitude, memory, cpu_cores, hard_drive_size } = req.body;
     
     // Validate input
     if (!name || !ip_address) {
@@ -47,6 +47,9 @@ router.post('/', authMiddleware, (req, res) => {
       ip_address,
       latitude: latitude || null,
       longitude: longitude || null,
+      memory: memory || null,
+      cpu_cores: cpu_cores || null,
+      hard_drive_size: hard_drive_size || null,
       user_id: req.userId
     });
     
@@ -54,6 +57,40 @@ router.post('/', authMiddleware, (req, res) => {
   } catch (error) {
     console.error('Error creating server:', error);
     res.status(500).json({ message: 'Failed to create server' });
+  }
+});
+
+// Update an existing server
+router.put('/:id', authMiddleware, (req, res) => {
+  try {
+    const { name, ip_address, latitude, longitude, memory, cpu_cores, hard_drive_size } = req.body;
+    
+    // Validate input
+    if (!name || !ip_address) {
+      return res.status(400).json({ message: 'Name and IP address are required' });
+    }
+    
+    // Check if server exists and belongs to the user
+    const existingServer = db.servers.findById(req.params.id);
+    if (!existingServer || existingServer.user_id !== req.userId) {
+      return res.status(404).json({ message: 'Server not found' });
+    }
+    
+    // Update server
+    const updatedServer = db.servers.update(req.params.id, {
+      name,
+      ip_address,
+      latitude: latitude || null,
+      longitude: longitude || null,
+      memory: memory || null,
+      cpu_cores: cpu_cores || null,
+      hard_drive_size: hard_drive_size || null
+    });
+    
+    res.json(updatedServer);
+  } catch (error) {
+    console.error('Error updating server:', error);
+    res.status(500).json({ message: 'Failed to update server' });
   }
 });
 

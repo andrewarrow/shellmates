@@ -10,6 +10,7 @@ dotenv.config();
 const authRoutes = require('./routes/auth');
 const ec2Routes = require('./routes/ec2');
 const serverRoutes = require('./routes/servers');
+const spotRoutes = require('./routes/spots');
 
 // Database initialization
 const db = require('./database/db');
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/ec2', ec2Routes);
 app.use('/api/servers', serverRoutes);
+app.use('/api/spots', spotRoutes);
 
 // Serve static frontend in production
 if (process.env.NODE_ENV === 'production') {
