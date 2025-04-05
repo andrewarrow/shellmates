@@ -277,7 +277,16 @@ function SingleServer() {
                               )}
                               {index === 2 && (
                                 <pre>
-                                <br/>
+                                {'latest_ubuntu_key=$(curl "http://spec.ccfc.min.s3.amazonaws.com/?prefix=firecracker-ci/$CI_VERSION/$ARCH/ubuntu-&list-type=2" | grep -oP "(?<=<Key>)(firecracker-ci/$CI_VERSION/$ARCH/ubuntu-[0-9]+\.[0-9]+\.squashfs)(?=</Key>)" | sort -V | tail -1)'}<br/>
+                                {'ubuntu_version=$(basename $latest_ubuntu_key .sqashfs | grep -oE "[0-9]+\.[0-9]+")'}<br/>
+                                {'wget -O ubuntu-$ubuntu_version.squashfs.upstream "https://s3.amazonaws.com/spec.ccfc.min/$latest_ubuntu_key"'}<br/>
+                                {'unsquashfs ubuntu-$ubuntu_version.squashfs.upstream'}<br/>
+                                {'ssh-keygen -f id_rsa -N ""'}<br/>
+                                cp -v id_rsa.pub squashfs-root/root/.ssh/authorized_keys<br/>
+                                {'mv -v id_rsa ./ubuntu-$ubuntu_version.id_rsa'}<br/>
+                                {'sudo chown -R root:root squashfs-root'}<br/>
+                                {''}<br/>
+                                {''}<br/>
                                 <br/>
                                 <br/>
                                 <br/>
