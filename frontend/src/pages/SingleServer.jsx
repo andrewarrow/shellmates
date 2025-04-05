@@ -291,21 +291,23 @@ function SingleServer() {
                               )}
                               {index === 3 && (
                                 <pre>
+                                {'useradd -r -s /bin/false fc_user'}<br/>
                                 {'JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"'}<br/>
                                 {'mkdir -p ${JAIL_ROOT}/rootfs'}<br/>
                                 {'cp vmlinux-6.1.102 ${JAIL_ROOT}'}<br/>
                                 {'cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs'}<br/>
+                                {'cp ubuntu-24.04.id_rsa ${JAIL_ROOT}/rootfs'}<br/>
                                 {'chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs'}<br/>
-                                {'jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file firecracker -- --api-sock /run/api.sock'}<br/>
-                                {''}<br/>
+                                {'jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock'}<br/>
+                                </pre>
+                              )}
+                              {index === 4 && (
+                                <pre>
                                 {''}<br/>
                                 {''}<br/>
                                 {''}<br/>
                                 {''}<br/>
                                 </pre>
-                              )}
-                              {index === 4 && (
-                                <p>If this is your first time connecting, you'll see a fingerprint warning. Verify the fingerprint is correct before typing "yes" to continue.</p>
                               )}
                               {index === 5 && (
                                 <p>Once connected, update the server packages with <code>sudo apt update && sudo apt upgrade -y</code> (for Ubuntu/Debian) or <code>sudo yum update -y</code> (for CentOS/RHEL).</p>
