@@ -1,5 +1,7 @@
 node_modules
 frontend/dist
+dist
+shellmates-dist.tar.gz
 backend/data
 .DS_Store
 package-lock.json
