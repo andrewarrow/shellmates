@@ -6,7 +6,9 @@
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
     "frontend": "cd frontend && npm run dev",
     "backend": "cd backend && npm run dev",
+    "backend:seed": "cd backend && npm run dev:seed",
     "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "dev:seed": "concurrently \"npm run backend:seed\" \"npm run frontend\"",
     "build": "npm run build:frontend",
     "build:frontend": "cd frontend && npm run build"
   },

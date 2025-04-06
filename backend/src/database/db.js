@@ -313,6 +313,6 @@ module.exports = {
   db,
   initialize: () => {
     migrate();
-    seed();
-  }
+  },
+  seed
 };

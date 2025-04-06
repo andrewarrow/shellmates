@@ -7,7 +7,9 @@
     "dev": "node src/index.js",
     "watch": "nodemon src/index.js",
     "migrate": "node -e \"require('./src/database/db.js').db.migrate()\"",
-    "seed": "node -e \"require('./src/database/db.js').db.seed()\"",
+    "seed": "node -e \"require('./src/database/db.js').seed()\"",
+    "dev:seed": "npm run seed && npm run dev",
+    "watch:seed": "npm run seed && npm run watch",
     "reset-db": "rm -f data/traffic.db && npm run migrate && npm run seed"
   },
   "dependencies": {
