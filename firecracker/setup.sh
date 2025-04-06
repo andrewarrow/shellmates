@@ -29,13 +29,12 @@
   truncate -s 200G ubuntu-$ubuntu_version.ext4
   mkfs.ext4 -d squashfs-root -F ubuntu-$ubuntu_version.ext4
   useradd -r -s /bin/false fc_user
-  JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
 cat > run_jailer.sh << EOF
 #!/bin/bash
 set -e
 
 JAIL_ID="hello-fc"
-JAIL_ROOT="/srv/jailer/firecracker/root"
+JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
 ROOTFS_NAME="ubuntu-24.04.ext4"
 KERNEL_NAME="vmlinux-6.1.102"
 FC_USER="fc_user"
@@ -96,7 +95,7 @@ EOF
   systemctl enable fcjail.service
   systemctl start fcjail.service
   sleep 2
-  cat > run_curls.sh << 'EOF'
+cat > run_curls.sh << 'EOF'
   JAIL_ROOT="/srv/jailer/firecracker/root"
   API_SOCKET="${JAIL_ROOT}/run/api.sock"
   TAP_DEV="tap0"
@@ -125,4 +124,3 @@ EOF
 'EOF'
   chmod +x run_curls.sh
   ./run_curls.sh
-
