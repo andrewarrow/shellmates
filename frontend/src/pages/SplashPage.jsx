@@ -139,7 +139,7 @@ function SplashPage() {
               </div>
             </div>
             
-            <div className="bg-gray-800 text-white p-8">
+            <div className="bg-gray-800 text-white p-8 mt-12 rounded-lg">
               <h2 className="text-2xl font-semibold text-center mb-6">Technical Details</h2>
               <div className="max-w-4xl mx-auto text-gray-300">
                 <div className="mb-6">
@@ -223,9 +223,8 @@ function SplashPage() {
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-500 text-sm">© 2025 shellmates. All rights reserved.</p>
             <div className="flex space-x-4 mt-4 md:mt-0">
-              <a href="#" className="text-gray-400 hover:text-primary-300">Terms</a>
-              <a href="#" className="text-gray-400 hover:text-primary-300">Privacy</a>
-              <a href="#" className="text-gray-400 hover:text-primary-300">Contact</a>
+              <a href="/terms" className="text-gray-400 hover:text-primary-300">Terms</a>
+              <a href="/privacy" className="text-gray-400 hover:text-primary-300">Privacy</a>
             </div>
           </div>
         </div>

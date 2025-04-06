@@ -9,6 +9,9 @@ import SingleServer from './pages/SingleServer'
 function App() {
   const { isAuthenticated } = useAuth()
 
+  // Terms and Privacy pages are handled by static HTML outside of React
+  // The appropriate HTML files are served directly from /terms/index.html and /privacy/index.html
+
   return (
     <Routes>
       <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <SplashPage />} />
