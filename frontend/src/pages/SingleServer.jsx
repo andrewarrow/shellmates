@@ -14,6 +14,13 @@ function SingleServer() {
   const [spotsLoading, setSpotsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [spotsError, setSpotsError] = useState(null)
+  const [showAddSpotModal, setShowAddSpotModal] = useState(false)
+  const [newSpot, setNewSpot] = useState({
+    server_id: id,
+    memory: '',
+    cpu_cores: '',
+    hard_drive_size: ''
+  })
 
   useEffect(() => {
     const fetchServer = async () => {
@@ -42,10 +49,39 @@ function SingleServer() {
 
     fetchServer()
     fetchSpots()
+    
+    // Initialize newSpot with the current server ID
+    setNewSpot(prev => ({
+      ...prev,
+      server_id: id
+    }))
   }, [id])
 
   const handleBack = () => {
     navigate('/dashboard')
+  }
+  
+  const handleSpotInputChange = (e) => {
+    const { name, value } = e.target
+    setNewSpot(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleAddSpot = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await axios.post('/api/spots', newSpot)
+      setSpots(prev => [...prev, response.data])
+      setNewSpot({
+        server_id: id,
+        memory: '',
+        cpu_cores: '',
+        hard_drive_size: ''
+      })
+      setShowAddSpotModal(false)
+    } catch (err) {
+      console.error('Error adding spot:', err)
+      setSpotsError('Failed to add spot')
+    }
   }
 
   return (
@@ -158,7 +194,7 @@ function SingleServer() {
                     <div className="flex justify-between items-center mb-4">
                       <h2 className="text-lg font-medium dark:text-white">Server Spots</h2>
                       <button 
-                        onClick={() => navigate(`/dashboard?showAddSpotModal=true&serverId=${id}`)}
+                        onClick={() => setShowAddSpotModal(true)}
                         className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
                       >
                         Add Spot +
@@ -222,21 +258,6 @@ function SingleServer() {
                   
                   <div className="mt-8">
                     <h2 className="text-lg font-medium mb-4 dark:text-white">SSH Steps</h2>
-                    <div className="space-y-2">
-                      {[...Array(9)].map((_, index) => (
-                        <div key={index} className="border border-gray-300 rounded-md overflow-hidden">
-                          <a 
-                            href={`/step${index}.txt`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-700 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 dark:text-gray-200"
-                          >
-                            <h3 className="font-medium">Step {index + 1}</h3>
-                            <span className="text-blue-600">View Instructions</span>
-                          </a>
-                        </div>
-                      ))}
-                    </div>
                   </div>
                   
                   <div className="mt-8">
@@ -268,6 +289,98 @@ function SingleServer() {
           )}
         </div>
       </main>
+
+      {/* Add Spot Modal */}
+      {showAddSpotModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium">Add New Spot</h3>
+              <button 
+                onClick={() => setShowAddSpotModal(false)}
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <form onSubmit={handleAddSpot}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Server
+                  </label>
+                  <input
+                    type="text"
+                    value={server ? server.name : ''}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-white rounded-md shadow-sm"
+                    disabled
+                  />
+                  <input type="hidden" name="server_id" value={id} />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Memory
+                  </label>
+                  <input
+                    type="text"
+                    name="memory"
+                    value={newSpot.memory}
+                    onChange={handleSpotInputChange}
+                    placeholder="e.g. 8GB"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    CPU Cores
+                  </label>
+                  <input
+                    type="number"
+                    name="cpu_cores"
+                    value={newSpot.cpu_cores}
+                    onChange={handleSpotInputChange}
+                    placeholder="e.g. 4"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Hard Drive Size
+                  </label>
+                  <input
+                    type="text"
+                    name="hard_drive_size"
+                    value={newSpot.hard_drive_size}
+                    onChange={handleSpotInputChange}
+                    placeholder="e.g. 256GB"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+              
+              <div className="mt-6 flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAddSpotModal(false)}
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                >
+                  Add Spot
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </Layout>
   )
 }

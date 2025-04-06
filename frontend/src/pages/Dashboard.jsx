@@ -16,7 +16,7 @@ function Dashboard() {
   const [sideMenuActive, setSideMenuActive] = useState('')
   const [showAddServerModal, setShowAddServerModal] = useState(false)
   const [showEditServerModal, setShowEditServerModal] = useState(false)
-  const [showAddSpotModal, setShowAddSpotModal] = useState(false)
+  // Add Spot modal is now on SingleServer page
   const [showStripeModal, setShowStripeModal] = useState(false)
   const [showAccountModal, setShowAccountModal] = useState(false)
   const [showSSHKeyModal, setShowSSHKeyModal] = useState(false)
@@ -36,12 +36,7 @@ function Dashboard() {
     cpu_cores: '',
     hard_drive_size: ''
   })
-  const [newSpot, setNewSpot] = useState({
-    server_id: '',
-    memory: '',
-    cpu_cores: '',
-    hard_drive_size: ''
-  })
+  // newSpot state moved to SingleServer component
   const [editingServer, setEditingServer] = useState(null)
   const [editingSpot, setEditingSpot] = useState(null)
   const [showEditSpotModal, setShowEditSpotModal] = useState(false)
@@ -96,20 +91,7 @@ function Dashboard() {
     fetchStripeSettings()
   }, [])
   
-  // Check for URL parameters
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const showAddSpotParam = urlParams.get('showAddSpotModal')
-    const serverIdParam = urlParams.get('serverId')
-    
-    if (showAddSpotParam === 'true') {
-      setShowAddSpotModal(true)
-      
-      if (serverIdParam) {
-        setNewSpot(prev => ({ ...prev, server_id: serverIdParam }))
-      }
-    }
-  }, [])
+  // This effect is no longer needed as the Add Spot modal is moved to SingleServer page
 
   const handleLogout = () => {
     setIsLoggingOut(true)
@@ -186,10 +168,7 @@ function Dashboard() {
     }
   }
 
-  const handleSpotInputChange = (e) => {
-    const { name, value } = e.target
-    setNewSpot(prev => ({ ...prev, [name]: value }))
-  }
+  // handleSpotInputChange moved to SingleServer component
 
   const handleEditSpotInputChange = (e) => {
     const { name, value } = e.target
@@ -239,23 +218,7 @@ function Dashboard() {
     setShowEditSpotModal(true)
   }
 
-  const handleAddSpot = async (e) => {
-    e.preventDefault()
-    try {
-      const response = await axios.post('/api/spots', newSpot)
-      setSpots(prev => [...prev, response.data])
-      setNewSpot({
-        server_id: '',
-        memory: '',
-        cpu_cores: '',
-        hard_drive_size: ''
-      })
-      setShowAddSpotModal(false)
-    } catch (err) {
-      console.error('Error adding spot:', err)
-      setSpotsError('Failed to add spot')
-    }
-  }
+  // handleAddSpot moved to SingleServer component
   
   const handleEditSpot = async (e) => {
     e.preventDefault()
@@ -786,104 +749,7 @@ function Dashboard() {
               </div>
             )}
 
-            {/* Add Spot Modal */}
-            {showAddSpotModal && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium">Add New Spot</h3>
-                    <button 
-                      onClick={() => setShowAddSpotModal(false)}
-                      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  
-                  <form onSubmit={handleAddSpot}>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Select Server
-                        </label>
-                        <select
-                          name="server_id"
-                          value={newSpot.server_id}
-                          onChange={handleSpotInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                          required
-                        >
-                          <option value="">Select a server...</option>
-                          {servers.map(server => (
-                            <option key={server.id} value={server.id}>
-                              {server.name} ({server.ip_address})
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Memory
-                        </label>
-                        <input
-                          type="text"
-                          name="memory"
-                          value={newSpot.memory}
-                          onChange={handleSpotInputChange}
-                          placeholder="e.g. 8GB"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          CPU Cores
-                        </label>
-                        <input
-                          type="number"
-                          name="cpu_cores"
-                          value={newSpot.cpu_cores}
-                          onChange={handleSpotInputChange}
-                          placeholder="e.g. 4"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Hard Drive Size
-                        </label>
-                        <input
-                          type="text"
-                          name="hard_drive_size"
-                          value={newSpot.hard_drive_size}
-                          onChange={handleSpotInputChange}
-                          placeholder="e.g. 256GB"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="mt-6 flex justify-end space-x-3">
-                      <button
-                        type="button"
-                        onClick={() => setShowAddSpotModal(false)}
-                        className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="submit"
-                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-                      >
-                        Add Spot
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
+            {/* Add Spot Modal removed - now in SingleServer component */}
 
             {/* Stripe Settings Modal */}
             {showStripeModal && (
