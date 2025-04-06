@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import Layout from '../components/Layout'
 import AccountEditModal from '../components/AccountEditModal'
@@ -426,7 +426,7 @@ function Dashboard() {
                 <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
                 <h2 className="font-medium dark:text-white">My Servers</h2>
                 <button 
-                  className="text-sm text-blue-600 hover:underline"
+                  className="text-sm text-blue-300 hover:underline"
                   onClick={() => setShowAddServerModal(true)}
                 >
                   Add New +
@@ -1108,12 +1108,9 @@ function Dashboard() {
             <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
               <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
                 <h2 className="font-medium dark:text-white">My Spots</h2>
-                <button 
-                  className="text-sm text-blue-600 hover:underline"
-                  onClick={() => setShowAddSpotModal(true)}
-                >
-                  Add New +
-                </button>
+                <Link to="/browse-spots" className="text-sm text-blue-300 hover:underline">
+                  Browse Spots
+                </Link>
               </div>
               <div className="p-6 dark:text-gray-200">
                 {spotsLoading ? (
@@ -1121,7 +1118,7 @@ function Dashboard() {
                 ) : spotsError ? (
                   <div className="text-center py-4 text-red-500">{spotsError}</div>
                 ) : spots.length === 0 ? (
-                  <div className="text-center py-4 text-gray-500 dark:text-gray-400">No spots added yet</div>
+                  <div className="text-center py-4 text-gray-500 dark:text-gray-400">No spots rented yet</div>
                 ) : (
                   <div className="space-y-4">
                     {spots.map(spot => (
@@ -1183,12 +1180,20 @@ function Dashboard() {
             {/* CloudWatch Metrics */}
             <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
               <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                <h2 className="font-medium dark:text-white">My Shells</h2>
+                <h2 className="font-medium dark:text-white">Getting Started</h2>
               </div>
               <div className="p-6 flex justify-center items-center h-48 dark:text-gray-300">
                 <div className="text-center text-gray-500 dark:text-gray-400">
+                  <div>Do you want to rent the server and be the sysop?
+    <a href="https://www.hetzner.com/" class="text-sm text-blue-300 hover:underline">Hetzner</a> <a href="https://www.ovhcloud.com/" class="text-sm text-blue-300 hover:underline">OVH</a> <a href="https://www.liquidweb.com/" class="text-sm text-blue-300 hover:underline">Liquid Web</a>
+
+    </div>
                   <div className="text-3xl mb-2">☯️</div>
-                  <div>8GB RAM at 45.11.123.44</div>
+                  <div>Or do you want to rent just a VM spot and be the tenant.&nbsp;
+                  <Link to="/browse-spots" className="text-sm text-blue-300 hover:underline">
+                    Browse Spots
+                  </Link>
+                  </div>
                 </div>
               </div>
             </div>

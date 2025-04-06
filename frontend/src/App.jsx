@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import SingleServer from './pages/SingleServer'
 import Spot from './pages/Spot'
+import BrowseSpots from './pages/BrowseSpots'
 
 // Component to handle Stripe redirect and forward to backend
 function StripeRedirect() {
@@ -99,6 +100,10 @@ function App() {
       <Route
         path="/stripe"
         element={<StripeRedirect />}
+      />
+      <Route 
+        path="/browse-spots" 
+        element={<BrowseSpots />} 
       />
     </Routes>
   )
