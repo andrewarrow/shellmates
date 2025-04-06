@@ -29,8 +29,8 @@
   truncate -s 200G ubuntu-$ubuntu_version.ext4
   mkfs.ext4 -d squashfs-root -F ubuntu-$ubuntu_version.ext4
   useradd -r -s /bin/false fc_user
-cat > run_jailer.sh << EOF
   JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
+cat > run_jailer.sh << EOF
   rm -rf /srv/jailer/firecracker
   mkdir -p ${JAIL_ROOT}/rootfs
   cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs
@@ -41,7 +41,6 @@ EOF
   chmod +x run_jailer.sh
   ./run_jailer.sh &
   sleep 2
-  JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
   API_SOCKET="${JAIL_ROOT}/run/api.sock"
   cat > run_curls.sh << EOF
   curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
