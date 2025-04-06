@@ -44,10 +44,15 @@ app.use('/api/stripe', stripeRoutes);
 
 // Serve static frontend in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../frontend/dist')));
+  // In production, the frontend is in dist/ at the same level as backend/
+  const frontendPath = path.join(__dirname, '../../dist');
+  console.log('Serving frontend from:', frontendPath);
+  app.use(express.static(frontendPath));
   
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
+    const indexPath = path.join(frontendPath, 'index.html');
+    console.log('Serving index from:', indexPath);
+    res.sendFile(indexPath);
   });
 }
 

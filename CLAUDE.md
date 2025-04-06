@@ -15,6 +15,16 @@
 - Run in production: `DB_PATH=/path/to/db.sqlite NODE_ENV=production npm run start:prod`
 - Default port: 3000 (override with PORT env var)
 
+## Production Structure
+When built for production, the application has the following structure:
+```
+dist/
+  ├── backend/        - Backend server code
+  ├── dist/           - Frontend built assets
+  ├── node_modules/   - Production dependencies 
+  └── package.json    - Production package.json
+```
+
 ## Code Style & Patterns
 - **Frontend**: React 19 with Vite, TailwindCSS, React Router v7
 - **Backend**: Node.js, Express, SQLite (better-sqlite3)
