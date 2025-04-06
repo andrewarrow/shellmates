@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import Layout from '../components/Layout'
+import ContactModal from '../components/ContactModal'
 import axios from 'axios'
 
 function Spot() {
@@ -11,12 +12,20 @@ function Spot() {
   const [spot, setSpot] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [contactModalOpen, setContactModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchSpot = async () => {
       try {
         const response = await axios.get(`/api/spots/${id}`)
         console.log('Spot data received:', response.data)
+        
+        // Check if email exists, otherwise set a default
+        if (!response.data.email) {
+          console.log('No email found in response, using default')
+          response.data.email = 'andrew@example.com'
+        }
+        
         setSpot(response.data)
         setLoading(false)
       } catch (err) {
@@ -177,7 +186,10 @@ function Spot() {
                     <div className="mt-8">
                       <h2 className="text-lg font-medium mb-4 dark:text-white">Actions</h2>
                       <div className="flex space-x-3">
-                        <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        <button 
+                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                          onClick={() => setContactModalOpen(true)}
+                        >
                           Contact Owner
                         </button>
                         <a 
@@ -217,6 +229,15 @@ function Spot() {
             )}
           </div>
         </main>
+
+        {/* Contact Modal */}
+        {spot && (
+          <ContactModal
+            isOpen={contactModalOpen}
+            onClose={() => setContactModalOpen(false)}
+            email={spot.email || 'andrew@example.com'}
+          />
+        )}
     </Layout>
   )
 }

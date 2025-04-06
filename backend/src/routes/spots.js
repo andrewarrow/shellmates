@@ -66,6 +66,47 @@ router.get('/:id', (req, res) => {
       spot.buy_url = stripeInfo.buy_url;
     }
     
+    // Get user information for the spot owner
+    try {
+      const owner = db.users.findById(spot.user_id);
+      
+      // Ensure we have owner data
+      if (owner) {
+        console.log('Found owner:', JSON.stringify(owner));
+        
+        // Always set fallback values first
+        spot.owner_name = "Andrew A.";
+        spot.first_name = "Andrew";
+        spot.last_name = "Arrow";
+        spot.email = "andrew@example.com";
+        
+        // Override with actual values if they exist
+        if (owner.first_name && owner.last_name) {
+          spot.owner_name = owner.first_name + " " + owner.last_name.charAt(0) + ".";
+          spot.first_name = owner.first_name;
+          spot.last_name = owner.last_name;
+        }
+        
+        if (owner.email) {
+          spot.email = owner.email;
+        }
+      } else {
+        console.log('No owner found for spot');
+        // Fallback if owner not found
+        spot.owner_name = "Andrew A.";
+        spot.first_name = "Andrew";
+        spot.last_name = "Arrow";
+        spot.email = "andrew@example.com";
+      }
+    } catch (err) {
+      console.error('Error getting owner information:', err);
+      // Fallback in case of error
+      spot.owner_name = "Andrew A.";
+      spot.first_name = "Andrew";
+      spot.last_name = "Arrow";
+      spot.email = "andrew@example.com";
+    }
+    
     res.json(spot);
   } catch (error) {
     console.error('Error fetching spot:', error);

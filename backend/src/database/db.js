@@ -127,6 +127,13 @@ const db = {
         'INSERT INTO users (username, password, created_at) VALUES (?, ?, ?) RETURNING *'
       );
       return stmt.get(username, password, new Date().toISOString());
+    },
+    updateProfile: (userId, profileData) => {
+      const { email, first_name, last_name } = profileData;
+      const stmt = sqlite.prepare(
+        'UPDATE users SET email = ?, first_name = ?, last_name = ? WHERE id = ? RETURNING *'
+      );
+      return stmt.get(email, first_name, last_name, userId);
     }
   },
   stripes: {

@@ -71,12 +71,27 @@ export const AuthProvider = ({ children }) => {
     setCurrentUser(null)
   }
   
+  const updateUser = async (userData) => {
+    try {
+      const response = await axios.put('/api/auth/profile', userData)
+      setCurrentUser({
+        ...currentUser,
+        ...response.data.user
+      })
+      return { success: true }
+    } catch (error) {
+      console.error('Profile update failed:', error)
+      throw new Error(error.response?.data?.message || 'Failed to update profile')
+    }
+  }
+  
   const value = {
     currentUser,
     isAuthenticated: !!currentUser,
     login,
     register,
     logout,
+    updateUser,
     loading
   }
   

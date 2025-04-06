@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import Layout from '../components/Layout'
+import AccountEditModal from '../components/AccountEditModal'
 import axios from 'axios'
 
 function Dashboard() {
@@ -16,6 +17,7 @@ function Dashboard() {
   const [showEditServerModal, setShowEditServerModal] = useState(false)
   const [showAddSpotModal, setShowAddSpotModal] = useState(false)
   const [showStripeModal, setShowStripeModal] = useState(false)
+  const [showAccountModal, setShowAccountModal] = useState(false)
   const [servers, setServers] = useState([])
   const [spots, setSpots] = useState([])
   const [stripeSettings, setStripeSettings] = useState({
@@ -417,7 +419,15 @@ function Dashboard() {
                     <div className="text-xs text-gray-500 dark:text-gray-400">user-id</div>
                   </div>
                   <div className="py-1">
-                    <div className="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Account</div>
+                    <div 
+                      className="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                      onClick={() => {
+                        setShowAccountModal(true);
+                        setShowUserMenu(false);
+                      }}
+                    >
+                      Account
+                    </div>
                     <div className="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Security credentials</div>
                     <div 
                       className="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
@@ -1230,6 +1240,12 @@ function Dashboard() {
           </div>
         </div>
       </main>
+
+      {/* Account Edit Modal */}
+      <AccountEditModal 
+        isOpen={showAccountModal} 
+        onClose={() => setShowAccountModal(false)} 
+      />
     </Layout>
   )
 }

@@ -98,13 +98,48 @@ router.get('/verify', auth, (req, res) => {
     // Send user info without password
     const userResponse = {
       id: user.id,
-      username: user.username
+      username: user.username,
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name
     };
     
     res.json({ user: userResponse });
   } catch (error) {
     console.error('Verification error:', error);
     res.status(500).json({ message: 'Verification failed' });
+  }
+});
+
+// Update user profile
+router.put('/profile', auth, (req, res) => {
+  try {
+    const { email, first_name, last_name } = req.body;
+    const user = db.users.findById(req.userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Update user profile fields
+    const updatedUser = db.users.updateProfile(
+      req.userId,
+      { email, first_name, last_name }
+    );
+    
+    // Send updated user info without password
+    const userResponse = {
+      id: updatedUser.id,
+      username: updatedUser.username,
+      email: updatedUser.email,
+      first_name: updatedUser.first_name,
+      last_name: updatedUser.last_name
+    };
+    
+    res.json({ user: userResponse });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({ message: 'Profile update failed' });
   }
 });
 
