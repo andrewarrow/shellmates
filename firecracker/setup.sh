@@ -1,3 +1,4 @@
+  rm -rf fc
   dnf install epel-release -y
   dnf install htop tar -y
   mkdir fc
@@ -11,24 +12,22 @@
   cp jailer-v1.11.0-x86_64 /usr/local/bin/jailer
   cd ..
   setfacl -m u:${USER}:rw /dev/kvm
-  [ $(stat -c "%G" /dev/kvm) = kvm ] && sudo usermod -aG kvm ${USER} && echo "Access granted."
+  [ $(stat -c "%G" /dev/kvm) = kvm ] && usermod -aG kvm ${USER} && echo "Access granted."
   [ -r /dev/kvm ] && [ -w /dev/kvm ] && echo "OK" || echo "FAIL"
-  ARCH="$(uname -m)"
-  lease_url="https://github.com/firecracker-microvm/firecracker/releases"
-  CI_VERSION=${latest_version%.*}
-  latest_kernel_key=$(curl "http://spec.ccfc.min.s3.amazonaws.com/?prefix=firecracker-ci/$CI_VERSION/$ARCH/vmlinux-&list-type=2" | grep -oP "(?<=<Key>)(firecracker-ci/$CI_VERSION/$ARCH/vmlinux-[0-9]+\.[0-9]+\.[0-9]{1,3})(?=</Key>)" | sort -V | tail -1)
-  wget "https://s3.amazonaws.com/spec.ccfc.min/${latest_kernel_key}"
+  ARCH="x86_64"
+  CI_VERSION="v1.11.0"
+  wget "https://s3.amazonaws.com/spec.ccfc.min/vmlinux-6.1.102"
 
-  latest_ubuntu_key=$(curl "http://spec.ccfc.min.s3.amazonaws.com/?prefix=firecracker-ci/$CI_VERSION/$ARCH/ubuntu-&list-type=2" | grep -oP "(?<=<Key>)(firecracker-ci/$CI_VERSION/$ARCH/ubuntu-[0-9]+\.[0-9]+\.squashfs)(?=</Key>)" | sort -V | tail -1)
-  ubuntu_version=$(basename $latest_ubuntu_key .sqashfs | grep -oE "[0-9]+\.[0-9]+")
+  latest_ubuntu_key="ci-artifacts-20230601/x86_64/ubuntu-22.04.squashfs"
+  ubuntu_version="22.04"
   wget -O ubuntu-$ubuntu_version.squashfs.upstream "https://s3.amazonaws.com/spec.ccfc.min/$latest_ubuntu_key"
   unsquashfs ubuntu-$ubuntu_version.squashfs.upstream
   ssh-keygen -f id_rsa -N ""
   cp -v id_rsa.pub squashfs-root/root/.ssh/authorized_keys
-  mv -v id_rsa ./ubuntu-$ubuntu_version.id_rsa
-  sudo chown -R root:root squashfs-root
+  mv -v id_rsa ubuntu-$ubuntu_version.id_rsa
+  chown -R root:root squashfs-root
   truncate -s 200G ubuntu-$ubuntu_version.ext4
-  sudo mkfs.ext4 -d squashfs-root -F ubuntu-$ubuntu_version.ext4
+  mkfs.ext4 -d squashfs-root -F ubuntu-$ubuntu_version.ext4
   useradd -r -s /bin/false fc_user
 cat > run_jailer.sh << `EOF`
   JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
