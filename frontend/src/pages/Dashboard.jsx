@@ -991,13 +991,14 @@ function Dashboard() {
                     {spots.map(spot => (
                       <div
                         key={spot.id}
-                        className="flex items-start justify-between space-x-3 p-3 hover:bg-gray-50 rounded-md border-b border-gray-100"
+                        className="flex items-start justify-between space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md border-b border-gray-100 dark:border-gray-700 cursor-pointer"
+                        onClick={() => navigate(`/rented-spot/${spot.guid}`)}
                       >
                         <div className="flex items-start space-x-3">
                           <span className="text-xl mt-1">☁️</span>
                           <div>
-                            <div className="font-medium">{spot.server_name}</div>
-                            <div className="text-sm text-gray-600">IP: {spot.ip_address}</div>
+                            <div className="font-medium dark:text-white">{spot.server_name}</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-300">IP: {spot.ip_address}</div>
                             <div className="mt-1 space-y-1">
                               {spot.memory && (
                                 <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -1022,16 +1023,7 @@ function Dashboard() {
                             className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                             onClick={(e) => {
                               e.stopPropagation();
-                              openEditSpotModal(spot);
-                            }}
-                          >
-                            Edit
-                          </button>
-                          <button 
-                            className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/spot/${spot.id}`);
+                              navigate(`/rented-spot/${spot.guid}`);
                             }}
                           >
                             View

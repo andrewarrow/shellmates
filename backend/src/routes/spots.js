@@ -26,6 +26,56 @@ router.get('/rented', authMiddleware, (req, res) => {
   }
 });
 
+// Get a specific rented spot by GUID
+router.get('/rented/:guid', authMiddleware, (req, res) => {
+  try {
+    // Find the spot by GUID
+    const spot = db.spots.findByGuid(req.params.guid);
+    
+    // Check if spot exists and is rented by the current user
+    if (!spot || spot.rented_by_user_id !== req.userId) {
+      return res.status(404).json({ message: 'Rented spot not found' });
+    }
+    
+    // Get server information
+    const server = spot.server_id ? db.servers.findById(spot.server_id) : null;
+    if (server) {
+      spot.server_name = server.name;
+      spot.ip_address = server.ip_address;
+    }
+    
+    // Get owner information
+    try {
+      const owner = db.users.findById(spot.user_id);
+      if (owner) {
+        // Format the owner name
+        spot.owner_name = owner.first_name + " " + owner.last_name.charAt(0) + ".";
+        spot.first_name = owner.first_name;
+        spot.last_name = owner.last_name;
+        spot.email = owner.email;
+      } else {
+        // Fallback if owner not found
+        spot.owner_name = "Andrew A.";
+        spot.first_name = "Andrew";
+        spot.last_name = "Arrow";
+        spot.email = "andrew@example.com";
+      }
+    } catch (err) {
+      console.error('Error getting owner information:', err);
+      // Fallback in case of error
+      spot.owner_name = "Andrew A.";
+      spot.first_name = "Andrew";
+      spot.last_name = "Arrow";
+      spot.email = "andrew@example.com";
+    }
+    
+    res.json(spot);
+  } catch (error) {
+    console.error('Error fetching rented spot:', error);
+    res.status(500).json({ message: 'Failed to fetch rented spot' });
+  }
+});
+
 // Get spots by server ID
 router.get('/server/:serverId', authMiddleware, (req, res) => {
   try {

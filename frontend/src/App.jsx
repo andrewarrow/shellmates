@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import SingleServer from './pages/SingleServer'
 import Spot from './pages/Spot'
+import RentedSpot from './pages/RentedSpot'
 import BrowseSpots from './pages/BrowseSpots'
 
 // Component to handle Stripe redirect and forward to backend
@@ -104,6 +105,10 @@ function App() {
       <Route 
         path="/browse-spots" 
         element={<BrowseSpots />} 
+      />
+      <Route 
+        path="/rented-spot/:guid" 
+        element={isAuthenticated ? <RentedSpot /> : <Navigate to="/login" />} 
       />
     </Routes>
   )
