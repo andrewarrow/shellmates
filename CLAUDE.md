@@ -12,7 +12,7 @@
 ## Production Deployment
 - Build for production: `npm run build:prod`
 - Create production tarball: `npm run build:tar`
-- Run in production: `DB_PATH=/path/to/db.sqlite NODE_ENV=production npm run start:prod`
+- Run in production: `DB_PATH=/path/to/db.sqlite PORT=3000 npm start`
 - Default port: 3000 (override with PORT env var)
 
 ## Production Structure
@@ -20,7 +20,7 @@ When built for production, the application has the following structure:
 ```
 dist/
   ├── backend/        - Backend server code
-  ├── dist/           - Frontend built assets
+  ├── frontend/       - Frontend built assets
   ├── node_modules/   - Production dependencies 
   └── package.json    - Production package.json
 ```

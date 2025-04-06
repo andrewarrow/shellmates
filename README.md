@@ -37,7 +37,7 @@ scp shellmates-dist.tar.gz user@server:/path/to/deploy
 ```bash
 tar -xzf shellmates-dist.tar.gz
 cd dist
-DB_PATH=/path/to/db.sqlite NODE_ENV=production PORT=3000 node backend/src/index.js
+DB_PATH=/path/to/db.sqlite PORT=3000 npm start
 ```
 
 ## Environment Variables

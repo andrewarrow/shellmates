@@ -11,9 +11,9 @@
     "dev:seed": "concurrently \"npm run backend:seed\" \"npm run frontend\"",
     "build": "npm run build:frontend",
     "build:frontend": "cd frontend && npm run build",
-    "build:prod": "rm -rf dist && mkdir -p dist && cd frontend && npm run build && cd .. && cp -r frontend/dist dist/ && cp -r backend dist/backend && cp package.json dist/ && cd dist && npm install --production",
+    "build:prod": "rm -rf dist && mkdir -p dist && cd frontend && npm run build && cd .. && mkdir -p dist/frontend && cp -r frontend/dist/* dist/frontend/ && cp -r backend dist/backend && node -e \"const pkg = require('./package.json'); pkg.scripts = { 'start': 'NODE_ENV=production node backend/src/index.js' }; require('fs').writeFileSync('dist/package.json', JSON.stringify(pkg, null, 2));\" && cd dist && npm install --production",
     "build:tar": "npm run build:prod && tar -czf shellmates-dist.tar.gz dist",
-    "start:prod": "NODE_ENV=production node dist/backend/src/index.js",
+    "start:prod": "NODE_ENV=production node backend/src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
