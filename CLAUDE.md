@@ -9,6 +9,12 @@
 - Build client: `npm run build:client` or `npm run build`
 - Run server with file watching: `cd server && npm run watch`
 
+## Production Deployment
+- Build for production: `npm run build:prod`
+- Create production tarball: `npm run build:tar`
+- Run in production: `DB_PATH=/path/to/db.sqlite NODE_ENV=production npm run start:prod`
+- Default port: 3000 (override with PORT env var)
+
 ## Code Style & Patterns
 - **Frontend**: React 19 with Vite, TailwindCSS, React Router v7
 - **Backend**: Node.js, Express, SQLite (better-sqlite3)

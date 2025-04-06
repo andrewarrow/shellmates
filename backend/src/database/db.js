@@ -5,7 +5,9 @@ const bcrypt = require('bcrypt');
 const { randomUUID } = require('crypto');
 
 // Database setup
-const dbPath = path.join(__dirname, '../../data/traffic.db');
+const dbPath = process.env.DB_PATH 
+  ? process.env.DB_PATH 
+  : path.join(__dirname, '../../data/traffic.db');
 const migrationsPath = path.join(__dirname, './migrations');
 const seedsPath = path.join(__dirname, './seeds');
 
