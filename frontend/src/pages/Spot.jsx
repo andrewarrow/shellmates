@@ -84,7 +84,7 @@ function Spot() {
                   <h1 className="text-2xl font-bold">Spot Details {spot.id && `#${spot.id}`}</h1>
                   <button 
                     onClick={handleBack}
-                    className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+                    className="px-4 py-2 bg-gray-200 dark:bg-gray-600 rounded-md hover:bg-gray-300 dark:hover:bg-gray-700 dark:text-white"
                   >
                     Go Back
                   </button>
