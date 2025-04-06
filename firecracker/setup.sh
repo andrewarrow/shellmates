@@ -71,14 +71,12 @@ Requires=network.target
 Type=simple
 User=root
 Group=root
-
 ExecStart=/root/fc/run_jailer.sh
-
-CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_DAC_OVERRIDE CAP_CHOWN CAP_SETUID CAP_SETGID
-AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_DAC_OVERRIDE CAP_CHOWN CAP_SETUID CAP_SETGID
+CapabilityBoundingSet=CAP_SYS_ADMIN CAP_MKNOD
+AmbientCapabilities=CAP_SYS_ADMIN CAP_MKNOD
 SecureBits=keep-caps
+PrivateMounts=no
 
-# Restart configuration
 Restart=on-failure
 RestartSec=5s
 
