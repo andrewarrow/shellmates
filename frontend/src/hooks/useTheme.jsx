@@ -8,7 +8,8 @@ const useTheme = () => {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   
-  return context;
+  // Only returning darkMode which is always true
+  return { darkMode: true };
 };
 
 export default useTheme;

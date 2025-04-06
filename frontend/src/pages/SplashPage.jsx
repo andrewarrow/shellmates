@@ -5,20 +5,20 @@ function SplashPage() {
   return (
     <Layout>
       <div className="flex flex-col items-center justify-center p-4">
-        <div className="max-w-5xl w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+        <div className="max-w-5xl w-full bg-gray-800 rounded-lg shadow-xl overflow-hidden">
           <div className="p-8 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-primary-800 dark:text-primary-300 mb-4">shellmates!</h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-primary-300 mb-4">shellmates!</h1>
+            <p className="text-xl text-gray-300 mb-4">
               Rent bare metal servers and create your own micro-cloud with friends.
             </p>
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
+            <p className="text-lg text-gray-300 mb-6">
               Split costs, maximize resources, and build a community of developers.
             </p>
             
             <div className="max-w-3xl mx-auto mb-8">
-              <div className="bg-primary-50 dark:bg-gray-700 rounded-lg p-6 text-left">
-                <h2 className="text-2xl font-semibold text-primary-800 dark:text-primary-300 mb-4">How Shellmates Works</h2>
-                <ul className="space-y-3 text-gray-700 dark:text-gray-300">
+              <div className="bg-gray-700 rounded-lg p-6 text-left">
+                <h2 className="text-2xl font-semibold text-primary-300 mb-4">How Shellmates Works</h2>
+                <ul className="space-y-3 text-gray-300">
                   <li className="flex items-start">
                     <span className="text-primary-600 font-bold mr-2">1.</span>
                     <span>Rent a powerful bare metal server from providers like Hetzner or OVH at prices starting from $34.50/month</span>
@@ -40,19 +40,19 @@ function SplashPage() {
             </div>
             
             <div className="mb-8">
-              <h2 className="text-2xl font-semibold text-primary-800 dark:text-primary-300 mb-4">Why Choose Shellmates?</h2>
+              <h2 className="text-2xl font-semibold text-primary-300 mb-4">Why Choose Shellmates?</h2>
               <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                <div className="bg-white dark:bg-gray-700 rounded-lg shadow p-4">
-                  <h3 className="text-lg font-semibold text-primary-700 dark:text-primary-400 mb-2">Cost Efficiency</h3>
-                  <p className="text-gray-600 dark:text-gray-300">Split a $34.50 server into two $17.25 VMs or make a profit renting them at $25 each</p>
+                <div className="bg-gray-700 rounded-lg shadow p-4">
+                  <h3 className="text-lg font-semibold text-primary-400 mb-2">Cost Efficiency</h3>
+                  <p className="text-gray-300">Split a $34.50 server into two $17.25 VMs or make a profit renting them at $25 each</p>
                 </div>
-                <div className="bg-white dark:bg-gray-700 rounded-lg shadow p-4">
-                  <h3 className="text-lg font-semibold text-primary-700 dark:text-primary-400 mb-2">Community</h3>
-                  <p className="text-gray-600 dark:text-gray-300">Connect with other developers who share your server - put faces to IPs</p>
+                <div className="bg-gray-700 rounded-lg shadow p-4">
+                  <h3 className="text-lg font-semibold text-primary-400 mb-2">Community</h3>
+                  <p className="text-gray-300">Connect with other developers who share your server - put faces to IPs</p>
                 </div>
-                <div className="bg-white dark:bg-gray-700 rounded-lg shadow p-4">
-                  <h3 className="text-lg font-semibold text-primary-700 dark:text-primary-400 mb-2">Flexibility</h3>
-                  <p className="text-gray-600 dark:text-gray-300">Be a landlord, tenant, or both - create the perfect VM for your needs</p>
+                <div className="bg-gray-700 rounded-lg shadow p-4">
+                  <h3 className="text-lg font-semibold text-primary-400 mb-2">Flexibility</h3>
+                  <p className="text-gray-300">Be a landlord, tenant, or both - create the perfect VM for your needs</p>
                 </div>
               </div>
             </div>
@@ -66,7 +66,7 @@ function SplashPage() {
               </Link>
               <Link 
                 to="/register" 
-                className="px-8 py-3 text-lg font-medium rounded-md bg-white text-primary-600 border border-primary-600 hover:bg-primary-50 transition-colors"
+                className="px-8 py-3 text-lg font-medium rounded-md bg-gray-700 text-primary-300 border border-primary-600 hover:bg-gray-600 transition-colors"
               >
                 Register
               </Link>
