@@ -17,3 +17,7 @@ body {
   min-height: 100vh;
   @apply bg-gray-50;
 }
+
+.dark body {
+  @apply bg-gray-900 text-white;
+}

@@ -1,29 +1,49 @@
 import { Link } from 'react-router-dom'
+import useTheme from '../hooks/useTheme'
 
 function SplashPage() {
+  const { darkMode, toggleDarkMode } = useTheme();
+  
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-primary-50 to-primary-100">
-      <div className="max-w-5xl w-full bg-white rounded-lg shadow-xl overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-primary-50 to-primary-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="fixed top-4 right-4">
+        <button 
+          onClick={toggleDarkMode} 
+          className="p-2 rounded-full bg-white dark:bg-gray-800 shadow"
+          aria-label="Toggle dark mode"
+        >
+          {darkMode ? (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-yellow-500">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-gray-700">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+            </svg>
+          )}
+        </button>
+      </div>
+      <div className="max-w-5xl w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
         <div className="p-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-primary-800 mb-4">shellmates!</h1>
-          <p className="text-xl text-gray-600 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-primary-800 dark:text-primary-300 mb-4">shellmates!</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-4">
             Rent bare metal servers and create your own micro-cloud with friends.
           </p>
-          <p className="text-lg text-gray-600 mb-6">
+          <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
             Split costs, maximize resources, and build a community of developers.
           </p>
           
           <div className="max-w-3xl mx-auto mb-8">
-            <div className="bg-primary-50 rounded-lg p-6 text-left">
-              <h2 className="text-2xl font-semibold text-primary-800 mb-4">How Shellmates Works</h2>
-              <ul className="space-y-3 text-gray-700">
+            <div className="bg-primary-50 dark:bg-gray-700 rounded-lg p-6 text-left">
+              <h2 className="text-2xl font-semibold text-primary-800 dark:text-primary-300 mb-4">How Shellmates Works</h2>
+              <ul className="space-y-3 text-gray-700 dark:text-gray-300">
                 <li className="flex items-start">
                   <span className="text-primary-600 font-bold mr-2">1.</span>
                   <span>Rent a powerful bare metal server from providers like Hetzner or OVH at prices starting from $34.50/month</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary-600 font-bold mr-2">2.</span>
-                  <span>Use our Firecracker VM technology to divide your server into smaller VMs</span>
+                  <span>We help you setup Firecracker VMs to divide your server into smaller VMs</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary-600 font-bold mr-2">3.</span>
@@ -38,19 +58,19 @@ function SplashPage() {
           </div>
           
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold text-primary-800 mb-4">Why Choose Shellmates?</h2>
+            <h2 className="text-2xl font-semibold text-primary-800 dark:text-primary-300 mb-4">Why Choose Shellmates?</h2>
             <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              <div className="bg-white rounded-lg shadow p-4">
-                <h3 className="text-lg font-semibold text-primary-700 mb-2">Cost Efficiency</h3>
-                <p className="text-gray-600">Split a $34.50 server into two $17.25 VMs or make a profit renting them at $25 each</p>
+              <div className="bg-white dark:bg-gray-700 rounded-lg shadow p-4">
+                <h3 className="text-lg font-semibold text-primary-700 dark:text-primary-400 mb-2">Cost Efficiency</h3>
+                <p className="text-gray-600 dark:text-gray-300">Split a $34.50 server into two $17.25 VMs or make a profit renting them at $25 each</p>
               </div>
-              <div className="bg-white rounded-lg shadow p-4">
-                <h3 className="text-lg font-semibold text-primary-700 mb-2">Community</h3>
-                <p className="text-gray-600">Connect with other developers who share your server - put faces to IPs</p>
+              <div className="bg-white dark:bg-gray-700 rounded-lg shadow p-4">
+                <h3 className="text-lg font-semibold text-primary-700 dark:text-primary-400 mb-2">Community</h3>
+                <p className="text-gray-600 dark:text-gray-300">Connect with other developers who share your server - put faces to IPs</p>
               </div>
-              <div className="bg-white rounded-lg shadow p-4">
-                <h3 className="text-lg font-semibold text-primary-700 mb-2">Flexibility</h3>
-                <p className="text-gray-600">Be a landlord, tenant, or both - create the perfect VM for your needs</p>
+              <div className="bg-white dark:bg-gray-700 rounded-lg shadow p-4">
+                <h3 className="text-lg font-semibold text-primary-700 dark:text-primary-400 mb-2">Flexibility</h3>
+                <p className="text-gray-600 dark:text-gray-300">Be a landlord, tenant, or both - create the perfect VM for your needs</p>
               </div>
             </div>
           </div>
