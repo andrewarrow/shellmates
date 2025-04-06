@@ -16,7 +16,7 @@
   [ -r /dev/kvm ] && [ -w /dev/kvm ] && echo "OK" || echo "FAIL"
   ARCH="x86_64"
   CI_VERSION="v1.11.0"
-  wget "https://s3.amazonaws.com/spec.ccfc.min/vmlinux-6.1.102.bin"
+  wget "https://s3.amazonaws.com/spec.ccfc.min/firecracker-ci/v1.11/x86_64/vmlinux-6.1.102"
 
   latest_ubuntu_key="ci-artifacts-20230601/x86_64/ubuntu-22.04.squashfs"
   ubuntu_version="22.04"
