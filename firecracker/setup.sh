@@ -31,12 +31,35 @@
   useradd -r -s /bin/false fc_user
   JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
 cat > run_jailer.sh << EOF
-  rm -rf /srv/jailer/firecracker
-  mkdir -p ${JAIL_ROOT}/rootfs
-  cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs
-  cp vmlinux-6.1.102 ${JAIL_ROOT}
-  chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs
-  jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock
+#!/bin/bash
+set -e
+
+JAIL_ID="hello-fc"
+JAIL_ROOT="/srv/jailer/firecracker//root"
+ROOTFS_NAME="ubuntu-24.04.ext4"
+KERNEL_NAME="vmlinux-6.1.102"
+FC_USER="fc_user"
+ROOTFS_SOURCE="/root/fc/ubuntu-24.04.ext4"
+KERNEL_SOURCE="/root/fc/vmlinux-6.1.102"
+
+if [ -d "/srv/jailer/firecracker/hello-fc/root" ] && [ -f "/srv/jailer/firecracker/hello-fc/root/rootfs/" ]; then
+  cp /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4 /tmp/fc-rootfs-save
+fi
+
+rm -rf /srv/jailer/firecracker
+mkdir -p "/srv/jailer/firecracker/hello-fc/root/rootfs"
+
+if [ -s /tmp/fc-rootfs-save ]; then
+  mv /tmp/fc-rootfs-save /srv/jailer/firecracker/hello-fc/root/rootfs/
+  echo "Restored previous rootfs image"
+else
+  cp /root/fc/ubuntu-24.04.ext4 /srv/jailer/firecracker/hello-fc/root/rootfs/
+  echo "Copied fresh rootfs image"
+fi
+
+cp /root/fc/vmlinux-6.1.102 /srv/jailer/firecracker/hello-fc/root/
+chown -R ":" /srv/jailer/firecracker/hello-fc/root/rootfs
+exec /usr/bin/jailer --id "hello-fc" --uid "0" --gid "0" --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock
 EOF
   chmod +x run_jailer.sh
   ./run_jailer.sh &

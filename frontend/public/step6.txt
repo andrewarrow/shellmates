@@ -1,25 +1,21 @@
 #!/bin/bash
 set -e
 
-# Define variables
 JAIL_ID="hello-fc"
 JAIL_ROOT="/srv/jailer/firecracker/${JAIL_ID}/root"
 ROOTFS_NAME="ubuntu-24.04.ext4"
 KERNEL_NAME="vmlinux-6.1.102"
 FC_USER="fc_user"
-ROOTFS_SOURCE="/path/to/ubuntu-24.04.ext4" # Update this path to where your base image is stored
-KERNEL_SOURCE="/path/to/vmlinux-6.1.102"   # Update this path to where your kernel is stored
+ROOTFS_SOURCE="/root/fc/ubuntu-24.04.ext4" # Update this path to where your base image is stored
+KERNEL_SOURCE="/root/fc/vmlinux-6.1.102"   # Update this path to where your kernel is stored
 
-# Save previous rootfs if it exists
 if [ -d "${JAIL_ROOT}" ] && [ -f "${JAIL_ROOT}/rootfs/${ROOTFS_NAME}" ]; then
   cp "${JAIL_ROOT}/rootfs/${ROOTFS_NAME}" /tmp/fc-rootfs-save
 fi
 
-# Clean up and recreate jailer directory structure
 rm -rf /srv/jailer/firecracker
 mkdir -p "${JAIL_ROOT}/rootfs"
 
-# Restore saved rootfs or copy a fresh one
 if [ -s /tmp/fc-rootfs-save ]; then
   mv /tmp/fc-rootfs-save "${JAIL_ROOT}/rootfs/${ROOTFS_NAME}"
   echo "Restored previous rootfs image"
@@ -28,13 +24,8 @@ else
   echo "Copied fresh rootfs image"
 fi
 
-# Copy kernel
 cp "${KERNEL_SOURCE}" "${JAIL_ROOT}/"
-
-# Set proper permissions
 chown -R "${FC_USER}:${FC_USER}" "${JAIL_ROOT}/rootfs"
-
-# Execute jailer
 exec /usr/bin/jailer \
   --id "${JAIL_ID}" \
   --uid "$(id -u ${FC_USER})" \
