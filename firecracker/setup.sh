@@ -59,10 +59,44 @@ fi
 
 cp /root/fc/vmlinux-6.1.102 /srv/jailer/firecracker/hello-fc/root/
 chown -R ":" /srv/jailer/firecracker/hello-fc/root/rootfs
-exec /usr/bin/jailer --id "hello-fc" --uid "0" --gid "0" --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock
+exec /usr/local/bin/jailer --id "hello-fc" --uid "0" --gid "0" --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock
+EOF
+cat > /etc/systemd/system/fcjail.service << EOF
+[Unit]
+Description=Firecracker Jailer Service
+After=network.target
+Requires=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+
+ExecStart=/root/fc/run_jailer.sh
+
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_DAC_OVERRIDE CAP_CHOWN CAP_SETUID CAP_SETGID
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_DAC_OVERRIDE CAP_CHOWN CAP_SETUID CAP_SETGID
+SecureBits=keep-caps
+
+# Restart configuration
+Restart=on-failure
+RestartSec=5s
+
+LimitNOFILE=1048576
+LimitMEMLOCK=infinity
+
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target
 EOF
   chmod +x run_jailer.sh
-  ./run_jailer.sh &
+  chmod 644 /etc/systemd/system/fcjail.service
+  systemctl daemon-reload
+  systemctl enable fcjail.service
+  systemctl start fcjail.service
   sleep 2
   API_SOCKET="${JAIL_ROOT}/run/api.sock"
   cat > run_curls.sh << EOF
