@@ -13,20 +13,36 @@ function Spot() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [contactModalOpen, setContactModalOpen] = useState(false)
+  
+  // For debugging
+  const handleOpenContactModal = () => {
+    setContactModalOpen(true);
+  }
+
+  // Helper function to ensure we have an email
+  const getOwnerEmail = () => {
+    if (!spot) return 'andrew@example.com';
+    return spot.email || 'andrew@example.com';
+  }
 
   useEffect(() => {
     const fetchSpot = async () => {
       try {
         const response = await axios.get(`/api/spots/${id}`)
-        console.log('Spot data received:', response.data)
         
-        // Check if email exists, otherwise set a default
+        // Ensure we have an email
         if (!response.data.email) {
           console.log('No email found in response, using default')
           response.data.email = 'andrew@example.com'
         }
         
-        setSpot(response.data)
+        // Force a default email if we somehow get undefined
+        const spotData = {
+          ...response.data,
+          email: response.data.email || 'andrew@example.com'
+        };
+        
+        setSpot(spotData)
         setLoading(false)
       } catch (err) {
         console.error('Error fetching spot:', err)
@@ -188,7 +204,7 @@ function Spot() {
                       <div className="flex space-x-3">
                         <button 
                           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                          onClick={() => setContactModalOpen(true)}
+                          onClick={handleOpenContactModal}
                         >
                           Contact Owner
                         </button>
@@ -235,7 +251,7 @@ function Spot() {
           <ContactModal
             isOpen={contactModalOpen}
             onClose={() => setContactModalOpen(false)}
-            email={spot.email || 'andrew@example.com'}
+            email={getOwnerEmail()}
           />
         )}
     </Layout>

@@ -6,10 +6,19 @@ import { useState, useRef } from 'react';
 function ContactModal({ isOpen, onClose, email }) {
   const [copySuccess, setCopySuccess] = useState(false);
   const emailRef = useRef(null);
+  const defaultEmail = 'andrew@example.com';
+  
+  // Use a safe email value that is guaranteed to not be undefined
+  const safeEmail = email || defaultEmail;
+  
+  console.log('ContactModal rendered with email:', safeEmail);
 
   const handleCopyEmail = () => {
     if (emailRef.current) {
-      const emailToCopy = email || 'andrew@example.com';
+      // Get the value directly from the input field for safety
+      const emailToCopy = emailRef.current.value || defaultEmail;
+      console.log('Copying email to clipboard:', emailToCopy);
+      
       navigator.clipboard.writeText(emailToCopy)
         .then(() => {
           setCopySuccess(true);
@@ -49,7 +58,7 @@ function ContactModal({ isOpen, onClose, email }) {
               <input
                 ref={emailRef}
                 type="email"
-                value={email || 'andrew@example.com'}
+                value={safeEmail}
                 readOnly
                 className="flex-grow px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md shadow-sm focus:outline-none dark:bg-gray-700 dark:text-white"
               />

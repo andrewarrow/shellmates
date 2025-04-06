@@ -72,24 +72,17 @@ router.get('/:id', (req, res) => {
       
       // Ensure we have owner data
       if (owner) {
-        console.log('Found owner:', JSON.stringify(owner));
         
-        // Always set fallback values first
-        spot.owner_name = "Andrew A.";
-        spot.first_name = "Andrew";
-        spot.last_name = "Arrow";
-        spot.email = "andrew@example.com";
+        // Format the owner name
+        spot.owner_name = owner.first_name + " " + owner.last_name.charAt(0) + ".";
         
-        // Override with actual values if they exist
-        if (owner.first_name && owner.last_name) {
-          spot.owner_name = owner.first_name + " " + owner.last_name.charAt(0) + ".";
-          spot.first_name = owner.first_name;
-          spot.last_name = owner.last_name;
-        }
+        // Set the first_name and last_name fields
+        spot.first_name = owner.first_name;
+        spot.last_name = owner.last_name;
         
-        if (owner.email) {
-          spot.email = owner.email;
-        }
+        // Set the email from the database (this is what was missing before)
+        spot.email = owner.email;
+        
       } else {
         console.log('No owner found for spot');
         // Fallback if owner not found
