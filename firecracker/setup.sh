@@ -29,21 +29,23 @@
   truncate -s 200G ubuntu-$ubuntu_version.ext4
   mkfs.ext4 -d squashfs-root -F ubuntu-$ubuntu_version.ext4
   useradd -r -s /bin/false fc_user
-cat > run_jailer.sh << `EOF`
+cat > run_jailer.sh << EOF
+  JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
   rm -rf /srv/jailer/firecracker
-  mkdir -p /srv/jailer/firecracker/hello-fc/root/rootfs
-  cp ubuntu-24.04.ext4 /srv/jailer/firecracker/hello-fc/root/rootfs
-  cp vmlinux-6.1.102 /srv/jailer/firecracker/hello-fc/root
-  chown -R fc_user:fc_user /srv/jailer/firecracker/hello-fc/root/rootfs
+  mkdir -p ${JAIL_ROOT}/rootfs
+  cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs
+  cp vmlinux-6.1.102 ${JAIL_ROOT}
+  chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs
   jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock
-`EOF`
+EOF
   chmod +x run_jailer.sh
   ./run_jailer.sh &
-  sleep 1
+  sleep 2
+  JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
   API_SOCKET="${JAIL_ROOT}/run/api.sock"
   cat > run_curls.sh << EOF
-  curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
-  curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
+  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
+  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
   TAP_DEV="tap0"
   TAP_IP="172.16.0.1"
   MASK_SHORT="/30"
@@ -56,11 +58,11 @@ cat > run_jailer.sh << `EOF`
   HOST_IFACE=$(ip -j route list default |jq -r ".[0].dev")
   iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
   iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
-  curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "iface_id": "net1", "guest_mac": "06:00:AC:10:00:02", "host_dev_name": "tap0" }' "http://localhost/network-interfaces/net1"
+  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "iface_id": "net1", "guest_mac": "06:00:AC:10:00:02", "host_dev_name": "tap0" }' "http://localhost/network-interfaces/net1"
 
-  curl -X PUT --unix-socket "${API_SOCKET}" --data '{"vcpu_count": 2, "mem_size_mib": 32768, "smt": false}' "http://localhost/machine-config"
+  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{"vcpu_count": 2, "mem_size_mib": 32768, "smt": false}' "http://localhost/machine-config"
   sleep 0.015s
-  curl -X PUT --unix-socket "${API_SOCKET}" --data '{"action_type": "InstanceStart"}' "http://localhost/actions"
+  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{"action_type": "InstanceStart"}' "http://localhost/actions"
   sleep 2s
   KEY_NAME=ubuntu-24.04.id_rsa
   ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
