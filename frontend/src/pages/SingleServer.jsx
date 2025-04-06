@@ -50,7 +50,7 @@ function SingleServer() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-100 flex flex-col">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col">
       {/* Top Navigation Bar */}
       <header className="bg-gray-900 text-white">
         <div className="flex items-center justify-between px-4 py-2">
@@ -80,11 +80,11 @@ function SingleServer() {
       <main className="flex-1 p-6">
         <div className="max-w-4xl mx-auto">
           {loading ? (
-            <div className="bg-white shadow rounded-lg p-6 text-center">
+            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 text-center dark:text-gray-200">
               <div className="animate-pulse">Loading server details...</div>
             </div>
           ) : error ? (
-            <div className="bg-white shadow rounded-lg p-6 text-center text-red-500">
+            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 text-center text-red-500">
               {error}
               <div className="mt-4">
                 <button 
@@ -107,23 +107,23 @@ function SingleServer() {
                 </button>
               </div>
               
-              <div className="bg-white shadow rounded-lg overflow-hidden">
-                <div className="p-6">
+              <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+                <div className="p-6 dark:text-gray-200">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <h2 className="text-lg font-medium mb-4">Server Information</h2>
+                      <h2 className="text-lg font-medium mb-4 dark:text-white">Server Information</h2>
                       <div className="space-y-3">
                         <div>
-                          <span className="text-gray-600 font-medium">Name:</span>
+                          <span className="text-gray-600 dark:text-gray-300 font-medium">Name:</span>
                           <span className="ml-2">{server.name}</span>
                         </div>
                         <div>
-                          <span className="text-gray-600 font-medium">IP Address:</span>
+                          <span className="text-gray-600 dark:text-gray-300 font-medium">IP Address:</span>
                           <span className="ml-2">{server.ip_address}</span>
                         </div>
                         {(server.latitude && server.longitude) && (
                           <div>
-                            <span className="text-gray-600 font-medium">Location:</span>
+                            <span className="text-gray-600 dark:text-gray-300 font-medium">Location:</span>
                             <span className="ml-2">{server.latitude}, {server.longitude}</span>
                           </div>
                         )}
@@ -131,23 +131,23 @@ function SingleServer() {
                     </div>
                     
                     <div>
-                      <h2 className="text-lg font-medium mb-4">Hardware Specifications</h2>
+                      <h2 className="text-lg font-medium mb-4 dark:text-white">Hardware Specifications</h2>
                       <div className="space-y-3">
                         {server.memory && (
                           <div>
-                            <span className="text-gray-600 font-medium">Memory:</span>
+                            <span className="text-gray-600 dark:text-gray-300 font-medium">Memory:</span>
                             <span className="ml-2">{server.memory}</span>
                           </div>
                         )}
                         {server.cpu_cores && (
                           <div>
-                            <span className="text-gray-600 font-medium">CPU Cores:</span>
+                            <span className="text-gray-600 dark:text-gray-300 font-medium">CPU Cores:</span>
                             <span className="ml-2">{server.cpu_cores}</span>
                           </div>
                         )}
                         {server.hard_drive_size && (
                           <div>
-                            <span className="text-gray-600 font-medium">Storage:</span>
+                            <span className="text-gray-600 dark:text-gray-300 font-medium">Storage:</span>
                             <span className="ml-2">{server.hard_drive_size}</span>
                           </div>
                         )}
@@ -157,7 +157,7 @@ function SingleServer() {
                   
                   <div className="mt-8">
                     <div className="flex justify-between items-center mb-4">
-                      <h2 className="text-lg font-medium">Server Spots</h2>
+                      <h2 className="text-lg font-medium dark:text-white">Server Spots</h2>
                       <button 
                         onClick={() => navigate(`/dashboard?showAddSpotModal=true&serverId=${id}`)}
                         className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
@@ -183,11 +183,11 @@ function SingleServer() {
                         {spots.map(spot => (
                           <div
                             key={spot.id}
-                            className="p-4 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+                            className="p-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                           >
                             <div className="flex justify-between items-start">
                               <div>
-                                <div className="font-medium text-lg mb-2">Spot #{spot.id}</div>
+                                <div className="font-medium text-lg mb-2 dark:text-white">Spot #{spot.id}</div>
                                 <div className="space-y-1">
                                   {spot.memory && (
                                     <div className="text-sm">
@@ -222,7 +222,7 @@ function SingleServer() {
                   </div>
                   
                   <div className="mt-8">
-                    <h2 className="text-lg font-medium mb-4">SSH Steps</h2>
+                    <h2 className="text-lg font-medium mb-4 dark:text-white">SSH Steps</h2>
                     <div className="space-y-2">
                       {[...Array(9)].map((_, index) => (
                         <div key={index} className="border border-gray-300 rounded-md overflow-hidden">
@@ -230,7 +230,7 @@ function SingleServer() {
                             href={`/step${index}.txt`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex justify-between items-center p-3 bg-gray-100 cursor-pointer hover:bg-gray-200"
+                            className="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-700 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 dark:text-gray-200"
                           >
                             <h3 className="font-medium">Step {index + 1}</h3>
                             <span className="text-blue-600">View Instructions</span>
@@ -241,7 +241,7 @@ function SingleServer() {
                   </div>
                   
                   <div className="mt-8">
-                    <h2 className="text-lg font-medium mb-4">Actions</h2>
+                    <h2 className="text-lg font-medium mb-4 dark:text-white">Actions</h2>
                     <div className="flex space-x-3">
                       <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
                         Edit Server
@@ -255,8 +255,8 @@ function SingleServer() {
               </div>
             </div>
           ) : (
-            <div className="bg-white shadow rounded-lg p-6 text-center">
-              <div className="text-lg">Server not found</div>
+            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 text-center dark:text-gray-200">
+              <div className="text-lg dark:text-white">Server not found</div>
               <div className="mt-4">
                 <button 
                   onClick={handleBack}
@@ -271,7 +271,7 @@ function SingleServer() {
       </main>
       
       {/* Footer */}
-      <footer className="bg-gray-100 border-t border-gray-200 py-4 px-6 text-sm text-gray-600 mt-auto">
+      <footer className="bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 py-4 px-6 text-sm text-gray-600 dark:text-gray-400 mt-auto">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className="mb-2 md:mb-0">© 2025 shellmates or its affiliates. All rights reserved.</div>
           <div className="flex space-x-4">

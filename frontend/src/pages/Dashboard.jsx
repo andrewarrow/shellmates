@@ -281,7 +281,7 @@ function Dashboard() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-100 flex flex-col">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col">
       {/* Top Navigation Bar */}
       <header className="bg-gray-900 text-white">
         <div className="flex items-center justify-between px-4 py-2">
@@ -300,28 +300,28 @@ function Dashboard() {
               </button>
               
               {showServiceMenu && (
-                <div className="absolute left-0 mt-1 w-64 bg-white text-gray-800 shadow-lg rounded-md z-10">
-                  <div className="p-3 border-b border-gray-200">
+                <div className="absolute left-0 mt-1 w-64 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-lg rounded-md z-10">
+                  <div className="p-3 border-b border-gray-200 dark:border-gray-700">
                     <input 
                       type="text" 
                       placeholder="Find a service" 
-                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md"
                     />
                   </div>
                   <div className="p-2">
-                    <div className="font-bold px-2 py-1 text-sm text-gray-600">Recently visited</div>
-                    <div className="flex items-start p-2 hover:bg-gray-100 rounded-md cursor-pointer" onClick={() => window.location.href = '/ec2'}>
+                    <div className="font-bold px-2 py-1 text-sm text-gray-600 dark:text-gray-400">Recently visited</div>
+                    <div className="flex items-start p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer" onClick={() => window.location.href = '/ec2'}>
                       <span className="text-xl mr-2">🖥️</span>
                       <div>
-                        <div className="font-medium">EC2</div>
-                        <div className="text-xs text-gray-500">Virtual servers in the cloud</div>
+                        <div className="font-medium dark:text-white">EC2</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">Virtual servers in the cloud</div>
                       </div>
                     </div>
-                    <div className="flex items-start p-2 hover:bg-gray-100 rounded-md cursor-pointer">
+                    <div className="flex items-start p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer">
                       <span className="text-xl mr-2">📦</span>
                       <div>
-                        <div className="font-medium">S3</div>
-                        <div className="text-xs text-gray-500">Scalable storage in the cloud</div>
+                        <div className="font-medium dark:text-white">S3</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">Scalable storage in the cloud</div>
                       </div>
                     </div>
                   </div>
@@ -358,16 +358,16 @@ function Dashboard() {
               </button>
               
               {showUserMenu && (
-                <div className="absolute right-0 mt-1 w-48 bg-white text-gray-800 shadow-lg rounded-md z-10">
-                  <div className="p-2 border-b border-gray-200">
-                    <div className="font-bold">{currentUser?.username || 'User'}</div>
-                    <div className="text-xs text-gray-500">user-id</div>
+                <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-lg rounded-md z-10">
+                  <div className="p-2 border-b border-gray-200 dark:border-gray-700">
+                    <div className="font-bold dark:text-white">{currentUser?.username || 'User'}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">user-id</div>
                   </div>
                   <div className="py-1">
-                    <div className="px-3 py-1 hover:bg-gray-100 cursor-pointer">Account</div>
-                    <div className="px-3 py-1 hover:bg-gray-100 cursor-pointer">Security credentials</div>
+                    <div className="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Account</div>
+                    <div className="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Security credentials</div>
                     <div 
-                      className="px-3 py-1 hover:bg-gray-100 cursor-pointer"
+                      className="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                       onClick={handleLogout}
                     >
                       Sign out
@@ -394,9 +394,9 @@ function Dashboard() {
           {/* Dashboard Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* My Servers Card */}
-            <div className="bg-white shadow rounded-lg overflow-hidden">
-                <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-                <h2 className="font-medium">My Servers</h2>
+            <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+                <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
+                <h2 className="font-medium dark:text-white">My Servers</h2>
                 <button 
                   className="text-sm text-blue-600 hover:underline"
                   onClick={() => setShowAddServerModal(true)}
@@ -404,19 +404,19 @@ function Dashboard() {
                   Add New +
                 </button>
               </div>
-              <div className="p-6">
+              <div className="p-6 dark:text-gray-200">
                 {loading ? (
-                  <div className="text-center py-4">Loading...</div>
+                  <div className="text-center py-4 dark:text-gray-300">Loading...</div>
                 ) : error ? (
                   <div className="text-center py-4 text-red-500">{error}</div>
                 ) : servers.length === 0 ? (
-                  <div className="text-center py-4 text-gray-500">No servers added yet</div>
+                  <div className="text-center py-4 text-gray-500 dark:text-gray-400">No servers added yet</div>
                 ) : (
                   <div className="space-y-4">
                     {servers.map(server => (
                       <div
                         key={server.id}
-                        className="flex items-start justify-between space-x-3 p-3 hover:bg-gray-50 rounded-md border-b border-gray-100 cursor-pointer"
+                        className="flex items-start justify-between space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md border-b border-gray-100 dark:border-gray-700 cursor-pointer"
                         onClick={() => {
                           navigate(`/server/${server.id}`);
                         }}
@@ -424,21 +424,21 @@ function Dashboard() {
                         <div className="flex items-start space-x-3">
                           <span className="text-xl mt-1">🖥️</span>
                           <div>
-                            <div className="font-medium">{server.name}</div>
-                            <div className="text-sm text-gray-600">IP: {server.ip_address}</div>
+                            <div className="font-medium dark:text-white">{server.name}</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-300">IP: {server.ip_address}</div>
                             <div className="mt-1 space-y-1">
                               {server.memory && (
-                                <div className="text-xs text-gray-500">
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
                                   <span className="font-medium">Memory:</span> {server.memory}
                                 </div>
                               )}
                               {server.cpu_cores && (
-                                <div className="text-xs text-gray-500">
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
                                   <span className="font-medium">CPU:</span> {server.cpu_cores} cores
                                 </div>
                               )}
                               {server.hard_drive_size && (
-                                <div className="text-xs text-gray-500">
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
                                   <span className="font-medium">Storage:</span> {server.hard_drive_size}
                                 </div>
                               )}
@@ -447,7 +447,7 @@ function Dashboard() {
                         </div>
                         <div className="flex space-x-2">
                           <button 
-                            className="text-xs text-blue-600 hover:text-blue-800"
+                            className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                             onClick={(e) => {
                               e.stopPropagation();
                               openEditModal(server);
@@ -456,7 +456,7 @@ function Dashboard() {
                             Edit
                           </button>
                           <button 
-                            className="text-xs text-gray-600 hover:text-gray-800"
+                            className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300"
                             onClick={(e) => {
                               e.stopPropagation();
                               navigate(`/server/${server.id}`);
@@ -475,12 +475,12 @@ function Dashboard() {
             {/* Add Server Modal */}
             {showAddServerModal && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium">Add New Server</h3>
+                    <h3 className="text-lg font-medium dark:text-white">Add New Server</h3>
                     <button 
                       onClick={() => setShowAddServerModal(false)}
-                      className="text-gray-500 hover:text-gray-700"
+                      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                     >
                       ✕
                     </button>
@@ -489,7 +489,7 @@ function Dashboard() {
                   <form onSubmit={handleAddServer}>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Server Name
                         </label>
                         <input
@@ -497,13 +497,13 @@ function Dashboard() {
                           name="name"
                           value={newServer.name}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                           required
                         />
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           IP Address
                         </label>
                         <input
@@ -511,14 +511,14 @@ function Dashboard() {
                           name="ip_address"
                           value={newServer.ip_address}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                           required
                         />
                       </div>
                       
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Latitude
                           </label>
                           <input
@@ -526,12 +526,12 @@ function Dashboard() {
                             name="latitude"
                             value={newServer.latitude}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                           />
                         </div>
                         
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Longitude
                           </label>
                           <input
@@ -539,13 +539,13 @@ function Dashboard() {
                             name="longitude"
                             value={newServer.longitude}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                           />
                         </div>
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Memory
                         </label>
                         <input
@@ -554,12 +554,12 @@ function Dashboard() {
                           value={newServer.memory}
                           onChange={handleInputChange}
                           placeholder="e.g. 8GB"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           CPU Cores
                         </label>
                         <input
@@ -568,12 +568,12 @@ function Dashboard() {
                           value={newServer.cpu_cores}
                           onChange={handleInputChange}
                           placeholder="e.g. 4"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Hard Drive Size
                         </label>
                         <input
@@ -582,7 +582,7 @@ function Dashboard() {
                           value={newServer.hard_drive_size}
                           onChange={handleInputChange}
                           placeholder="e.g. 256GB"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
                     </div>
@@ -591,7 +591,7 @@ function Dashboard() {
                       <button
                         type="button"
                         onClick={() => setShowAddServerModal(false)}
-                        className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                        className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                       >
                         Cancel
                       </button>
@@ -610,7 +610,7 @@ function Dashboard() {
             {/* Edit Server Modal */}
             {showEditServerModal && editingServer && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-medium">Edit Server</h3>
                     <button 
@@ -618,7 +618,7 @@ function Dashboard() {
                         setShowEditServerModal(false);
                         setEditingServer(null);
                       }}
-                      className="text-gray-500 hover:text-gray-700"
+                      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                     >
                       ✕
                     </button>
@@ -627,7 +627,7 @@ function Dashboard() {
                   <form onSubmit={handleEditServer}>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Server Name
                         </label>
                         <input
@@ -635,13 +635,13 @@ function Dashboard() {
                           name="name"
                           value={editingServer.name}
                           onChange={handleEditInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                           required
                         />
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           IP Address
                         </label>
                         <input
@@ -649,14 +649,14 @@ function Dashboard() {
                           name="ip_address"
                           value={editingServer.ip_address}
                           onChange={handleEditInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                           required
                         />
                       </div>
                       
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Latitude
                           </label>
                           <input
@@ -664,12 +664,12 @@ function Dashboard() {
                             name="latitude"
                             value={editingServer.latitude || ''}
                             onChange={handleEditInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                           />
                         </div>
                         
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Longitude
                           </label>
                           <input
@@ -677,13 +677,13 @@ function Dashboard() {
                             name="longitude"
                             value={editingServer.longitude || ''}
                             onChange={handleEditInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Memory
                         </label>
                         <input
@@ -692,12 +692,12 @@ function Dashboard() {
                           value={editingServer.memory || ''}
                           onChange={handleEditInputChange}
                           placeholder="e.g. 8GB"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           CPU Cores
                         </label>
                         <input
@@ -706,12 +706,12 @@ function Dashboard() {
                           value={editingServer.cpu_cores || ''}
                           onChange={handleEditInputChange}
                           placeholder="e.g. 4"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Hard Drive Size
                         </label>
                         <input
@@ -720,7 +720,7 @@ function Dashboard() {
                           value={editingServer.hard_drive_size || ''}
                           onChange={handleEditInputChange}
                           placeholder="e.g. 256GB"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
                     </div>
@@ -741,7 +741,7 @@ function Dashboard() {
                             setShowEditServerModal(false);
                             setEditingServer(null);
                           }}
-                          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                         >
                           Cancel
                         </button>
@@ -761,12 +761,12 @@ function Dashboard() {
             {/* Add Spot Modal */}
             {showAddSpotModal && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-medium">Add New Spot</h3>
                     <button 
                       onClick={() => setShowAddSpotModal(false)}
-                      className="text-gray-500 hover:text-gray-700"
+                      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                     >
                       ✕
                     </button>
@@ -775,14 +775,14 @@ function Dashboard() {
                   <form onSubmit={handleAddSpot}>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Select Server
                         </label>
                         <select
                           name="server_id"
                           value={newSpot.server_id}
                           onChange={handleSpotInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                           required
                         >
                           <option value="">Select a server...</option>
@@ -795,7 +795,7 @@ function Dashboard() {
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Memory
                         </label>
                         <input
@@ -804,12 +804,12 @@ function Dashboard() {
                           value={newSpot.memory}
                           onChange={handleSpotInputChange}
                           placeholder="e.g. 8GB"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           CPU Cores
                         </label>
                         <input
@@ -818,12 +818,12 @@ function Dashboard() {
                           value={newSpot.cpu_cores}
                           onChange={handleSpotInputChange}
                           placeholder="e.g. 4"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Hard Drive Size
                         </label>
                         <input
@@ -832,7 +832,7 @@ function Dashboard() {
                           value={newSpot.hard_drive_size}
                           onChange={handleSpotInputChange}
                           placeholder="e.g. 256GB"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
                     </div>
@@ -841,7 +841,7 @@ function Dashboard() {
                       <button
                         type="button"
                         onClick={() => setShowAddSpotModal(false)}
-                        className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                        className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                       >
                         Cancel
                       </button>
@@ -860,7 +860,7 @@ function Dashboard() {
             {/* Edit Spot Modal */}
             {showEditSpotModal && editingSpot && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-medium">Edit Spot</h3>
                     <button 
@@ -868,7 +868,7 @@ function Dashboard() {
                         setShowEditSpotModal(false);
                         setEditingSpot(null);
                       }}
-                      className="text-gray-500 hover:text-gray-700"
+                      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                     >
                       ✕
                     </button>
@@ -877,14 +877,14 @@ function Dashboard() {
                   <form onSubmit={handleEditSpot}>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Select Server
                         </label>
                         <select
                           name="server_id"
                           value={editingSpot.server_id}
                           onChange={handleEditSpotInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                           required
                         >
                           <option value="">Select a server...</option>
@@ -897,7 +897,7 @@ function Dashboard() {
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Memory
                         </label>
                         <input
@@ -906,12 +906,12 @@ function Dashboard() {
                           value={editingSpot.memory || ''}
                           onChange={handleEditSpotInputChange}
                           placeholder="e.g. 8GB"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           CPU Cores
                         </label>
                         <input
@@ -920,12 +920,12 @@ function Dashboard() {
                           value={editingSpot.cpu_cores || ''}
                           onChange={handleEditSpotInputChange}
                           placeholder="e.g. 4"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Hard Drive Size
                         </label>
                         <input
@@ -934,7 +934,7 @@ function Dashboard() {
                           value={editingSpot.hard_drive_size || ''}
                           onChange={handleEditSpotInputChange}
                           placeholder="e.g. 256GB"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
                     </div>
@@ -955,7 +955,7 @@ function Dashboard() {
                             setShowEditSpotModal(false);
                             setEditingSpot(null);
                           }}
-                          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                         >
                           Cancel
                         </button>
@@ -973,9 +973,9 @@ function Dashboard() {
             )}
             
             {/* My Spots Card */}
-            <div className="bg-white shadow rounded-lg overflow-hidden">
-              <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-                <h2 className="font-medium">My Spots</h2>
+            <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+              <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
+                <h2 className="font-medium dark:text-white">My Spots</h2>
                 <button 
                   className="text-sm text-blue-600 hover:underline"
                   onClick={() => setShowAddSpotModal(true)}
@@ -983,13 +983,13 @@ function Dashboard() {
                   Add New +
                 </button>
               </div>
-              <div className="p-6">
+              <div className="p-6 dark:text-gray-200">
                 {spotsLoading ? (
-                  <div className="text-center py-4">Loading...</div>
+                  <div className="text-center py-4 dark:text-gray-300">Loading...</div>
                 ) : spotsError ? (
                   <div className="text-center py-4 text-red-500">{spotsError}</div>
                 ) : spots.length === 0 ? (
-                  <div className="text-center py-4 text-gray-500">No spots added yet</div>
+                  <div className="text-center py-4 text-gray-500 dark:text-gray-400">No spots added yet</div>
                 ) : (
                   <div className="space-y-4">
                     {spots.map(spot => (
@@ -1004,17 +1004,17 @@ function Dashboard() {
                             <div className="text-sm text-gray-600">IP: {spot.ip_address}</div>
                             <div className="mt-1 space-y-1">
                               {spot.memory && (
-                                <div className="text-xs text-gray-500">
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
                                   <span className="font-medium">Memory:</span> {spot.memory}
                                 </div>
                               )}
                               {spot.cpu_cores && (
-                                <div className="text-xs text-gray-500">
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
                                   <span className="font-medium">CPU:</span> {spot.cpu_cores} cores
                                 </div>
                               )}
                               {spot.hard_drive_size && (
-                                <div className="text-xs text-gray-500">
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
                                   <span className="font-medium">Storage:</span> {spot.hard_drive_size}
                                 </div>
                               )}
@@ -1023,7 +1023,7 @@ function Dashboard() {
                         </div>
                         <div className="flex space-x-2">
                           <button 
-                            className="text-xs text-blue-600 hover:text-blue-800"
+                            className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                             onClick={(e) => {
                               e.stopPropagation();
                               openEditSpotModal(spot);
@@ -1032,7 +1032,7 @@ function Dashboard() {
                             Edit
                           </button>
                           <button 
-                            className="text-xs text-gray-600 hover:text-gray-800"
+                            className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300"
                             onClick={(e) => {
                               e.stopPropagation();
                               navigate(`/spot/${spot.id}`);
@@ -1049,12 +1049,12 @@ function Dashboard() {
             </div>
             
             {/* CloudWatch Metrics */}
-            <div className="bg-white shadow rounded-lg overflow-hidden">
-              <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-                <h2 className="font-medium">My Shells</h2>
+            <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+              <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                <h2 className="font-medium dark:text-white">My Shells</h2>
               </div>
-              <div className="p-6 flex justify-center items-center h-48">
-                <div className="text-center text-gray-500">
+              <div className="p-6 flex justify-center items-center h-48 dark:text-gray-300">
+                <div className="text-center text-gray-500 dark:text-gray-400">
                   <div className="text-3xl mb-2">☯️</div>
                   <div>8GB RAM at 45.11.123.44</div>
                 </div>
@@ -1066,7 +1066,7 @@ function Dashboard() {
       </main>
       
       {/* Footer */}
-      <footer className="bg-gray-100 border-t border-gray-200 py-4 px-6 text-sm text-gray-600 mt-auto">
+      <footer className="bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 py-4 px-6 text-sm text-gray-600 dark:text-gray-400 mt-auto">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className="mb-2 md:mb-0">© 2025 shellmates or its affiliates. All rights reserved.</div>
           <div className="flex space-x-4">
