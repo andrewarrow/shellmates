@@ -13,6 +13,7 @@ const ec2Routes = require('./routes/ec2');
 const serverRoutes = require('./routes/servers');
 const spotRoutes = require('./routes/spots');
 const stripeRoutes = require('./routes/stripes');
+const adminRoutes = require('./routes/admin');
 
 // Database initialization
 const db = require('./database/db');
@@ -40,6 +41,7 @@ app.use('/api/ec2', ec2Routes);
 app.use('/api/servers', serverRoutes);
 app.use('/api/spots', spotRoutes);
 app.use('/api/stripe', stripeRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Always serve the static HTML files for terms and privacy in both dev and prod
 const termsPrivacyPath = path.join(__dirname, '../../frontend/public');
