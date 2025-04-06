@@ -42,14 +42,14 @@ ROOTFS_SOURCE="/root/fc/ubuntu-24.04.ext4"
 KERNEL_SOURCE="/root/fc/vmlinux-6.1.102"
 
 if [ -d "/srv/jailer/firecracker/hello-fc/root/rootfs" ] && [ -f "/srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4" ]; then
-  cp /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4 /tmp/fc-rootfs-save
+  cp /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4 /root/fc-rootfs-save
 fi
 
 rm -rf /srv/jailer/firecracker
 mkdir -p "/srv/jailer/firecracker/hello-fc/root/rootfs"
 
-if [ -s /tmp/fc-rootfs-save ]; then
-  mv /tmp/fc-rootfs-save /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4
+if [ -s /root/fc-rootfs-save ]; then
+  mv /root/fc-rootfs-save /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4
   echo "Restored previous rootfs image"
 else
   cp /root/fc/ubuntu-24.04.ext4 /srv/jailer/firecracker/hello-fc/root/rootfs/
@@ -71,10 +71,13 @@ Type=simple
 User=root
 Group=root
 ExecStart=/root/fc/run_jailer.sh
+ExecStartPost=/bin/bash -c "sleep 3 && /root/fc/run_curls.sh"
 CapabilityBoundingSet=CAP_SYS_ADMIN CAP_MKNOD
 AmbientCapabilities=CAP_SYS_ADMIN CAP_MKNOD
 SecureBits=keep-caps
 PrivateMounts=no
+StandardOutput=null
+StandardError=null
 
 Restart=on-failure
 RestartSec=5s
@@ -93,6 +96,8 @@ EOF
   chmod 644 /etc/systemd/system/fcjail.service
   systemctl daemon-reload
   systemctl enable fcjail.service
+  systemctl enable fcjail_timer.service
+  systemctl enable fcjail.timer
   systemctl start fcjail.service
   TAP_DEV="tap0"
   TAP_IP="172.16.0.1"
@@ -117,9 +122,10 @@ cat > run_curls.sh << 'EOF'
   sleep 0.015s
   curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{"action_type": "InstanceStart"}' "http://localhost/actions"
   sleep 2s
-  KEY_NAME=ubuntu-24.04.id_rsa
+  KEY_NAME=/root/fc/ubuntu-24.04.id_rsa
   ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
   ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+  exit 0
 'EOF'
   chmod +x run_curls.sh
   sleep 5s
