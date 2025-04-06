@@ -25,7 +25,7 @@ router.get('/', auth, (req, res) => {
 
 // Create or update stripe settings
 router.post('/', auth, (req, res) => {
-  const { sk_key, pk_key } = req.body;
+  const { sk_key, pk_key, buy_url } = req.body;
   
   if (!sk_key || !pk_key) {
     return res.status(400).json({ message: 'Both secret key and publishable key are required' });
@@ -39,20 +39,20 @@ router.post('/', auth, (req, res) => {
       // Update existing settings
       const stmt = db.sqlite.prepare(`
         UPDATE stripes 
-        SET sk_key = ?, pk_key = ? 
+        SET sk_key = ?, pk_key = ?, buy_url = ? 
         WHERE user_id = ? 
         RETURNING *
       `);
-      const updatedSettings = stmt.get(sk_key, pk_key, req.userId);
+      const updatedSettings = stmt.get(sk_key, pk_key, buy_url || null, req.userId);
       res.json(updatedSettings);
     } else {
       // Create new settings
       const stmt = db.sqlite.prepare(`
-        INSERT INTO stripes (user_id, sk_key, pk_key)
-        VALUES (?, ?, ?)
+        INSERT INTO stripes (user_id, sk_key, pk_key, buy_url)
+        VALUES (?, ?, ?, ?)
         RETURNING *
       `);
-      const newSettings = stmt.get(req.userId, sk_key, pk_key);
+      const newSettings = stmt.get(req.userId, sk_key, pk_key, buy_url || null);
       res.status(201).json(newSettings);
     }
   } catch (error) {

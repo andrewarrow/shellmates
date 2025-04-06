@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import Layout from '../components/Layout'
 import axios from 'axios'
@@ -44,9 +44,26 @@ function Spot() {
           
           {/* Right Side - User Menu */}
           <div className="flex items-center space-x-4">
-            <div className="px-3 py-1 hover:bg-gray-800 rounded-md cursor-pointer">
-              {currentUser?.username || 'User'}
-            </div>
+            {currentUser ? (
+              <div className="px-3 py-1 hover:bg-gray-800 rounded-md cursor-pointer">
+                {currentUser.username}
+              </div>
+            ) : (
+              <div className="flex gap-4">
+                <Link 
+                  to="/login" 
+                  className="px-4 py-2 rounded-md bg-gray-700 text-primary-300 hover:bg-gray-600 transition-colors"
+                >
+                  Login
+                </Link>
+                <Link 
+                  to="/register" 
+                  className="px-4 py-2 rounded-md bg-primary-600 text-white hover:bg-primary-700 transition-colors"
+                >
+                  Register
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -162,9 +179,20 @@ function Spot() {
                         <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
                           Contact Owner
                         </button>
-                        <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                        <a 
+                          href={spot.buy_url || '#'} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={`px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 ${!spot.buy_url ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          onClick={(e) => {
+                            if (!spot.buy_url) {
+                              e.preventDefault();
+                              alert('Payment link not available for this spot');
+                            }
+                          }}
+                        >
                           Rent This Spot
-                        </button>
+                        </a>
                       </div>
                     </div>
                   </div>

@@ -60,6 +60,12 @@ router.get('/:id', (req, res) => {
       return res.status(404).json({ message: 'Spot not found' });
     }
     
+    // Get Stripe information for the spot owner if available
+    const stripeInfo = db.stripes.findByUserId(spot.user_id);
+    if (stripeInfo && stripeInfo.buy_url) {
+      spot.buy_url = stripeInfo.buy_url;
+    }
+    
     res.json(spot);
   } catch (error) {
     console.error('Error fetching spot:', error);

@@ -20,7 +20,8 @@ function Dashboard() {
   const [spots, setSpots] = useState([])
   const [stripeSettings, setStripeSettings] = useState({
     sk_key: '',
-    pk_key: ''
+    pk_key: '',
+    buy_url: ''
   })
   const [newServer, setNewServer] = useState({
     name: '',
@@ -77,7 +78,8 @@ function Dashboard() {
         if (response.data && !response.data.message) {
           setStripeSettings({
             sk_key: response.data.sk_key || '',
-            pk_key: response.data.pk_key || ''
+            pk_key: response.data.pk_key || '',
+            buy_url: response.data.buy_url || ''
           })
         }
       } catch (err) {
@@ -966,6 +968,23 @@ function Dashboard() {
                         />
                         <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                           This key is used to initialize Stripe elements on your website.
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Buy URL
+                        </label>
+                        <input
+                          type="text"
+                          name="buy_url"
+                          value={stripeSettings.buy_url}
+                          onChange={handleStripeInputChange}
+                          placeholder="https://buy.stripe.com/your-product-page"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          URL for customers to purchase your product directly from Stripe.
                         </p>
                       </div>
                     </div>
