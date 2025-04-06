@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import Layout from '../components/Layout'
 import ContactModal from '../components/ContactModal'
@@ -8,11 +8,13 @@ import axios from 'axios'
 function Spot() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const { currentUser } = useAuth()
   const [spot, setSpot] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [contactModalOpen, setContactModalOpen] = useState(false)
+  const [paymentStatus, setPaymentStatus] = useState(null)
   
   // For debugging
   const handleOpenContactModal = () => {
@@ -24,6 +26,43 @@ function Spot() {
     if (!spot) return 'andrew@example.com';
     return spot.email || 'andrew@example.com';
   }
+
+  // Parse URL query parameters for payment status messages
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search)
+    
+    // Check for payment status parameters
+    if (searchParams.has('payment')) {
+      const status = searchParams.get('payment')
+      const message = searchParams.get('message') || ''
+      
+      // Set payment status state
+      setPaymentStatus({
+        type: status,
+        message: decodeURIComponent(message),
+        isError: false
+      })
+    } 
+    else if (searchParams.has('error')) {
+      const errorType = searchParams.get('error')
+      const message = searchParams.get('message') || 'An error occurred with your payment'
+      
+      // Set payment error state
+      setPaymentStatus({
+        type: errorType,
+        message: decodeURIComponent(message),
+        isError: true
+      })
+    }
+    
+    // Clean up the URL by removing the payment parameters
+    if (searchParams.has('payment') || searchParams.has('error')) {
+      // Use setTimeout to avoid immediate redirect during render
+      setTimeout(() => {
+        navigate(`/spot/${id}`, { replace: true })
+      }, 100)
+    }
+  }, [location, navigate, id])
 
   useEffect(() => {
     const fetchSpot = async () => {
@@ -133,6 +172,73 @@ function Spot() {
                   </button>
                 </div>
                 
+                {/* Payment Status Alert */}
+                {paymentStatus && (
+                  <div className={`mb-6 p-4 rounded-md ${
+                    paymentStatus.isError 
+                      ? 'bg-red-100 border border-red-400 text-red-700' 
+                      : paymentStatus.type === 'success'
+                        ? 'bg-green-100 border border-green-400 text-green-700'
+                        : 'bg-blue-100 border border-blue-400 text-blue-700'
+                  }`}>
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        {paymentStatus.isError ? (
+                          <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                          </svg>
+                        ) : paymentStatus.type === 'success' ? (
+                          <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                        ) : (
+                          <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-sm leading-5 font-medium">
+                          {paymentStatus.isError
+                            ? 'Payment Error: '
+                            : paymentStatus.type === 'success'
+                              ? 'Payment Successful: '
+                              : paymentStatus.type === 'cancelled'
+                                ? 'Payment Cancelled: '
+                                : 'Payment Status: '}
+                          {paymentStatus.message || (
+                            paymentStatus.type === 'success'
+                              ? 'Your payment was processed successfully!'
+                              : paymentStatus.type === 'cancelled'
+                                ? 'Your payment was cancelled.'
+                                : paymentStatus.type === 'incomplete'
+                                  ? 'Your payment is being processed.'
+                                  : 'There was a problem with your payment.'
+                          )}
+                        </p>
+                      </div>
+                      <div className="ml-auto pl-3">
+                        <div className="-mx-1.5 -my-1.5">
+                          <button 
+                            onClick={() => setPaymentStatus(null)} 
+                            className={`inline-flex rounded-md p-1.5 ${
+                              paymentStatus.isError 
+                                ? 'text-red-500 hover:bg-red-200' 
+                                : paymentStatus.type === 'success'
+                                  ? 'text-green-500 hover:bg-green-200'
+                                  : 'text-blue-500 hover:bg-blue-200'
+                            } focus:outline-none`}
+                          >
+                            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
                 <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
                   <div className="p-6 dark:text-gray-200">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -208,23 +314,37 @@ function Spot() {
                         >
                           Contact Owner
                         </button>
-                        <a 
-                          href={spot.buy_url || '#'} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className={`px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 ${!spot.buy_url ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          onClick={(e) => {
-                            if (!spot.buy_url) {
-                              e.preventDefault();
-                              console.log('Missing buy_url for spot:', spot);
-                              alert('Payment link not available for this spot');
-                            } else {
-                              console.log('Navigating to buy URL:', spot.buy_url);
+                        <button 
+                          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                          onClick={async () => {
+                            if (!spot.guid) {
+                              console.log('Missing guid for spot:', spot);
+                              alert('Unable to process payment for this spot');
+                              return;
+                            }
+                            
+                            try {
+                              // Call our backend first to set up the payment
+                              const response = await axios.post('/api/stripe/initiate-payment', {
+                                spotGuid: spot.guid
+                              });
+                              
+                              // Redirect to the Stripe checkout page
+                              if (response.data.buyUrl) {
+                                console.log('Redirecting to payment page:', response.data.buyUrl);
+                                window.location.href = response.data.buyUrl;
+                              } else {
+                                console.error('No buy URL returned from server');
+                                alert('Unable to process payment at this time');
+                              }
+                            } catch (error) {
+                              console.error('Error initiating payment:', error);
+                              alert(error.response?.data?.message || 'Payment processing failed');
                             }
                           }}
                         >
                           Rent This Spot
-                        </a>
+                        </button>
                       </div>
                     </div>
                   </div>

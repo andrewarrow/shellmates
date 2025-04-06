@@ -11,13 +11,10 @@ function ContactModal({ isOpen, onClose, email }) {
   // Use a safe email value that is guaranteed to not be undefined
   const safeEmail = email || defaultEmail;
   
-  console.log('ContactModal rendered with email:', safeEmail);
-
   const handleCopyEmail = () => {
     if (emailRef.current) {
       // Get the value directly from the input field for safety
       const emailToCopy = emailRef.current.value || defaultEmail;
-      console.log('Copying email to clipboard:', emailToCopy);
       
       navigator.clipboard.writeText(emailToCopy)
         .then(() => {
