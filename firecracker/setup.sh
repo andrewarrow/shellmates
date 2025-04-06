@@ -29,9 +29,6 @@
   truncate -s 200G ubuntu-$ubuntu_version.ext4
   mkfs.ext4 -d squashfs-root -F ubuntu-$ubuntu_version.ext4
   useradd -r -s /bin/false fc_user
-  mkdir /home/public
-  chmod o+w /home/public
-  chmod g+w /home/public
 cat > run_jailer.sh << EOF
 #!/bin/bash
 set -e
@@ -45,14 +42,14 @@ ROOTFS_SOURCE="/root/fc/ubuntu-24.04.ext4"
 KERNEL_SOURCE="/root/fc/vmlinux-6.1.102"
 
 if [ -d "/srv/jailer/firecracker/hello-fc/root/rootfs" ] && [ -f "/srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4" ]; then
-  cp /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4 /home/public/fc-rootfs-save
+  cp /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4 /root/fc-rootfs-save
 fi
 
 rm -rf /srv/jailer/firecracker
 mkdir -p "/srv/jailer/firecracker/hello-fc/root/rootfs"
 
 if [ -s /root/fc-rootfs-save ]; then
-  mv /home/public/fc-rootfs-save /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4
+  mv /root/fc-rootfs-save /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4
   echo "Restored previous rootfs image"
 else
   cp /root/fc/ubuntu-24.04.ext4 /srv/jailer/firecracker/hello-fc/root/rootfs/
@@ -75,8 +72,8 @@ User=root
 Group=root
 ExecStart=/root/fc/run_jailer.sh
 ExecStartPost=/bin/bash -c "sleep 3 && /root/fc/run_curls.sh"
-CapabilityBoundingSet=CAP_SYS_ADMIN CAP_MKNOD
-AmbientCapabilities=CAP_SYS_ADMIN CAP_MKNOD
+CapabilityBoundingSet=CAP_SYS_ADMIN CAP_MKNOD CAP_DAC_OVERRIDE CAP_CHOWN CAP_SETUID CAP_SETGID
+AmbientCapabilities=CAP_SYS_ADMIN CAP_MKNOD CAP_DAC_OVERRIDE CAP_CHOWN CAP_SETUID CAP_SETGID
 SecureBits=keep-caps
 PrivateMounts=no
 #StandardOutput=null
