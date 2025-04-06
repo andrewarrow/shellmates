@@ -9,7 +9,8 @@ function AccountEditModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
     email: '',
     first_name: '',
-    last_name: ''
+    last_name: '',
+    ssh_key: ''
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -20,7 +21,8 @@ function AccountEditModal({ isOpen, onClose }) {
       setFormData({
         email: currentUser.email || '',
         first_name: currentUser.first_name || '',
-        last_name: currentUser.last_name || ''
+        last_name: currentUser.last_name || '',
+        ssh_key: currentUser.ssh_key || ''
       });
     }
   }, [currentUser]);
@@ -128,6 +130,21 @@ function AccountEditModal({ isOpen, onClose }) {
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
                 placeholder="Enter your last name"
+              />
+            </div>
+            
+            <div className="mb-6">
+              <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="ssh_key">
+                SSH Key
+              </label>
+              <textarea
+                id="ssh_key"
+                name="ssh_key"
+                value={formData.ssh_key}
+                onChange={handleChange}
+                rows="3"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+                placeholder="Enter your SSH public key"
               />
             </div>
             

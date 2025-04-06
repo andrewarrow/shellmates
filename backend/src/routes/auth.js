@@ -77,7 +77,11 @@ router.post('/login', async (req, res) => {
     // Send user info without password
     const userResponse = {
       id: user.id,
-      username: user.username
+      username: user.username,
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      ssh_key: user.ssh_key
     };
     
     res.json({ token, user: userResponse });
