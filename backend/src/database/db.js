@@ -255,6 +255,15 @@ const db = {
       `);
       return stmt.all(userId);
     },
+    findByRentedUserId: (userId) => {
+      const stmt = sqlite.prepare(`
+        SELECT s.*, srv.name as server_name, srv.ip_address 
+        FROM spots s
+        JOIN servers srv ON s.server_id = srv.id
+        WHERE s.rented_by_user_id = ?
+      `);
+      return stmt.all(userId);
+    },
     findByServerId: (serverId) => {
       const stmt = sqlite.prepare('SELECT * FROM spots WHERE server_id = ?');
       return stmt.all(serverId);
@@ -280,8 +289,8 @@ const db = {
     create: (spotData) => {
       const stmt = sqlite.prepare(
         `INSERT INTO spots (
-          server_id, user_id, memory, cpu_cores, hard_drive_size, guid
-        ) VALUES (?, ?, ?, ?, ?, ?) RETURNING *`
+          server_id, user_id, memory, cpu_cores, hard_drive_size, guid, rented_by_user_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING *`
       );
       return stmt.get(
         spotData.server_id,
@@ -289,7 +298,8 @@ const db = {
         spotData.memory || null,
         spotData.cpu_cores || null,
         spotData.hard_drive_size || null,
-        spotData.guid || randomUUID()
+        spotData.guid || randomUUID(),
+        spotData.rented_by_user_id || null
       );
     },
     update: (id, spotData) => {
@@ -298,7 +308,8 @@ const db = {
           memory = ?,
           cpu_cores = ?,
           hard_drive_size = ?,
-          guid = ?
+          guid = ?,
+          rented_by_user_id = ?
         WHERE id = ? RETURNING *`
       );
       return stmt.get(
@@ -306,8 +317,17 @@ const db = {
         spotData.cpu_cores || null,
         spotData.hard_drive_size || null,
         spotData.guid || null,
+        spotData.rented_by_user_id !== undefined ? spotData.rented_by_user_id : null,
         id
       );
+    },
+    updateRentedBy: (id, userId) => {
+      const stmt = sqlite.prepare(
+        `UPDATE spots SET 
+          rented_by_user_id = ?
+        WHERE id = ? RETURNING *`
+      );
+      return stmt.get(userId, id);
     },
     delete: (id) => {
       const stmt = sqlite.prepare('DELETE FROM spots WHERE id = ?');

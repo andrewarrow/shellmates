@@ -4,7 +4,7 @@ const authMiddleware = require('../middleware/auth');
 
 const router = express.Router();
 
-// Get all spots for the logged-in user
+// Get all spots for the logged-in user (spots they created/own)
 router.get('/', authMiddleware, (req, res) => {
   try {
     const spots = db.spots.findByUserId(req.userId);
@@ -12,6 +12,17 @@ router.get('/', authMiddleware, (req, res) => {
   } catch (error) {
     console.error('Error fetching spots:', error);
     res.status(500).json({ message: 'Failed to fetch spots' });
+  }
+});
+
+// Get all spots rented by the logged-in user
+router.get('/rented', authMiddleware, (req, res) => {
+  try {
+    const spots = db.spots.findByRentedUserId(req.userId);
+    res.json(spots);
+  } catch (error) {
+    console.error('Error fetching rented spots:', error);
+    res.status(500).json({ message: 'Failed to fetch rented spots' });
   }
 });
 

@@ -104,6 +104,14 @@ router.post('/initiate-payment', async (req, res) => {
     
     // If buy_url exists, use it directly
     if (stripeSettings.buy_url) {
+      // Store user id in cookie for callback handling
+      res.cookie('user_id', req.userId, { 
+        httpOnly: true, 
+        maxAge: 3600000, // 1 hour
+        sameSite: 'lax',
+        path: '/'
+      });
+      
       return res.json({ buyUrl: stripeSettings.buy_url });
     }
     
@@ -117,6 +125,7 @@ router.post('/initiate-payment', async (req, res) => {
 router.get('/callback', async (req, res) => {
   const { session_id } = req.query;
   const spotGuid = req.cookies?.spot_guid;
+  const userId = req.cookies?.user_id;
   
   if (!spotGuid) {
     return res.redirect('/dashboard?error=missing_spot_reference');
@@ -148,8 +157,19 @@ router.get('/callback', async (req, res) => {
         
         // Check if the payment was successful
         if (session.payment_status === 'paid') {
-          // Clear the cookie
+          // Clear cookies
           res.clearCookie('spot_guid', { path: '/' });
+          res.clearCookie('user_id', { path: '/' });
+          
+          // Update the spot with the user id if available
+          if (userId) {
+            try {
+              db.spots.updateRentedBy(spot.id, userId);
+              console.log(`Updated spot ${spot.id} to be rented by user ${userId}`);
+            } catch (updateError) {
+              console.error(`Error updating spot rented_by_user_id: ${updateError.message}`);
+            }
+          }
           
           // Redirect to dashboard with success message
           return res.redirect('/dashboard?payment=success&spot=' + spotGuid);
@@ -248,8 +268,23 @@ router.post('/webhook', async (req, res) => {
         if (session.payment_status === 'paid') {
           console.log(`Payment successful for spot: ${spotGuid}`);
           
-          // Here you could update the spot status in the database
-          // For example, mark it as paid, activate features, etc.
+          // Find the customer/user ID from the session
+          const customerId = session.customer || session.client_reference_id;
+          
+          // Get the user_id from the session metadata
+          const rentingUserId = session.metadata?.user_id;
+          
+          if (rentingUserId) {
+            // Update the spot to mark it as rented
+            try {
+              db.spots.updateRentedBy(spot.id, rentingUserId);
+              console.log(`Updated spot ${spot.id} to be rented by user ${rentingUserId}`);
+            } catch (updateError) {
+              console.error(`Error updating spot rented_by_user_id: ${updateError.message}`);
+            }
+          } else {
+            console.error('No user_id found in session metadata, cannot update spot rental status');
+          }
           
           // You could also send an email to the user, etc.
         }

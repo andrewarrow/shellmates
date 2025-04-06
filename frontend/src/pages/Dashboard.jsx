@@ -61,7 +61,8 @@ function Dashboard() {
 
     const fetchSpots = async () => {
       try {
-        const response = await axios.get('/api/spots')
+        // Fetch spots rented by current user
+        const response = await axios.get('/api/spots/rented')
         setSpots(response.data)
         setSpotsLoading(false)
       } catch (err) {
@@ -973,7 +974,7 @@ function Dashboard() {
             {/* My Spots Card */}
             <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
               <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
-                <h2 className="font-medium dark:text-white">My Spots</h2>
+                <h2 className="font-medium dark:text-white">My Rented Spots</h2>
                 <Link to="/browse-spots" className="text-sm text-blue-300 hover:underline">
                   Browse Spots
                 </Link>
