@@ -16,7 +16,7 @@
   [ -r /dev/kvm ] && [ -w /dev/kvm ] && echo "OK" || echo "FAIL"
   ARCH="x86_64"
   CI_VERSION="v1.11.0"
-  wget "https://s3.amazonaws.com/spec.ccfc.min/vmlinux-6.1.102"
+  wget "https://s3.amazonaws.com/spec.ccfc.min/vmlinux-6.1.102.bin"
 
   latest_ubuntu_key="ci-artifacts-20230601/x86_64/ubuntu-22.04.squashfs"
   ubuntu_version="22.04"
@@ -30,21 +30,19 @@
   mkfs.ext4 -d squashfs-root -F ubuntu-$ubuntu_version.ext4
   useradd -r -s /bin/false fc_user
 cat > run_jailer.sh << `EOF`
-  JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
-
-  cp ${JAIL_ROOT}/rootfs/ubuntu-24.04.ext4 save
+  cp /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4 save
 
   rm -rf /srv/jailer/firecracker
-  mkdir -p ${JAIL_ROOT}/rootfs
+  mkdir -p /srv/jailer/firecracker/hello-fc/root/rootfs
 
   if [ -s save ]; then
-    mv save ${JAIL_ROOT}/rootfs/ubuntu-24.04.ext4
+    mv save /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4
   else
-    cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs
+    cp ubuntu-24.04.ext4 /srv/jailer/firecracker/hello-fc/root/rootfs
   fi
 
-  cp vmlinux-6.1.102 ${JAIL_ROOT}
-  chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs
+  cp vmlinux-6.1.102 /srv/jailer/firecracker/hello-fc/root
+  chown -R fc_user:fc_user /srv/jailer/firecracker/hello-fc/root/rootfs
   jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock
 `EOF`
   chmod +x run_jailer.sh
