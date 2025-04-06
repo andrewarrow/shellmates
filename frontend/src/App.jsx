@@ -28,7 +28,7 @@ function App() {
       />
       <Route 
         path="/spot/:id" 
-        element={isAuthenticated ? <Spot /> : <Navigate to="/login" />} 
+        element={<Spot />} 
       />
       <Route 
         path="/spots/:id" 

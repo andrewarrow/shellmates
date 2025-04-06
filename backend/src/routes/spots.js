@@ -40,12 +40,23 @@ router.get('/server/:serverId', authMiddleware, (req, res) => {
   }
 });
 
-// Get spot by ID
-router.get('/:id', authMiddleware, (req, res) => {
+// Get spot by ID or GUID
+router.get('/:id', (req, res) => {
   try {
-    const spot = db.spots.findById(req.params.id);
+    let spot;
     
-    if (!spot || spot.user_id !== req.userId) {
+    // Check if the ID is numeric or a GUID
+    const isNumeric = /^\d+$/.test(req.params.id);
+    
+    if (isNumeric) {
+      // If numeric, find by ID
+      spot = db.spots.findById(req.params.id);
+    } else {
+      // Otherwise try to find by GUID
+      spot = db.spots.findByGuid(req.params.id);
+    }
+    
+    if (!spot) {
       return res.status(404).json({ message: 'Spot not found' });
     }
     
