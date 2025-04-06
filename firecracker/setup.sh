@@ -39,8 +39,9 @@ cat > run_jailer.sh << `EOF`
 `EOF`
   chmod +x run_jailer.sh
   ./run_jailer.sh &
+  sleep 1
   API_SOCKET="${JAIL_ROOT}/run/api.sock"
-  cat > run_curls.sh << `EOF`
+  cat > run_curls.sh << EOF
   curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
   curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
   TAP_DEV="tap0"
@@ -58,11 +59,13 @@ cat > run_jailer.sh << `EOF`
   curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "iface_id": "net1", "guest_mac": "06:00:AC:10:00:02", "host_dev_name": "tap0" }' "http://localhost/network-interfaces/net1"
 
   curl -X PUT --unix-socket "${API_SOCKET}" --data '{"vcpu_count": 2, "mem_size_mib": 32768, "smt": false}' "http://localhost/machine-config"
+  sleep 0.015s
   curl -X PUT --unix-socket "${API_SOCKET}" --data '{"action_type": "InstanceStart"}' "http://localhost/actions"
+  sleep 2s
   KEY_NAME=ubuntu-24.04.id_rsa
   ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
   ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
-`EOF`
+EOF
   chmod +x run_curls.sh
   ./run_curls.sh
 
