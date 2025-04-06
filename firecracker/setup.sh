@@ -18,8 +18,8 @@
   CI_VERSION="v1.11.0"
   wget "https://s3.amazonaws.com/spec.ccfc.min/firecracker-ci/v1.11/x86_64/vmlinux-6.1.102"
 
-  latest_ubuntu_key="ci-artifacts-20230601/x86_64/ubuntu-22.04.squashfs"
-  ubuntu_version="22.04"
+  latest_ubuntu_key="firecracker-ci/v1.11/x86_64/ubuntu-24.04.squashfs"
+  ubuntu_version="24.04"
   wget -O ubuntu-$ubuntu_version.squashfs.upstream "https://s3.amazonaws.com/spec.ccfc.min/$latest_ubuntu_key"
   unsquashfs ubuntu-$ubuntu_version.squashfs.upstream
   ssh-keygen -f id_rsa -N ""
@@ -30,17 +30,9 @@
   mkfs.ext4 -d squashfs-root -F ubuntu-$ubuntu_version.ext4
   useradd -r -s /bin/false fc_user
 cat > run_jailer.sh << `EOF`
-  cp /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4 save
-
   rm -rf /srv/jailer/firecracker
   mkdir -p /srv/jailer/firecracker/hello-fc/root/rootfs
-
-  if [ -s save ]; then
-    mv save /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4
-  else
-    cp ubuntu-24.04.ext4 /srv/jailer/firecracker/hello-fc/root/rootfs
-  fi
-
+  cp ubuntu-24.04.ext4 /srv/jailer/firecracker/hello-fc/root/rootfs
   cp vmlinux-6.1.102 /srv/jailer/firecracker/hello-fc/root
   chown -R fc_user:fc_user /srv/jailer/firecracker/hello-fc/root/rootfs
   jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock
