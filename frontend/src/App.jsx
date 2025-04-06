@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import SingleServer from './pages/SingleServer'
+import Spot from './pages/Spot'
 
 function App() {
   const { isAuthenticated } = useAuth()
@@ -27,7 +28,11 @@ function App() {
       />
       <Route 
         path="/spot/:id" 
-        element={isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} 
+        element={isAuthenticated ? <Spot /> : <Navigate to="/login" />} 
+      />
+      <Route 
+        path="/spots/:id" 
+        element={<Spot />} 
       />
     </Routes>
   )

@@ -113,20 +113,20 @@ function SplashPage() {
             
             <h2 className="text-2xl font-semibold text-center mb-6">Available Spots from Our Community</h2>
             <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-primary-800 rounded-lg p-4 flex flex-col items-center">
+              <Link to="/spots/ABC123" className="bg-primary-800 rounded-lg p-4 flex flex-col items-center">
                 <div className="w-20 h-20 rounded-full bg-primary-300 mb-3 overflow-hidden">
-                  <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Sarah K." className="w-full h-full object-cover" />
+                  <img src="https://avatars.githubusercontent.com/u/127054?v=4" alt="Andrew A." className="w-full h-full object-cover" />
                 </div>
-                <h3 className="font-semibold">Sarah K. offers:</h3>
-                <p className="text-center">16GB RAM, 2 cores, 128GB SSD</p>
-                <p className="text-primary-300 mt-1">$15/month - Berlin</p>
-              </div>
+                <h3 className="font-semibold">Andrew A. offers:</h3>
+                <p className="text-center">32GB RAM, 2 cores, 200GB SSD</p>
+                <p className="text-primary-300 mt-1">$18.07/month USD - Germany</p>
+              </Link>
               <div className="bg-primary-800 rounded-lg p-4 flex flex-col items-center">
                 <div className="w-20 h-20 rounded-full bg-primary-300 mb-3 overflow-hidden">
                   <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="David T." className="w-full h-full object-cover" />
                 </div>
                 <h3 className="font-semibold">David T. offers:</h3>
-                <p className="text-center">32GB RAM, 4 cores, 256GB SSD</p>
+                <p className="text-center">16GB RAM, 4 cores, 128GB HDD</p>
                 <p className="text-primary-300 mt-1">$22/month - San Francisco</p>
               </div>
               <div className="bg-primary-800 rounded-lg p-4 flex flex-col items-center">
