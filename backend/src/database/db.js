@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const Database = require('better-sqlite3');
 const bcrypt = require('bcrypt');
+const { randomUUID } = require('crypto');
 
 // Database setup
 const dbPath = path.join(__dirname, '../../data/traffic.db');
@@ -229,6 +230,15 @@ const db = {
       const stmt = sqlite.prepare('SELECT * FROM spots WHERE server_id = ?');
       return stmt.all(serverId);
     },
+    findByGuid: (guid) => {
+      const stmt = sqlite.prepare(`
+        SELECT s.*, srv.name as server_name, srv.ip_address 
+        FROM spots s
+        JOIN servers srv ON s.server_id = srv.id
+        WHERE s.guid = ?
+      `);
+      return stmt.get(guid);
+    },
     findById: (id) => {
       const stmt = sqlite.prepare(`
         SELECT s.*, srv.name as server_name, srv.ip_address 
@@ -241,15 +251,16 @@ const db = {
     create: (spotData) => {
       const stmt = sqlite.prepare(
         `INSERT INTO spots (
-          server_id, user_id, memory, cpu_cores, hard_drive_size
-        ) VALUES (?, ?, ?, ?, ?) RETURNING *`
+          server_id, user_id, memory, cpu_cores, hard_drive_size, guid
+        ) VALUES (?, ?, ?, ?, ?, ?) RETURNING *`
       );
       return stmt.get(
         spotData.server_id,
         spotData.user_id,
         spotData.memory || null,
         spotData.cpu_cores || null,
-        spotData.hard_drive_size || null
+        spotData.hard_drive_size || null,
+        spotData.guid || randomUUID()
       );
     },
     update: (id, spotData) => {
@@ -257,13 +268,15 @@ const db = {
         `UPDATE spots SET 
           memory = ?,
           cpu_cores = ?,
-          hard_drive_size = ?
+          hard_drive_size = ?,
+          guid = ?
         WHERE id = ? RETURNING *`
       );
       return stmt.get(
         spotData.memory || null,
         spotData.cpu_cores || null,
         spotData.hard_drive_size || null,
+        spotData.guid || null,
         id
       );
     },

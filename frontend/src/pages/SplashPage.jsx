@@ -113,7 +113,7 @@ function SplashPage() {
             
             <h2 className="text-2xl font-semibold text-center mb-6">Available Spots from Our Community</h2>
             <div className="grid md:grid-cols-3 gap-6">
-              <Link to="/spots/ABC123" className="bg-primary-800 rounded-lg p-4 flex flex-col items-center">
+              <Link to="/spots/c8f3c470-f353-4804-bd5c-a5c30bba7dbb" className="bg-primary-800 rounded-lg p-4 flex flex-col items-center">
                 <div className="w-20 h-20 rounded-full bg-primary-300 mb-3 overflow-hidden">
                   <img src="https://avatars.githubusercontent.com/u/127054?v=4" alt="Andrew A." className="w-full h-full object-cover" />
                 </div>
