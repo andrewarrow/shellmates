@@ -1,1 +1,33 @@
+[Unit]
+Description=Firecracker Jailer Service
+After=network.target
+Requires=network.target
 
+[Service]
+Type=simple
+User=root
+Group=root
+
+# Execute the startup script
+ExecStart=/usr/local/bin/start-firecracker.sh
+
+# Security settings
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_DAC_OVERRIDE CAP_CHOWN CAP_SETUID CAP_SETGID
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_DAC_OVERRIDE CAP_CHOWN CAP_SETUID CAP_SETGID
+SecureBits=keep-caps
+
+# Restart configuration
+Restart=on-failure
+RestartSec=5s
+
+# Resource limits
+LimitNOFILE=1048576
+LimitMEMLOCK=infinity
+
+# Kill the service with SIGTERM, wait 10s, then SIGKILL
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target
