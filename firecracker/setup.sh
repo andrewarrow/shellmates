@@ -41,7 +41,7 @@ FC_USER="fc_user"
 ROOTFS_SOURCE="/root/fc/ubuntu-24.04.ext4"
 KERNEL_SOURCE="/root/fc/vmlinux-6.1.102"
 
-if [ -d "/srv/jailer/firecracker/hello-fc/root" ] && [ -f "/srv/jailer/firecracker/hello-fc/root/rootfs/" ]; then
+if [ -d "/srv/jailer/firecracker/hello-fc/root/rootfs" ] && [ -f "/srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4" ]; then
   cp /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4 /tmp/fc-rootfs-save
 fi
 
@@ -49,7 +49,7 @@ rm -rf /srv/jailer/firecracker
 mkdir -p "/srv/jailer/firecracker/hello-fc/root/rootfs"
 
 if [ -s /tmp/fc-rootfs-save ]; then
-  mv /tmp/fc-rootfs-save /srv/jailer/firecracker/hello-fc/root/rootfs/
+  mv /tmp/fc-rootfs-save /srv/jailer/firecracker/hello-fc/root/rootfs/ubuntu-24.04.ext4
   echo "Restored previous rootfs image"
 else
   cp /root/fc/ubuntu-24.04.ext4 /srv/jailer/firecracker/hello-fc/root/rootfs/
@@ -94,24 +94,23 @@ EOF
   systemctl daemon-reload
   systemctl enable fcjail.service
   systemctl start fcjail.service
-  sleep 2
-cat > run_curls.sh << 'EOF'
-  JAIL_ROOT="/srv/jailer/firecracker/root"
-  API_SOCKET="${JAIL_ROOT}/run/api.sock"
   TAP_DEV="tap0"
   TAP_IP="172.16.0.1"
   MASK_SHORT="/30"
-  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
-  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
   ip link del "$TAP_DEV" 2> /dev/null || true
   ip tuntap add dev "$TAP_DEV" mode tap
   ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
   ip link set dev "$TAP_DEV" up
   sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
   iptables -P FORWARD ACCEPT
-  HOST_IFACE=$(ip -j route list default |jq -r ".[0].dev")
+  HOST_IFACE="enp0s31f6"
   iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
   iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
+cat > run_curls.sh << 'EOF'
+  JAIL_ROOT="/srv/jailer/firecracker/root"
+  API_SOCKET="${JAIL_ROOT}/run/api.sock"
+  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
+  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
   curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "iface_id": "net1", "guest_mac": "06:00:AC:10:00:02", "host_dev_name": "tap0" }' "http://localhost/network-interfaces/net1"
 
   curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{"vcpu_count": 2, "mem_size_mib": 32768, "smt": false}' "http://localhost/machine-config"
@@ -123,4 +122,5 @@ cat > run_curls.sh << 'EOF'
   ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
 'EOF'
   chmod +x run_curls.sh
+  sleep 5s
   ./run_curls.sh
