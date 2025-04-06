@@ -96,17 +96,17 @@ function SplashPage() {
             <h2 className="text-2xl font-semibold text-center mb-6">Bare Metal Servers You Can Split</h2>
             <div className="grid md:grid-cols-3 gap-6 mb-8">
               <div className="text-center bg-primary-800 rounded-lg p-4">
-                <h3 className="text-xl font-semibold mb-2"><a className="link hover:underline" href="https://hetzner.cloud/?ref=rROuQ1YPYg9q">Hetzner</a></h3>
+                <h3 className="text-xl font-semibold mb-2"><a className="link hover:underline" href="https://hetzner.com/?ref=shellmates">Hetzner</a></h3>
                 <p>64 GB RAM, Intel Core i7-6700, 2x SSD 512 GB for $34.50</p>
                 <p className="mt-2 text-primary-200">Split into 2 VMs with 32GB RAM each</p>
               </div>
               <div className="text-center bg-primary-800 rounded-lg p-4">
-                <h3 className="text-xl font-semibold mb-2"><a className="link hover:underline" href="https://us.ovhcloud.com/bare-metal/rise/">OVH Rise</a></h3>
+                <h3 className="text-xl font-semibold mb-2"><a className="link hover:underline" href="https://us.ovhcloud.com/bare-metal/rise?ref=shellmates">OVH Rise</a></h3>
                 <p>32 GB RAM, Intel Xeon-E 2386G - 6c/12t - 3.5GHz/4.7GHz, 2x 4TB HDD for $66.50</p>
                 <p className="mt-2 text-primary-200">Split into 3 VMs with 10GB RAM each</p>
               </div>
               <div className="text-center bg-primary-800 rounded-lg p-4">
-                <h3 className="text-xl font-semibold mb-2"><a className="link hover:underline" href="https://www.liquidweb.com/dedicated-server-hosting/bare-metal/">LiquidWeb</a></h3>
+                <h3 className="text-xl font-semibold mb-2"><a className="link hover:underline" href="https://www.liquidweb.com/dedicated-server-hosting/bare-metal?ref=shellmates">LiquidWeb</a></h3>
                 <p>16 GB memory, Intel E-2134 4 core @ 3.5 GHz, 2×480 GB SSD for $44.00</p>
                 <p className="mt-2 text-primary-200">Split into 2 VMs with 8GB RAM each</p>
               </div>

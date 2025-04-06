@@ -1051,7 +1051,7 @@ function Dashboard() {
               <div className="p-6 flex justify-center items-center h-48 dark:text-gray-300">
                 <div className="text-center text-gray-500 dark:text-gray-400">
                   <div>Do you want to rent the server and be the sysop?
-    <a href="https://www.hetzner.com/" class="text-sm text-blue-300 hover:underline">Hetzner</a> <a href="https://www.ovhcloud.com/" class="text-sm text-blue-300 hover:underline">OVH</a> <a href="https://www.liquidweb.com/" class="text-sm text-blue-300 hover:underline">Liquid Web</a>
+    <a href="https://www.hetzner.com/?ref=shellmates" class="text-sm text-blue-300 hover:underline">Hetzner</a> <a href="https://www.ovhcloud.com/?ref=shellmates" class="text-sm text-blue-300 hover:underline">OVH</a> <a href="https://www.liquidweb.com/?ref=shellmates" class="text-sm text-blue-300 hover:underline">Liquid Web</a>
 
     </div>
                   <div className="text-3xl mb-2">☯️</div>

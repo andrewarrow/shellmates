@@ -14,7 +14,9 @@ function SingleServer() {
   const [spotsLoading, setSpotsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [spotsError, setSpotsError] = useState(null)
-  const [showAddSpotModal, setShowAddSpotModal] = useState(false)
+  const [showSpotModal, setShowSpotModal] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [selectedSpotId, setSelectedSpotId] = useState(null)
   const [newSpot, setNewSpot] = useState({
     server_id: id,
     memory: '',
@@ -66,21 +68,64 @@ function SingleServer() {
     setNewSpot(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleAddSpot = async (e) => {
+  const handleOpenAddSpotModal = () => {
+    setIsEditing(false)
+    setSelectedSpotId(null)
+    setNewSpot({
+      server_id: id,
+      memory: '',
+      cpu_cores: '',
+      hard_drive_size: ''
+    })
+    setShowSpotModal(true)
+  }
+
+  const handleOpenEditSpotModal = (spot) => {
+    setIsEditing(true)
+    setSelectedSpotId(spot.id)
+    setNewSpot({
+      server_id: id,
+      memory: spot.memory || '',
+      cpu_cores: spot.cpu_cores || '',
+      hard_drive_size: spot.hard_drive_size || ''
+    })
+    setShowSpotModal(true)
+  }
+
+  const handleSubmitSpot = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.post('/api/spots', newSpot)
-      setSpots(prev => [...prev, response.data])
+      if (isEditing && selectedSpotId) {
+        // Update existing spot
+        const response = await axios.put(`/api/spots/${selectedSpotId}`, {
+          memory: newSpot.memory,
+          cpu_cores: newSpot.cpu_cores,
+          hard_drive_size: newSpot.hard_drive_size
+        })
+        
+        // Update the spots list with the edited spot
+        setSpots(prev => prev.map(spot => 
+          spot.id === selectedSpotId ? { ...spot, ...response.data } : spot
+        ))
+      } else {
+        // Create new spot
+        const response = await axios.post('/api/spots', newSpot)
+        setSpots(prev => [...prev, response.data])
+      }
+      
+      // Reset form and close modal
       setNewSpot({
         server_id: id,
         memory: '',
         cpu_cores: '',
         hard_drive_size: ''
       })
-      setShowAddSpotModal(false)
+      setShowSpotModal(false)
+      setIsEditing(false)
+      setSelectedSpotId(null)
     } catch (err) {
-      console.error('Error adding spot:', err)
-      setSpotsError('Failed to add spot')
+      console.error(`Error ${isEditing ? 'updating' : 'adding'} spot:`, err)
+      setSpotsError(`Failed to ${isEditing ? 'update' : 'add'} spot`)
     }
   }
 
@@ -136,7 +181,7 @@ function SingleServer() {
                 <h1 className="text-2xl font-bold">{server.name}</h1>
                 <button 
                   onClick={handleBack}
-                  className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+                  className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-md hover:bg-gray-300 dark:hover:bg-gray-600"
                 >
                   Back to Dashboard
                 </button>
@@ -194,7 +239,7 @@ function SingleServer() {
                     <div className="flex justify-between items-center mb-4">
                       <h2 className="text-lg font-medium dark:text-white">Server Spots</h2>
                       <button 
-                        onClick={() => setShowAddSpotModal(true)}
+                        onClick={handleOpenAddSpotModal}
                         className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
                       >
                         Add Spot +
@@ -243,6 +288,12 @@ function SingleServer() {
                               </div>
                               <div className="flex space-x-2">
                                 <button 
+                                  className="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 text-xs"
+                                  onClick={() => handleOpenEditSpotModal(spot)}
+                                >
+                                  Edit
+                                </button>
+                                <button 
                                   className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs"
                                   onClick={() => navigate(`/spot/${spot.id}`)}
                                 >
@@ -290,21 +341,21 @@ function SingleServer() {
         </div>
       </main>
 
-      {/* Add Spot Modal */}
-      {showAddSpotModal && (
+      {/* Spot Modal (Add/Edit) */}
+      {showSpotModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium">Add New Spot</h3>
+              <h3 className="text-lg font-medium">{isEditing ? 'Edit Spot' : 'Add New Spot'}</h3>
               <button 
-                onClick={() => setShowAddSpotModal(false)}
+                onClick={() => setShowSpotModal(false)}
                 className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               >
                 ✕
               </button>
             </div>
             
-            <form onSubmit={handleAddSpot}>
+            <form onSubmit={handleSubmitSpot}>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -365,7 +416,7 @@ function SingleServer() {
               <div className="mt-6 flex justify-end space-x-3">
                 <button
                   type="button"
-                  onClick={() => setShowAddSpotModal(false)}
+                  onClick={() => setShowSpotModal(false)}
                   className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                 >
                   Cancel
@@ -374,7 +425,7 @@ function SingleServer() {
                   type="submit"
                   className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
                 >
-                  Add Spot
+                  {isEditing ? 'Save Changes' : 'Add Spot'}
                 </button>
               </div>
             </form>

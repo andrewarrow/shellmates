@@ -20,9 +20,9 @@ function Footer() {
           <div>
             <h3 className="text-lg font-semibold text-primary-300 mb-4">Providers</h3>
             <ul className="space-y-2 text-gray-400">
-              <li><a href="https://www.hetzner.com/" className="hover:text-primary-300 transition-colors">Hetzner</a></li>
-              <li><a href="https://www.ovhcloud.com/" className="hover:text-primary-300 transition-colors">OVH</a></li>
-              <li><a href="https://www.liquidweb.com/" className="hover:text-primary-300 transition-colors">Liquid Web</a></li>
+              <li><a href="https://www.hetzner.com/?ref=shellmates" className="hover:text-primary-300 transition-colors">Hetzner</a></li>
+              <li><a href="https://www.ovhcloud.com/?ref=shellmates" className="hover:text-primary-300 transition-colors">OVH</a></li>
+              <li><a href="https://www.liquidweb.com/?ref=shellmates" className="hover:text-primary-300 transition-colors">Liquid Web</a></li>
             </ul>
           </div>
           <div>

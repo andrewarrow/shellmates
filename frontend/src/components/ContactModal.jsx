@@ -11,10 +11,13 @@ function ContactModal({ isOpen, onClose, email }) {
   // Use a safe email value that is guaranteed to not be undefined
   const safeEmail = email || defaultEmail;
   
-  const handleCopyEmail = () => {
+  const handleCopyEmail = (e) => {
+    // Prevent any default behavior
+    e?.preventDefault();
+    
     if (emailRef.current) {
-      // Get the value directly from the input field for safety
-      const emailToCopy = emailRef.current.value || defaultEmail;
+      // Use the safeEmail directly instead of getting from input value
+      const emailToCopy = safeEmail;
       
       navigator.clipboard.writeText(emailToCopy)
         .then(() => {
@@ -60,7 +63,8 @@ function ContactModal({ isOpen, onClose, email }) {
                 className="flex-grow px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md shadow-sm focus:outline-none dark:bg-gray-700 dark:text-white"
               />
               <button
-                onClick={handleCopyEmail}
+                type="button"
+                onClick={(e) => handleCopyEmail(e)}
                 className={`px-4 py-2 border border-transparent rounded-r-md shadow-sm text-sm font-medium text-white ${
                   copySuccess ? 'bg-green-600' : 'bg-indigo-600 hover:bg-indigo-700'
                 } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
@@ -76,6 +80,7 @@ function ContactModal({ isOpen, onClose, email }) {
           
           <div className="flex justify-end mt-6">
             <button
+              type="button"
               onClick={onClose}
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
