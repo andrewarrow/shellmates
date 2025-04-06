@@ -49,7 +49,7 @@ function SingleServer() {
   }
 
   return (
-    <Layout>
+    <Layout hideNavLink>
       {/* Top Navigation Bar */}
       <header className="bg-gray-900 text-white">
         <div className="flex items-center justify-between px-4 py-2">
