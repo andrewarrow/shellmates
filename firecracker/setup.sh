@@ -96,7 +96,6 @@ EOF
   chmod 644 /etc/systemd/system/fcjail.service
   systemctl daemon-reload
   systemctl enable fcjail.service
-  systemctl start fcjail.service
   #TAP_DEV="tap0"
   #TAP_IP="172.16.0.1"
   #MASK_SHORT="/30"
@@ -165,22 +164,20 @@ COMMIT
 # Completed on Sun Apr  6 21:49:00 2025
 EOF
   systemctl restart iptables
-cat > run_curls.sh << 'EOF'
-  JAIL_ROOT="/srv/jailer/firecracker/root"
-  API_SOCKET="${JAIL_ROOT}/run/api.sock"
-  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
-  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
-  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "iface_id": "net1", "guest_mac": "06:00:AC:10:00:02", "host_dev_name": "tap0" }' "http://localhost/network-interfaces/net1"
-
-  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{"vcpu_count": 2, "mem_size_mib": 32768, "smt": false}' "http://localhost/machine-config"
+cat > run_curls.sh << EOF
+  JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
+  API_SOCKET="\${JAIL_ROOT}/run/api.sock"
+  curl -i -X PUT --unix-socket "\${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
+  curl -i -X PUT --unix-socket "\${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
+  curl -i -X PUT --unix-socket "\${API_SOCKET}" --data '{ "iface_id": "net1", "guest_mac": "06:00:AC:10:00:02", "host_dev_name": "tap0" }' "http://localhost/network-interfaces/net1"
+  curl -i -X PUT --unix-socket "\${API_SOCKET}" --data '{"vcpu_count": 2, "mem_size_mib": 32768, "smt": false}' "http://localhost/machine-config"
   sleep 0.015s
-  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{"action_type": "InstanceStart"}' "http://localhost/actions"
+  curl -i -X PUT --unix-socket "\${API_SOCKET}" --data '{"action_type": "InstanceStart"}' "http://localhost/actions"
   sleep 2s
   KEY_NAME=/root/fc/ubuntu-24.04.id_rsa
-  ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
-  ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+  ssh -i \$KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
+  ssh -i \$KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
   exit 0
 EOF
   chmod +x run_curls.sh
-  sleep 5s
-  ./run_curls.sh
+  systemctl start fcjail.service
