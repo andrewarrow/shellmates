@@ -107,33 +107,6 @@ router.post('/initiate-payment', async (req, res) => {
       return res.json({ buyUrl: stripeSettings.buy_url });
     }
     
-    // Otherwise create a Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: `Spot on server ${spot.server_name || 'Server'}`,
-              description: `${spot.memory || ''} RAM, ${spot.cpu_cores || ''} CPU cores`
-            },
-            unit_amount: 1000, // $10.00 - You'd want to set this dynamically
-          },
-          quantity: 1,
-        },
-      ],
-      mode: 'payment',
-      success_url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/stripe?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/dashboard?payment=cancelled`,
-      metadata: {
-        spot_guid: spotGuid // Include the spot guid in metadata for the webhook
-      },
-    });
-    
-    // Return the checkout URL to redirect to
-    res.json({ buyUrl: session.url });
-    
   } catch (error) {
     console.error('Error initiating payment:', error);
     res.status(500).json({ message: 'Failed to initiate payment process' });

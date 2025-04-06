@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import Layout from '../components/Layout'
 import AccountEditModal from '../components/AccountEditModal'
+import SSHKeyModal from '../components/SSHKeyModal'
 import axios from 'axios'
 
 function Dashboard() {
@@ -18,6 +19,7 @@ function Dashboard() {
   const [showAddSpotModal, setShowAddSpotModal] = useState(false)
   const [showStripeModal, setShowStripeModal] = useState(false)
   const [showAccountModal, setShowAccountModal] = useState(false)
+  const [showSSHKeyModal, setShowSSHKeyModal] = useState(false)
   const [servers, setServers] = useState([])
   const [spots, setSpots] = useState([])
   const [stripeSettings, setStripeSettings] = useState({
@@ -343,64 +345,10 @@ function Dashboard() {
           {/* Left Side - Logo & Service Menu */}
           <div className="flex items-center space-x-6">
             <div className="text-xl font-bold"><a href="/">shellmates</a></div>
-            
-            {/* Service Menu */}
-            <div className="relative">
-              <button 
-                onClick={() => setShowServiceMenu(!showServiceMenu)}
-                className="flex items-center space-x-1 px-3 py-1 hover:bg-gray-800 rounded-md"
-              >
-                <span>Services</span>
-                <span className="text-xs">▼</span>
-              </button>
-              
-              {showServiceMenu && (
-                <div className="absolute left-0 mt-1 w-64 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-lg rounded-md z-10">
-                  <div className="p-3 border-b border-gray-200 dark:border-gray-700">
-                    <input 
-                      type="text" 
-                      placeholder="Find a service" 
-                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md"
-                    />
-                  </div>
-                  <div className="p-2">
-                    <div className="font-bold px-2 py-1 text-sm text-gray-600 dark:text-gray-400">Recently visited</div>
-                    <div className="flex items-start p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer" onClick={() => window.location.href = '/ec2'}>
-                      <span className="text-xl mr-2">🖥️</span>
-                      <div>
-                        <div className="font-medium dark:text-white">EC2</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">Virtual servers in the cloud</div>
-                      </div>
-                    </div>
-                    <div className="flex items-start p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer">
-                      <span className="text-xl mr-2">📦</span>
-                      <div>
-                        <div className="font-medium dark:text-white">S3</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">Scalable storage in the cloud</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
-          
+            
           {/* Right Side - Search, Region, User Menu */}
           <div className="flex items-center space-x-4">
-            {/* Search Bar */}
-            <div className="hidden md:block">
-              <input 
-                type="text" 
-                placeholder="Search" 
-                className="px-3 py-1 bg-gray-800 rounded-md text-white w-64"
-              />
-            </div>
-            
-            {/* Region Selector */}
-            <div className="flex items-center space-x-1 px-2 py-1 hover:bg-gray-800 rounded-md cursor-pointer">
-              <span className="hidden sm:inline">US East (N. Virginia)</span>
-              <span className="sm:hidden">us-east-1</span>
-            </div>
             
             {/* User Menu */}
             <div className="relative">
@@ -428,7 +376,15 @@ function Dashboard() {
                     >
                       Account
                     </div>
-                    <div className="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Security credentials</div>
+                    <div 
+                      className="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                      onClick={() => {
+                        setShowSSHKeyModal(true);
+                        setShowUserMenu(false);
+                      }}
+                    >
+                      SSH Key
+                    </div>
                     <div 
                       className="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                       onClick={() => {
@@ -1245,6 +1201,12 @@ function Dashboard() {
       <AccountEditModal 
         isOpen={showAccountModal} 
         onClose={() => setShowAccountModal(false)} 
+      />
+      
+      {/* SSH Key Modal */}
+      <SSHKeyModal
+        isOpen={showSSHKeyModal}
+        onClose={() => setShowSSHKeyModal(false)}
       />
     </Layout>
   )

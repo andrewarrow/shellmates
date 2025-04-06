@@ -129,11 +129,11 @@ const db = {
       return stmt.get(username, password, new Date().toISOString());
     },
     updateProfile: (userId, profileData) => {
-      const { email, first_name, last_name } = profileData;
+      const { email, first_name, last_name, ssh_key } = profileData;
       const stmt = sqlite.prepare(
-        'UPDATE users SET email = ?, first_name = ?, last_name = ? WHERE id = ? RETURNING *'
+        'UPDATE users SET email = ?, first_name = ?, last_name = ?, ssh_key = ? WHERE id = ? RETURNING *'
       );
-      return stmt.get(email, first_name, last_name, userId);
+      return stmt.get(email, first_name, last_name, ssh_key, userId);
     }
   },
   stripes: {

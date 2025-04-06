@@ -310,13 +310,24 @@ function Spot() {
                       <div className="flex space-x-3">
                         <button 
                           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                          onClick={handleOpenContactModal}
+                          onClick={() => {
+                            if (!currentUser) {
+                              navigate('/login');
+                            } else {
+                              handleOpenContactModal();
+                            }
+                          }}
                         >
                           Contact Owner
                         </button>
                         <button 
                           className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                           onClick={async () => {
+                            if (!currentUser) {
+                              navigate('/login');
+                              return;
+                            }
+                            
                             if (!spot.guid) {
                               console.log('Missing guid for spot:', spot);
                               alert('Unable to process payment for this spot');

@@ -101,7 +101,8 @@ router.get('/verify', auth, (req, res) => {
       username: user.username,
       email: user.email,
       first_name: user.first_name,
-      last_name: user.last_name
+      last_name: user.last_name,
+      ssh_key: user.ssh_key
     };
     
     res.json({ user: userResponse });
@@ -114,7 +115,7 @@ router.get('/verify', auth, (req, res) => {
 // Update user profile
 router.put('/profile', auth, (req, res) => {
   try {
-    const { email, first_name, last_name } = req.body;
+    const { email, first_name, last_name, ssh_key } = req.body;
     const user = db.users.findById(req.userId);
     
     if (!user) {
@@ -124,7 +125,7 @@ router.put('/profile', auth, (req, res) => {
     // Update user profile fields
     const updatedUser = db.users.updateProfile(
       req.userId,
-      { email, first_name, last_name }
+      { email, first_name, last_name, ssh_key }
     );
     
     // Send updated user info without password
@@ -133,7 +134,8 @@ router.put('/profile', auth, (req, res) => {
       username: updatedUser.username,
       email: updatedUser.email,
       first_name: updatedUser.first_name,
-      last_name: updatedUser.last_name
+      last_name: updatedUser.last_name,
+      ssh_key: updatedUser.ssh_key
     };
     
     res.json({ user: userResponse });
