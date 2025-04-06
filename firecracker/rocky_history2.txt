@@ -1,0 +1,255 @@
+       TAP_DEV="tap0"
+    2  TAP_IP="172.16.0.1"
+    3  MASK_SHORT="/30"
+    4  sudo ip link del "$TAP_DEV" 2> /dev/null || true
+    5  sudo ip tuntap add dev "$TAP_DEV" mode tap
+    6  sudo ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
+    7  sudo ip link set dev "$TAP_DEV" up
+    8  sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+    9  sudo iptables -P FORWARD ACCEPT
+   10  HOST_IFACE=$(ip -j route list default |jq -r '.[0].dev')
+   11  sudo iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+   12  sudo iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
+   13  sudo iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+   14  sudo iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
+   15  API_SOCKET="/tmp/firecracker.socket"
+   16  LOGFILE="./firecracker.log"
+   17  echo $API_SOCKET
+   18  touch $LOGFILE
+   19  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+   20          \"log_path\": \"${LOGFILE}\",
+   21          \"level\": \"Debug\",
+   22          \"show_level\": true,
+   23          \"show_log_origin\": true
+   24      }"     "http://localhost/logger"
+   25  KERNEL="./$(ls vmlinux* | tail -1)"
+   26  KERNEL_BOOT_ARGS="console=ttyS0 reboot=k panic=1 pci=off"
+   27  ARCH=$(uname -m)
+   28  uname -m
+   29  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+   30          \"kernel_image_path\": \"${KERNEL}\",
+   31          \"boot_args\": \"${KERNEL_BOOT_ARGS}\"
+   32      }"     "http://localhost/boot-source"
+   33  ROOTFS="./$(ls *.ext4 | tail -1)"
+   34  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+   35          \"drive_id\": \"rootfs\",
+   36          \"path_on_host\": \"${ROOTFS}\",
+   37          \"is_root_device\": true,
+   38          \"is_read_only\": false
+   39      }"     "http://localhost/drives/rootfs"
+   40  FC_MAC="06:00:AC:10:00:02"
+   41  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+   42          \"iface_id\": \"net1\",
+   43          \"guest_mac\": \"$FC_MAC\",
+   44          \"host_dev_name\": \"$TAP_DEV\"
+   45      }"     "http://localhost/network-interfaces/net1"
+   46  sudo curl -X PUT --unix-socket "${API_SOCKET}"     --data "{
+   47          \"action_type\": \"InstanceStart\"
+   48      }"     "http://localhost/actions"
+   49  KEY_NAME=./$(ls *.id_rsa | tail -1)
+   50  ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
+   51  ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+   52  ssh -i $KEY_NAME root@172.16.0.2
+   53  killall firecracker
+   54  ls
+   55  pwd
+   56  mkdir os
+   57  cd os
+   58  ls
+   59  git clone https://github.com/firecracker-microvm/firecracker.git
+   60  dnf install git
+   61  git clone https://github.com/firecracker-microvm/firecracker.git
+   62  cd sr
+   63  cd firecracker/
+   64  ls
+   65  cd src/
+   66  ls
+   67  cd jailer/
+   68  ls
+   69  dnf install cargo
+   70  ls
+   71  cargo build
+   72  dnf upgrade cargo
+   73  cd ..
+   74  git clone https://github.com/rust-lang/cargo.git
+   75  cd cargo/
+   76  ls
+   77  dnf install gcc
+   78  cargo build --release
+   79  rustc
+   80  rustc -v
+   81  rustc --version
+   82  cd ..
+   83  git clone https://github.com/rust-lang/rust.git
+   84  git clone --depth=1 https://github.com/rust-lang/rust.git
+   85  cd rust/
+   86  ls
+   87  ./x.py
+   88  which rustc
+   89  rustc --version
+   90  ls
+   91  ./configure 
+   92  python3 /root/os/rust/x.py --help
+   93  ./x.py build
+   94  dnf install cmake
+   95  ./x.py build
+   96  dnf install c++
+   97  sudo dnf groupinstall "Development Tools" "C Development Tools and Libraries" "C++ Development Tools and Libraries"
+   98  dnf group install "c-development"
+   99  sudo dnf group list
+  100  dnf group install "development-tools"
+  101  sudo dnf group install "Development Tools"
+  102  ./x.py build
+  103  dnf install ninja
+  104  dnf install ninja-build
+  105  dnf search ninja
+  106  dnf search ninja-build
+  107  sudo dnf clean all
+  108  sudo dnf makecache
+  109  dnf install ninja-build
+  110  wget https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-linux.zip
+  111  ls
+  112  unzip ninja-linux.zip
+  113  mv ninja /usr/local/bin/
+  114  ninja --version
+  115  ./x.py build
+  116  ./x.py install
+  117  which rustc
+  118  rustc --version
+  119  ls -l /usr/local/bin/rustc
+  120  ls
+  121  cd build/
+  122  ls
+  123  cd dist/
+  124  ls
+  125  ls -l
+  126  cd ..
+  127  ls
+  128  cd x86_64-unknown-linux-gnu/
+  129  ls
+  130  ./stage0-rustc/release/build/rustc-main-e0ebf66fc8122e34/build
+  131  ./stage0-rustc/release/build/rustc-main-e0ebf66fc8122e34
+  132  ls ./stage0-rustc/release/build/rustc-main-e0ebf66fc8122e34
+  133  ls
+  134  cd ..
+  135  ls
+  136  cd x86_64-unknown-linux-gnu/
+  137  ls
+  138  cd stage0
+  139  ls
+  140  cd ..
+  141  cd stage2
+  142  ls
+  143  cd bin
+  144  ls
+  145  ./rustc --version
+  146  hitory
+  147  ls
+  148  history
+  149  cp * /usr/local/bin/
+  150  cd ..
+  151  ls
+  152  rustc --version
+  153  which rustc
+  154  ls -l /usr/local/bin/rustc
+  155  /usr/local/bin/rustc --version
+  156  rustc --version
+  157  which rustc
+  158  exit
+  159  rustc --version
+  160  cd os
+  161  cd rust/
+  162  ls
+  163  cd build/
+  164  ls
+  165  cd x86_64-unknown-linux-gnu/
+  166  ls
+  167  cd stage1-toolsb
+  168  cd stage1-tools-bin/
+  169  ls
+  170  cp * /usr/local/bin/
+  171  y
+  172  ls
+  173  cd ..
+  174  ls
+  175  exit
+  176  ls
+  177  cd firecracker
+  178  cd os
+  179  ls
+  180  cd firecracker/src/jailer/
+  181  ls
+  182  cargo build
+  183  ls
+  184  pwd
+  185  ls
+  186  ls src/
+  187  cd ..
+  188  ls
+  189  cd build/
+  190  ls
+  191  cd cargo_target/
+  192  ls
+  193  cd debug/
+  194  ls
+  195  ls -l
+  196  ./jailer 
+  197  cp jailer /usr/local/bin/
+  198  ls jailer.d
+  199  ls jailer.d/
+  200  file jailer
+  201  file jailer.d
+  202  more jailer.d
+  203  ls
+  204  cd ..
+  205  ls
+  206  sudo mkdir -p /srv/jailer/firecracker/root
+  207  cp vmlinux-6.1.102 /srv/jailer/firecracker/
+  208  cp ubuntu-24.04.ext4 /srv/jailer/firecracker/
+  209  cp ubuntu-24.04.ext4.id_rsa /srv/jailer/firecracker/
+  210  cp ubuntu-24.044.id_rsa /srv/jailer/firecracker/
+  211  cp ubuntu-24.04.id_rsa /srv/jailer/firecracker/
+  212  sudo useradd -r -s /bin/false fc_user
+  213  sudo mkdir -p /sys/fs/cgroup/cpu/firecracker
+  214  sudo chown -R fc_user:fc_user /sys/fs/cgroup/cpu/firecracker
+  215  ls
+  216  ./firecracker --version
+  217  cp firecracker /usr/local/bin/
+  218  jailer   --id hello-fc   --uid $(id -u fc_user)   --gid $(id -g fc_user)   --chroot-base-dir /srv/jailer   --exec-file firecracker   --   --api-sock /srv/jailer/firecracker/hello-fc/run/api.sock
+  219  history | grep api.sock
+  220  history | grep sock
+  221  ls /srv/jailer/firecracker
+  222  ls /srv/jailer/firecracker/ru
+  223  ls /srv/jailer/firecracker/hello-fc/root/run/
+  224  ls /srv/jailer/firecracker/hello-fc/
+  225  ls /srv/jailer/firecracker/hello-fc//root/
+  226  ls /srv/jailer/firecracker/hello-fc//root/run
+  227  jailer   --id hello-fc   --uid $(id -u fc_user)   --gid $(id -g fc_user)   --chroot-base-dir /srv/jailer   --exec-file firecracker   --   --api-sock /srv/jailer/firecracker/hello-fc/root/run/api.sock
+  228  sudo rm -rf /srv/jailer/firecracker/hello-fc
+  229  jailer   --id hello-fc   --uid $(id -u fc_user)   --gid $(id -g fc_user)   --chroot-base-dir /srv/jailer   --exec-file firecracker   --   --api-sock /srv/jailer/firecracker/hello-fc/root/run/api.sock
+  230  ls /srv/jailer/firecracker/hello-fc/root/run/
+  231  ls /srv/jailer/firecracker/hello-fc/root/
+  232  jailer   --id hello-fc   --uid $(id -u fc_user)   --gid $(id -g fc_user)   --chroot-base-dir /srv/jailer   --exec-file firecracker   --   --api-sock /run/api.sock
+  233  sudo rm -rf /srv/jailer/firecracker/hello-fc
+  234  jailer   --id hello-fc   --uid $(id -u fc_user)   --gid $(id -g fc_user)   --chroot-base-dir /srv/jailer   --exec-file firecracker   --   --api-sock /run/api.sock
+  235  sudo rm -rf /srv/jailer/firecracker/hello-fc
+  236  jailer   --id hello-fc   --uid $(id -u fc_user)   --gid $(id -g fc_user)   --chroot-base-dir /srv/jailer   --exec-file firecracker   --   --api-sock /run/api.sock
+  237  sudo rm -rf /srv/jailer/firecracker/hello-fc
+  238  ls
+  239  jailer   --id hello-fc   --uid $(id -u fc_user)   --gid $(id -g fc_user)   --chroot-base-dir /srv/jailer   --exec-file firecracker   --   --api-sock /run/api.sock &
+  240  ls
+  241  cp ubuntu-24.04.* /srv/jailer/firecracker/hello-fc/root/
+  242  cp vmlinux-6.1.102 /srv/jailer/firecracker/hello-fc/root/
+  243  ls /srv/jailer/firecracker/hello-fc/root/
+  244  killall jailer
+  245  ps awx | grep jail
+  246  sudo rm -rf /srv/jailer/firecracker/hello-fc
+  247  JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
+  248  mkdir -p ${JAIL_ROOT}/rootfs
+  249  ls
+  250  cp ubuntu-24.04.* ${JAIL_ROOT}/rootfs/
+  251  chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs
+  252  cp vmlinux-6.1.102 ${JAIL_ROOT}
+  253  ls ${JAIL_ROOT}
+  254  ls ${JAIL_ROOT}/rootfs/
+  255  jailer   --id hello-fc   --uid $(id -u fc_user)   --gid $(id -g fc_user)   --chroot-base-dir /srv/jailer   --exec-file firecracker   --   --api-sock /run/api.sock 

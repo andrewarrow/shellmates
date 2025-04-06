@@ -1,3 +1,4 @@
 node_modules
+backend/data
 .DS_Store
 package-lock.json

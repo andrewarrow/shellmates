@@ -1,0 +1,1 @@
+For better security, disable password authentication and root login by editing /etc/ssh/sshd_config. Set PasswordAuthentication and PermitRootLogin to no, then restart SSH with sudo systemctl restart sshd.
