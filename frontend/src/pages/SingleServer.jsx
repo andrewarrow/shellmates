@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import Layout from '../components/Layout'
 import axios from 'axios'
 
 function SingleServer() {
@@ -48,7 +49,8 @@ function SingleServer() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <Layout>
+      <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Top Navigation Bar */}
       <header className="bg-gray-900 text-white">
         <div className="flex items-center justify-between px-4 py-2">
@@ -280,6 +282,7 @@ function SingleServer() {
         </div>
       </footer>
     </div>
+    </Layout>
   )
 }
 
