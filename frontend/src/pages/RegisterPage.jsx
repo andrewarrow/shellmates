@@ -48,10 +48,10 @@ function RegisterPage() {
   return (
     <Layout>
       <div className="flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+        <div className="max-w-md w-full bg-gray-800 rounded-lg shadow-lg p-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-primary-800">Create an Account</h1>
-            <p className="text-gray-600 mt-2">Join shellmates</p>
+            <h1 className="text-3xl font-bold text-primary-300">Create an Account</h1>
+            <p className="text-gray-300 mt-2">Join shellmates</p>
           </div>
           
           {error && (
@@ -62,7 +62,7 @@ function RegisterPage() {
           
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label htmlFor="username" className="block text-gray-700 font-medium mb-2">
+              <label htmlFor="username" className="block text-gray-300 font-medium mb-2">
                 Username
               </label>
               <input
@@ -70,13 +70,13 @@ function RegisterPage() {
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 required
               />
             </div>
             
             <div className="mb-4">
-              <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
+              <label htmlFor="password" className="block text-gray-300 font-medium mb-2">
                 Password
               </label>
               <input
@@ -84,13 +84,13 @@ function RegisterPage() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 required
               />
             </div>
             
             <div className="mb-6">
-              <label htmlFor="confirmPassword" className="block text-gray-700 font-medium mb-2">
+              <label htmlFor="confirmPassword" className="block text-gray-300 font-medium mb-2">
                 Confirm Password
               </label>
               <input
@@ -98,7 +98,7 @@ function RegisterPage() {
                 id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 required
               />
             </div>
@@ -113,9 +113,9 @@ function RegisterPage() {
           </form>
           
           <div className="mt-6 text-center">
-            <p className="text-gray-600">
+            <p className="text-gray-300">
               Already have an account?{' '}
-              <Link to="/login" className="text-primary-600 hover:text-primary-800">
+              <Link to="/login" className="text-primary-400 hover:text-primary-300">
                 Log in here
               </Link>
             </p>

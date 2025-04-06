@@ -1,9 +1,27 @@
 import { Link } from 'react-router-dom'
-import Layout from '../components/Layout'
 
 function SplashPage() {
   return (
-    <Layout>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
+      <div className="flex justify-between items-center p-4">
+        <Link to="/" className="text-xl font-bold text-primary-300">
+          shellmates
+        </Link>
+        <div className="flex gap-4">
+          <Link 
+            to="/login" 
+            className="px-4 py-2 rounded-md bg-gray-700 text-primary-300 hover:bg-gray-600 transition-colors"
+          >
+            Login
+          </Link>
+          <Link 
+            to="/register" 
+            className="px-4 py-2 rounded-md bg-primary-600 text-white hover:bg-primary-700 transition-colors"
+          >
+            Register
+          </Link>
+        </div>
+      </div>
       <div className="flex flex-col items-center justify-center p-4">
         <div className="max-w-5xl w-full bg-gray-800 rounded-lg shadow-xl overflow-hidden">
           <div className="p-8 text-center">
@@ -17,7 +35,7 @@ function SplashPage() {
             
             <div className="max-w-3xl mx-auto mb-8">
               <div className="bg-gray-700 rounded-lg p-6 text-left">
-                <h2 className="text-2xl font-semibold text-primary-300 mb-4">How Shellmates Works</h2>
+                <h2 className="text-2xl font-semibold text-primary-300 mb-4">How shellmates Works</h2>
                 <ul className="space-y-3 text-gray-300">
                   <li className="flex items-start">
                     <span className="text-primary-600 font-bold mr-2">1.</span>
@@ -40,7 +58,7 @@ function SplashPage() {
             </div>
             
             <div className="mb-8">
-              <h2 className="text-2xl font-semibold text-primary-300 mb-4">Why Choose Shellmates?</h2>
+              <h2 className="text-2xl font-semibold text-primary-300 mb-4">Why Choose shellmates?</h2>
               <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                 <div className="bg-gray-700 rounded-lg shadow p-4">
                   <h3 className="text-lg font-semibold text-primary-400 mb-2">Cost Efficiency</h3>
@@ -120,10 +138,55 @@ function SplashPage() {
                 <p className="text-primary-300 mt-1">$8/month - Tokyo</p>
               </div>
             </div>
+            
+            <div className="bg-gray-800 text-white p-8">
+              <h2 className="text-2xl font-semibold text-center mb-6">Technical Details</h2>
+              <div className="max-w-4xl mx-auto text-gray-300">
+                <div className="mb-6">
+                  <h3 className="text-xl font-semibold text-primary-300 mb-2">Firecracker Technology</h3>
+                  <p className="mb-3">
+                    Our platform runs on <a href="https://firecracker-microvm.github.io/" className="text-primary-400 hover:underline">Firecracker</a>, an open-source virtualization technology developed by AWS for serverless computing. Firecracker enables us to create lightweight micro-VMs that boot in under 125ms and have a minimal memory footprint.
+                  </p>
+                  <p>
+                    Firecracker VMs provide strong isolation with a reduced attack surface compared to traditional VMs, while maintaining excellent performance characteristics that approach bare metal speeds.
+                  </p>
+                </div>
+                
+                <div className="mb-6">
+                  <h3 className="text-xl font-semibold text-primary-300 mb-2">Security Architecture</h3>
+                  <p className="mb-3">
+                    We employ Firecracker's built-in jailer component, which leverages Linux namespaces, cgroups, and seccomp-bpf to create an additional security boundary. The jailer runs each VM with minimum privileges in a chroot environment, providing defense-in-depth against potential vulnerabilities.
+                  </p>
+                  <p>
+                    This multi-layered security approach means your workloads run in isolation from both the host system and other VMs, protecting your data and applications from potential noisy neighbor issues or security breaches.
+                  </p>
+                </div>
+                
+                <div className="mb-6">
+                  <h3 className="text-xl font-semibold text-primary-300 mb-2">Operating System Environment</h3>
+                  <p className="mb-3">
+                    Our host systems run <span className="font-semibold">Rocky Linux 9</span>, an enterprise-grade, community-driven Linux distribution that provides long-term stability and security updates. Rocky Linux is binary-compatible with Red Hat Enterprise Linux, offering enterprise-level reliability.
+                  </p>
+                  <p>
+                    Guest VMs run <span className="font-semibold">Ubuntu 24.04 LTS</span>, providing a familiar, modern environment with long-term support. This combination gives you the security of an enterprise-grade host OS with the flexibility and wide software compatibility of Ubuntu for your applications.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-semibold text-primary-300 mb-2">Resource Allocation</h3>
+                  <p className="mb-3">
+                    Each VM is allocated dedicated CPU cores, memory, and storage resources with guaranteed performance. Unlike traditional cloud providers that often oversubscribe resources, your allocated resources are yours alone, with no hidden throttling or noisy neighbor effects.
+                  </p>
+                  <p>
+                    Network virtualization ensures your VM gets fair bandwidth allocation while maintaining isolation from other tenants' network traffic for both security and performance reasons.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   )
 }
 
