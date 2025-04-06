@@ -1,10 +1,23 @@
   
   useradd -r -s /bin/false fc_user
-  rm -rf /srv/jailer/firecracker
+cat > run_jailer.sh << `EOF`
   JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
+
+  cp ${JAIL_ROOT}/rootfs/ubuntu-24.04.ext4 save
+
+  rm -rf /srv/jailer/firecracker
   mkdir -p ${JAIL_ROOT}/rootfs
+
+  if [ -s save ]; then
+    mv save ${JAIL_ROOT}/rootfs/ubuntu-24.04.ext4
+  else
+    cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs
+  fi
+
   cp vmlinux-6.1.102 ${JAIL_ROOT}
-  cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs
-  cp ubuntu-24.04.id_rsa ${JAIL_ROOT}/rootfs
+  #cp ubuntu-24.04.id_rsa ${JAIL_ROOT}/rootfs
   chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs
   jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock
+`EOF`
+  chmod +x run_jailer.sh
+  ./run_jailer.sh
