@@ -4,6 +4,9 @@ Rent bare metal servers and create your own micro-cloud with friends.
 
 Split costs, maximize resources, and build a community of developers.
 
+# video demo
+[![Video Demo](https://i.imgur.com/FxoS0dI.png)](https://www.youtube.com/watch?v=MNcnoMVRC68)
+
 ## How shellmates Works
 
 1. Rent a powerful bare metal server from providers like Hetzner or OVH at prices starting from $34.50/month
