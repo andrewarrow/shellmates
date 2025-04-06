@@ -127,52 +127,68 @@ EOF
   systemctl enable fcjail.service
   systemctl enable balancer
   systemctl start balancer
+
 TAP_DEV="tap0"
 TAP_IP="172.16.0.1"
 MASK_SHORT="/30"
 HOST_IFACE="enp0s31f6"
+
 systemctl stop iptables
+
+# Remove existing tap interface
 ip link del "$TAP_DEV" 2>/dev/null || true
+
+# Create tap interface
 ip tuntap add dev "$TAP_DEV" mode tap
 ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
 ip link set dev "$TAP_DEV" up
-iptables -A FORWARD -i "$TAP_DEV" -j ACCEPT
-iptables -A FORWARD -o "$TAP_DEV" -j ACCEPT
+
+# Enable IP forwarding
 echo 1 > /proc/sys/net/ipv4/ip_forward
+
+# Flush existing rules
 iptables -F
 iptables -t nat -F
 iptables -t mangle -F
 iptables -X
+
+# Set default policies (INPUT defaults to ACCEPT but last rule REJECTs)
 iptables -P INPUT ACCEPT
-iptables -P FORWARD ACCEPT
+iptables -P FORWARD DROP  # Changed to DROP for security
 iptables -P OUTPUT ACCEPT
+
+# INPUT chain rules
 iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 iptables -A INPUT -p icmp -j ACCEPT
 iptables -A INPUT -i lo -j ACCEPT
-iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+# Allow SSH only on the host's main interface
+iptables -A INPUT -i "$HOST_IFACE" -p tcp --dport 22 -m state --state NEW -j ACCEPT
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT
 iptables -A INPUT -j REJECT --reject-with icmp-host-prohibited
-if ip link show br0 >/dev/null 2>&1; then
-  iptables -A INPUT -i br0 -p tcp -m tcp --dport 22 -j DROP
-fi
-if ip link show br0 >/dev/null 2>&1; then
-  iptables -A FORWARD -i br0 -o "$HOST_IFACE" -j ACCEPT
-  iptables -A FORWARD -i "$HOST_IFACE" -o br0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-  iptables -A FORWARD -i br0 -p udp -m udp --dport 53 -j ACCEPT
-  iptables -A FORWARD -i br0 -p tcp -m tcp --dport 53 -j ACCEPT
-fi
-iptables -A FORWARD -d 172.16.0.2/32 -p tcp -m tcp --dport 22 -j ACCEPT
-iptables -A FORWARD -d 172.16.0.3/32 -p tcp -m tcp --dport 22 -j ACCEPT
-iptables -A FORWARD -p udp -m udp --dport 53 -j ACCEPT
-iptables -A FORWARD -p tcp -m tcp --dport 53 -j ACCEPT
-iptables -t nat -A PREROUTING -p tcp -m tcp --dport 2201 -j DNAT --to-destination 172.16.0.2:22
-iptables -t nat -A PREROUTING -p tcp -m tcp --dport 2202 -j DNAT --to-destination 172.16.0.3:22
-iptables -t nat -A POSTROUTING -s 172.16.0.0/24 -o "$HOST_IFACE" -j MASQUERADE
+
+# FORWARD chain rules
+iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+# Allow VMs to reach the internet
+iptables -A FORWARD -i "$TAP_DEV" -o "$HOST_IFACE" -j ACCEPT
+# Allow incoming SSH traffic to VMs after DNAT
+iptables -A FORWARD -i "$HOST_IFACE" -o "$TAP_DEV" -d 172.16.0.2/32 -p tcp --dport 22 -j ACCEPT
+iptables -A FORWARD -i "$HOST_IFACE" -o "$TAP_DEV" -d 172.16.0.3/32 -p tcp --dport 22 -j ACCEPT
+
+# NAT rules
+iptables -t nat -A PREROUTING -p tcp --dport 2201 -j DNAT --to-destination 172.16.0.2:22
+iptables -t nat -A PREROUTING -p tcp --dport 2202 -j DNAT --to-destination 172.16.0.3:22
 iptables -t nat -A POSTROUTING -s 172.16.0.0/30 -o "$HOST_IFACE" -j MASQUERADE
+
+# Save rules
 iptables-save > /etc/sysconfig/iptables
-systemctl enable iptables
-systemctl restart iptables
+
+systemctl enable iptables --now
+
+
+
+
+
 
 cat > run_curls.sh << EOF
   JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
