@@ -37,22 +37,11 @@ router.post('/', auth, (req, res) => {
     
     if (existingSettings) {
       // Update existing settings
-      const stmt = db.sqlite.prepare(`
-        UPDATE stripes 
-        SET sk_key = ?, pk_key = ?, buy_url = ? 
-        WHERE user_id = ? 
-        RETURNING *
-      `);
-      const updatedSettings = stmt.get(sk_key, pk_key, buy_url || null, req.userId);
+      const updatedSettings = db.stripes.update(req.userId, sk_key, pk_key, buy_url);
       res.json(updatedSettings);
     } else {
       // Create new settings
-      const stmt = db.sqlite.prepare(`
-        INSERT INTO stripes (user_id, sk_key, pk_key, buy_url)
-        VALUES (?, ?, ?, ?)
-        RETURNING *
-      `);
-      const newSettings = stmt.get(req.userId, sk_key, pk_key, buy_url || null);
+      const newSettings = db.stripes.create(req.userId, sk_key, pk_key, buy_url);
       res.status(201).json(newSettings);
     }
   } catch (error) {

@@ -101,7 +101,7 @@ function seed() {
   
   if (seedFiles.length > 0) {
     console.log(`Running ${seedFiles.length} seed files...`);
-    //seedFiles.forEach(runSeed);
+    seedFiles.forEach(runSeed);
     console.log('Seeding completed.');
   } else {
     console.log('No seed files found.');
@@ -134,17 +134,17 @@ const db = {
       const stmt = sqlite.prepare('SELECT * FROM stripes WHERE user_id = ?');
       return stmt.get(userId);
     },
-    create: (userId, sk_key, pk_key) => {
+    create: (userId, sk_key, pk_key, buy_url) => {
       const stmt = sqlite.prepare(
-        'INSERT INTO stripes (user_id, sk_key, pk_key, created_at) VALUES (?, ?, ?, ?) RETURNING *'
+        'INSERT INTO stripes (user_id, sk_key, pk_key, buy_url, created_at) VALUES (?, ?, ?, ?, ?) RETURNING *'
       );
-      return stmt.get(userId, sk_key, pk_key, new Date().toISOString());
+      return stmt.get(userId, sk_key, pk_key, buy_url || null, new Date().toISOString());
     },
-    update: (userId, sk_key, pk_key) => {
+    update: (userId, sk_key, pk_key, buy_url) => {
       const stmt = sqlite.prepare(
-        'UPDATE stripes SET sk_key = ?, pk_key = ? WHERE user_id = ? RETURNING *'
+        'UPDATE stripes SET sk_key = ?, pk_key = ?, buy_url = ? WHERE user_id = ? RETURNING *'
       );
-      return stmt.get(sk_key, pk_key, userId);
+      return stmt.get(sk_key, pk_key, buy_url || null, userId);
     },
     delete: (userId) => {
       const stmt = sqlite.prepare('DELETE FROM stripes WHERE user_id = ?');

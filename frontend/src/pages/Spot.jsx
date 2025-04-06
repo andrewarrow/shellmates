@@ -16,6 +16,7 @@ function Spot() {
     const fetchSpot = async () => {
       try {
         const response = await axios.get(`/api/spots/${id}`)
+        console.log('Spot data received:', response.data)
         setSpot(response.data)
         setLoading(false)
       } catch (err) {
@@ -187,7 +188,10 @@ function Spot() {
                           onClick={(e) => {
                             if (!spot.buy_url) {
                               e.preventDefault();
+                              console.log('Missing buy_url for spot:', spot);
                               alert('Payment link not available for this spot');
+                            } else {
+                              console.log('Navigating to buy URL:', spot.buy_url);
                             }
                           }}
                         >
