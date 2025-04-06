@@ -134,7 +134,7 @@ export default defineConfig({
       
       <div class="mt-8 pt-6 border-t border-gray-700">
         <p>Last Updated: April 6, 2025</p>
-        <p class="mt-4">If you have any questions about these Terms, please contact us at <a href="mailto:support@shellmates.com" class="text-primary-300 hover:underline">support@shellmates.com</a>.</p>
+        <p class="mt-4">If you have any questions about these Terms, please contact us at support@andrewarrow.dev</p>
       </div>
     </div>
     
@@ -290,7 +290,7 @@ export default defineConfig({
       
       <div class="mt-8 pt-6 border-t border-gray-700">
         <p>Last Updated: April 6, 2025</p>
-        <p class="mt-4">If you have any questions about this Privacy Policy, please contact us at <a href="mailto:privacy@shellmates.com" class="text-primary-300 hover:underline">privacy@shellmates.com</a>.</p>
+        <p class="mt-4">If you have any questions about this Privacy Policy, please contact us at privacy@andrewarrow.dev</p>
       </div>
     </div>
     
