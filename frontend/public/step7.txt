@@ -14,6 +14,8 @@ iptables -A INPUT -i br0 -p tcp --dport 22 -j DROP
 iptables -A FORWARD -p tcp -d 172.16.0.2 --dport 22 -j ACCEPT
 iptables -A FORWARD -p tcp -d 172.16.0.3 --dport 22 -j ACCEPT
 
+iptables -A FORWARD -i br0 -o enp0s31f6 -j ACCEPT
+
 iptables-save > /etc/sysconfig/iptables
 
 /etc/ssh/sshd_config
