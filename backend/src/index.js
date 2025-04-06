@@ -41,6 +41,11 @@ app.use('/api/servers', serverRoutes);
 app.use('/api/spots', spotRoutes);
 app.use('/api/stripe', stripeRoutes);
 
+// Always serve the static HTML files for terms and privacy in both dev and prod
+const termsPrivacyPath = path.join(__dirname, '../../frontend/public');
+app.use('/terms', express.static(path.join(termsPrivacyPath, 'terms')));
+app.use('/privacy', express.static(path.join(termsPrivacyPath, 'privacy')));
+
 
 // Serve static frontend in production
 if (process.env.NODE_ENV === 'production') {
@@ -49,6 +54,9 @@ if (process.env.NODE_ENV === 'production') {
   console.log('Serving frontend from:', frontendPath);
   app.use(express.static(frontendPath));
   
+  // Terms and Privacy pages are now handled globally above
+  
+  // Catch-all route for the React app
   app.get('*', (req, res) => {
     const indexPath = path.join(frontendPath, 'index.html');
     console.log('Serving index from:', indexPath);

@@ -37,8 +37,8 @@ function Footer() {
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-500 text-sm">© 2025 shellmates. All rights reserved.</p>
           <div className="flex space-x-4 mt-4 md:mt-0">
-            <Link to="/terms" className="text-gray-400 hover:text-primary-300">Terms</Link>
-            <Link to="/privacy" className="text-gray-400 hover:text-primary-300">Privacy</Link>
+            <a href="/terms" className="text-gray-400 hover:text-primary-300">Terms</a>
+            <a href="/privacy" className="text-gray-400 hover:text-primary-300">Privacy</a>
           </div>
         </div>
       </div>
