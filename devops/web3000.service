@@ -1,0 +1,39 @@
+cat > /etc/systemd/system/web3000.conf << EOF
+JWT_SECRET=5e7b5635-aa3a-4c73-93bb-ec7e21e52645
+DB_PATH=./traffic.db
+EOF
+cat > /etc/systemd/system/web3000.service << EOF
+[Unit]
+Description=Web3000
+After=network.target
+Requires=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDir=/root/dist
+EnvironmentFile=/etc/systemd/system/web3000.conf
+ExecStart=/root/.nvm/versions/node/v23.9.0/bin/npm run start
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE CAP_DAC_OVERRIDE CAP_CHOWN CAP_SETUID CAP_SETGID
+AmbientCapabilities=CAP_NET_BIND_SERVICE CAP_DAC_OVERRIDE CAP_CHOWN CAP_SETUID CAP_SETGID
+#StandardOutput=null
+#StandardError=null
+
+Restart=on-failure
+RestartSec=5s
+
+LimitNOFILE=1048576
+LimitMEMLOCK=infinity
+
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable web3000.service
+systemctl start web3000
