@@ -1,0 +1,749 @@
+    3  cat /proc/mdstat
+    4  echo check > /sys/block/md2/md/sync_action
+    5  more /sys/block/md2/md/sync_action
+    6  cat /proc/mdstat
+  127  JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
+  245  cat > ${JAIL_ROOT}/vm_config.json << `EOF`
+  246    {
+  247      "boot-source": {
+  248        "kernel_image_path": "vmlinux-6.1.102",
+  249        "boot_args": "console=ttyS0 reboot=k panic=1 pci=off"
+  250      },
+  251      "drives": [
+  252        {
+  253          "drive_id": "rootfs",
+  254          "path_on_host": "/rootfs/ubuntu-24.04.ext4",
+  255          "is_root_device": true,
+  256          "is_read_only": false
+  257        }
+  258      ],
+  259      "network-interfaces": [
+  260        {
+  261          "iface_id": "net1",
+  262          "guest_mac": "06:00:AC:10:00:02",
+  263          "host_dev_name": "tap0"
+  264        }
+  265      ],
+  266      "machine-config": {
+  267        "vcpu_count": 2,
+  268        "mem_size_mib": 32768,
+  269        "smt": false
+  270      }
+  271    }
+  272  `EOF`
+  273  ls /srv/jailer/firecracker/hello-fc/root
+  274  cat /srv/jailer/firecracker/hello-fc/root/vm_config.json 
+  275  cat /srv/jailer/firecracker/hello-fc/root/vm_config.json  | jq .c
+  276  cat /srv/jailer/firecracker/hello-fc/root/vm_config.json  | jq .
+  277  history
+  278  exit
+  279  KEY_NAME=ubuntu-24.04.id_rsa
+  280  cd fc
+  281  ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
+  282  TAP_DEV="tap0"
+  283      TAP_IP="172.16.0.1"
+  284      MASK_SHORT="/30"
+  285      ip link del "$TAP_DEV" 2> /dev/null || true
+  286      ip tuntap add dev "$TAP_DEV" mode tap
+  287      ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
+  288      ip link set dev "$TAP_DEV" up
+  289      sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+  290      iptables -P FORWARD ACCEPT
+  291      HOST_IFACE=$(ip -j route list default |jq -r ".[0].dev")
+  292      iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+  293      iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
+  294  ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
+  295  killall firecracker
+  296      TAP_DEV="tap0"
+  297      TAP_IP="172.16.0.1"
+  298      MASK_SHORT="/30"
+  299      ip link del "$TAP_DEV" 2> /dev/null || true
+  300      ip tuntap add dev "$TAP_DEV" mode tap
+  301      ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
+  302      ip link set dev "$TAP_DEV" up
+  303      sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+  304      iptables -P FORWARD ACCEPT
+  305      HOST_IFACE=$(ip -j route list default |jq -r ".[0].dev")
+  306      iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+  307      iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
+  308  killall firecracker
+  309      TAP_DEV="tap0"
+  310      TAP_IP="172.16.0.1"
+  311      MASK_SHORT="/30"
+  312      ip link del "$TAP_DEV" 2> /dev/null || true
+  313      ip tuntap add dev "$TAP_DEV" mode tap
+  314      ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
+  315      ip link set dev "$TAP_DEV" up
+  316      sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+  317      iptables -P FORWARD ACCEPT
+  318      HOST_IFACE=$(ip -j route list default |jq -r ".[0].dev")
+  319      iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+  320      iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
+  321    KEY_NAME=ubuntu-24.04.id_rsa
+  322    ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
+  323    ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+  324  ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
+  325  killall firecracker
+  326  ls
+  327  ./run_curls.sh 
+  328  ssh -i $KEY_NAME root@172.16.0.2
+  329  killall firecracker
+  330  ls
+  331  ./run_curls.sh 
+  332  ssh -i $KEY_NAME root@172.16.0.2
+  333  killall firecracker
+  334  ls
+  335  ls -l
+  336  df -h
+  337  cd /srv/jailer/firecracker/
+  338  ls
+  339  cd hello-fc/root/
+  340  ls
+  341  cd rootfs/
+  342  ls
+  343  ls -l
+  344  ls -h
+  345  du ubuntu-24.04.ext4 
+  346  du -h ubuntu-24.04.ext4 
+  347  ls
+  348  df -h
+  349  ls
+  350  cd ~
+  351  cd fc
+  352  ls
+  353  ./run_curls.sh 
+  354  ssh -i $KEY_NAME root@172.16.0.2
+  355  exit
+  356  htop
+  357  exit
+  358  curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"kernel_image_path\": \"${KERNEL}\", \"boot_args\": \"${KERNEL_BOOT_ARGS}\" }" "http://localhost/boot-source
+  359  curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"kernel_image_path\": \"${KERNEL}\", \"boot_args\": \"${KERNEL_BOOT_ARGS}\" }" "http://localhost/boot-source"
+  360  API_SOCKET="/srv/jailer/firecracker/hello-fc/root/run/api.sock"
+  361  curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"kernel_image_path\": \"${KERNEL}\", \"boot_args\": \"${KERNEL_BOOT_ARGS}\" }" "http://localhost/boot-source"
+  362  ls
+  363  cd fc
+  364  ls
+  365  ./$(ls vmlinux* | tail -1)
+  366  ./$(ls vmlinux*)
+  367  ls vmlinux*
+  368  cd ..
+  369  ls
+  370  curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"kernel_image_path\": \"vmlinux-6.1.102\", \"boot_args\": \"console=ttyS0 reboot=k panic=1 pci=off\" }" "http://localhost/boot-source"
+  371  curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"drive_id\": \"rootfs\", \"path_on_host\": \"/rootfs/ubuntu-24.04.ext4\", \"is_root_device\": true, \"is_read_only\": false }" "http://localhost/drives/rootfs"
+  372  TAP_DEV="tap0"
+  373  TAP_IP="172.16.0.1"
+  374  MASK_SHORT="/30"
+  375  ip link del "$TAP_DEV" 2> /dev/null || true
+  376  ip tuntap add dev "$TAP_DEV" mode tap
+  377  ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
+  378  ip link set dev "$TAP_DEV" up
+  379  sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+  380  iptables -P FORWARD ACCEPT
+  381  HOST_IFACE=$(ip -j route list default |jq -r ".[0].dev")
+  382  iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+  383  iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
+  384  iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+  385  iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
+  386  curl -X PUT --unix-socket "${API_SOCKET}" --data "{ "iface_id": "net1", "guest_mac": "06:00:AC:10:00:02", "host_dev_name": "$TAP_DEV" }"     "http://localhost/network-interfaces/net1"
+  387  echo $TAP_DEV
+  388  curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"iface_id\": \"net1\", \"guest_mac\": \"06:00:AC:10:00:02\", \"host_dev_name\": \"$TAP_DEV\" }"     "http://localhost/network-interfaces/net1"
+  389  curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"action_type\": \"InstanceStart\" }" "http://localhost/actions"
+  390  ls
+  391  KEY_NAME=./$(ls *.id_rsa | tail -1)
+  392  cd fc
+  393  KEY_NAME=./$(ls *.id_rsa | tail -1)
+  394  ls
+  395  KEY_NAME=./$(ls *.id_rsa)
+  396  echo $KEY_NAME
+  397  KEY_NAME=ubuntu-24.04.id_rsa
+  398  ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
+  399  ls
+  400  ssh -i $KEY_NAME root@172.16.0.2
+  401  history
+  402  ssh -i $KEY_NAME root@172.16.0.2
+  403  ssh -i $KEY_NAME root@172.16.0.2  \"echo "nameserver 8.8.8.8" > /etc/resolv.conf\"
+  404  ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.confx"
+  405  ssh -i $KEY_NAME root@172.16.0.2
+  406  history
+  407  ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+  408  ssh -i $KEY_NAME root@172.16.0.2
+  409  killall firecracker
+  410  JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
+  411  API_SOCKET="${JAIL_ROOT}/run/api.sock"
+  412   curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "vcpu_count": 2, "mem_size_mib": 32768, "smt": false}' "http://localhost/machine-config"
+  413    curl -X PUT --unix-socket "${API_SOCKET}" --data "{ \"action_type\": \"InstanceStart\" }" "http://localhost/actions"
+  414  curl -X PUT --unix-socket "${API_SOCKET}" --data '{"action_type": "InstanceStart"}' "http://localhost/actions"
+  415  curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
+  416  curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
+  417      TAP_DEV="tap0"
+  418      TAP_IP="172.16.0.1"
+  419      MASK_SHORT="/30"
+  420      ip link del "$TAP_DEV" 2> /dev/null || true
+  421      ip tuntap add dev "$TAP_DEV" mode tap
+  422      ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
+  423      ip link set dev "$TAP_DEV" up
+  424      sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+  425      iptables -P FORWARD ACCEPT
+  426      HOST_IFACE=$(ip -j route list default |jq -r ".[0].dev")
+  427  iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+  428   iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
+  429  curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "iface_id": "net1", "guest_mac": "06:00:AC:10:00:02", "host_dev_name": "$TAP_DEV" }' "http://localhost/network-interfaces/net1"
+  430  echo $TAP_DEV
+  431  curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "iface_id": "net1", "guest_mac": "06:00:AC:10:00:02", "host_dev_name": "tap0" }' "http://localhost/network-interfaces/net1"
+  432  curl -X PUT --unix-socket "${API_SOCKET}" --data '{"action_type": "InstanceStart"}' "http://localhost/actions"
+  433  KEY_NAME=ubuntu-24.04.id_rsa
+  434  ls
+  435  ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
+  436  ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+  437  ssh -i $KEY_NAME root@172.16.0.2
+  438  df -h
+  439      API_SOCKET="${JAIL_ROOT}/run/api.sock"
+  440      curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
+  441      curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
+  442      TAP_DEV="tap0"
+  443      TAP_IP="172.16.0.1"
+  444      MASK_SHORT="/30"
+  445      ip link del "$TAP_DEV" 2> /dev/null || true
+  446      ip tuntap add dev "$TAP_DEV" mode tap
+  447      ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
+  448      ip link set dev "$TAP_DEV" up
+  449      sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+  450      iptables -P FORWARD ACCEPT
+  451      HOST_IFACE=$(ip -j route list default |jq -r ".[0].dev")
+  452      iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+  453      iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
+  454  killall firecracker
+  455  ps awx 
+  456  ps awx  | grep fire
+  457    rm -rf /srv/jailer/firecracker
+  458    JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
+  459    mkdir -p ${JAIL_ROOT}/rootfs
+  460    cp vmlinux-6.1.102 ${JAIL_ROOT}
+  461    cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs
+  462    cp ubuntu-24.04.id_rsa ${JAIL_ROOT}/rootfs
+  463    chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs
+  464  jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock &
+  465      API_SOCKET="${JAIL_ROOT}/run/api.sock"
+  466      curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
+  467      curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
+  468      TAP_DEV="tap0"
+  469      TAP_IP="172.16.0.1"
+  470      MASK_SHORT="/30"
+  471      ip link del "$TAP_DEV" 2> /dev/null || true
+  472      ip tuntap add dev "$TAP_DEV" mode tap
+  473      ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
+  474      ip link set dev "$TAP_DEV" up
+  475      sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+  476      iptables -P FORWARD ACCEPT
+  477      HOST_IFACE=$(ip -j route list default |jq -r ".[0].dev")
+  478      iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+  479      iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
+  480      curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "iface_id": "net1", "guest_mac": "06:00:AC:10:00:02", "host_dev_name": "tap0" }' "http://localhost/network-interfaces/net1"
+  481    curl -X PUT --unix-socket "${API_SOCKET}" --data '{"vcpu_count": 2, "mem_size_mib": 32768, "smt": false}' "http://localhost/machine-config"
+  482    curl -X PUT --unix-socket "${API_SOCKET}" --data '{"action_type": "InstanceStart"}' "http://localhost/actions"
+  483  ps awx | grep fire
+  484  jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock
+  485  screen -S s
+  486  dnf install screen
+  487  screen -S s
+  488  screen -ls
+  489      API_SOCKET="${JAIL_ROOT}/run/api.sock"
+  490      curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
+  491      curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
+  492      TAP_DEV="tap0"
+  493      TAP_IP="172.16.0.1"
+  494      MASK_SHORT="/30"
+  495      ip link del "$TAP_DEV" 2> /dev/null || true
+  496      ip tuntap add dev "$TAP_DEV" mode tap
+  497      ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
+  498      ip link set dev "$TAP_DEV" up
+  499      sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+  500      iptables -P FORWARD ACCEPT
+  501      HOST_IFACE=$(ip -j route list default |jq -r ".[0].dev")
+  502      iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+  503      iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
+  504      curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "iface_id": "net1", "guest_mac": "06:00:AC:10:00:02", "host_dev_name": "tap0" }' "http://localhost/network-interfaces/net1"
+  505    curl -X PUT --unix-socket "${API_SOCKET}" --data '{"vcpu_count": 2, "mem_size_mib": 32768, "smt": false}' "http://localhost/machine-config"
+  506    curl -X PUT --unix-socket "${API_SOCKET}" --data '{"action_type": "InstanceStart"}' "http://localhost/actions"
+  507  KEY_NAME=ubuntu-24.04.id_rsa
+  508  ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
+  509  ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+  510  ssh -i $KEY_NAME root@172.16.0.2
+  511  screen -r s
+  512  history
+  513  ls /srv/jailer/firecracker/hello-fc/root/
+  514  ls -l /srv/jailer/firecracker/hello-fc/root/
+  515    rm -rf /srv/jailer/firecracker
+  516    JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
+  517    mkdir -p ${JAIL_ROOT}/rootfs
+  518  ls -l /srv/jailer/firecracker/hello-fc/root/
+  519  cat > ${JAIL_ROOT}/vm_config.json << `EOF`
+  520  {
+  521    "boot-source": {
+  522      "kernel_image_path": "vmlinux-6.1.102",
+  523      "boot_args": "console=ttyS0 reboot=k panic=1 pci=off"
+  524    },
+  525    "drives": [
+  526      {
+  527        "drive_id": "rootfs",
+  528        "path_on_host": "/rootfs/ubuntu-24.04.ext4",
+  529        "is_root_device": true,
+  530        "is_read_only": false
+  531      }
+  532    ],
+  533    "network-interfaces": [
+  534      {
+  535        "iface_id": "net1",
+  536        "guest_mac": "06:00:AC:10:00:02",
+  537        "host_dev_name": "tap0"
+  538      }
+  539    ],
+  540    "machine-config": {
+  541      "vcpu_count": 2,
+  542      "mem_size_mib": 32768,
+  543      "smt": false
+  544    }
+  545  }
+  546  `EOF`
+  547  ls -l /srv/jailer/firecracker/hello-fc/root/
+  548    CONFIG_FILE="${JAIL_ROOT}/vm_config.json"
+  549    cp vmlinux-6.1.102 ${JAIL_ROOT}
+  550    cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs
+  551    cp ubuntu-24.04.id_rsa ${JAIL_ROOT}/rootfs
+  552    chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs
+  553  ls
+  554  jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock --config-file ${CONFIG_FILE}
+  555  jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock --config-file /vm_config.json
+  556    rm -rf /srv/jailer/firecracker
+  557    JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
+  558    mkdir -p ${JAIL_ROOT}/rootfs
+  559  cat > ${JAIL_ROOT}/vm_config.json << `EOF`
+  560  {
+  561    "boot-source": {
+  562      "kernel_image_path": "vmlinux-6.1.102",
+  563      "boot_args": "console=ttyS0 reboot=k panic=1 pci=off"
+  564    },
+  565    "drives": [
+  566      {
+  567        "drive_id": "rootfs",
+  568        "path_on_host": "/rootfs/ubuntu-24.04.ext4",
+  569        "is_root_device": true,
+  570        "is_read_only": false
+  571      }
+  572    ],
+  573    "network-interfaces": [
+  574      {
+  575        "iface_id": "net1",
+  576        "guest_mac": "06:00:AC:10:00:02",
+  577        "host_dev_name": "tap0"
+  578      }
+  579    ],
+  580    "machine-config": {
+  581      "vcpu_count": 2,
+  582      "mem_size_mib": 32768,
+  583      "smt": false
+  584    }
+  585  }
+  586  `EOF`
+  587    CONFIG_FILE="${JAIL_ROOT}/vm_config.json"
+  588    cp vmlinux-6.1.102 ${JAIL_ROOT}
+  589    cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs
+  590    cp ubuntu-24.04.id_rsa ${JAIL_ROOT}/rootfs
+  591    chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs
+  592  jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock --config-file /vm_config.json
+  593  ls
+  594    rm -rf /srv/jailer/firecracker
+  595  ls
+  596  cd ..
+  597  ls
+  598  cd fc
+  599  cat > vm_config.json << `EOF`
+  600  {
+  601    "boot-source": {
+  602      "kernel_image_path": "vmlinux-6.1.102",
+  603      "boot_args": "console=ttyS0 reboot=k panic=1 pci=off"
+  604    },
+  605    "drives": [
+  606      {
+  607        "drive_id": "rootfs",
+  608        "path_on_host": "/rootfs/ubuntu-24.04.ext4",
+  609        "is_root_device": true,
+  610        "is_read_only": false
+  611      }
+  612    ],
+  613    "network-interfaces": [
+  614      {
+  615        "iface_id": "net1",
+  616        "guest_mac": "06:00:AC:10:00:02",
+  617        "host_dev_name": "tap0"
+  618      }
+  619    ],
+  620    "machine-config": {
+  621      "vcpu_count": 2,
+  622      "mem_size_mib": 32768,
+  623      "smt": false
+  624    }
+  625  }
+  626  `EOF`
+  627  ls
+  628  more vm_config.json 
+  629  ls /srv/
+  630  ls /srv/jailer/
+  631    JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
+  632    mkdir -p ${JAIL_ROOT}/rootfs
+  633    cp vm_config.json ${JAIL_ROOT}
+  634    cp vmlinux-6.1.102 ${JAIL_ROOT}
+  635    cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs
+  636    cp ubuntu-24.04.id_rsa ${JAIL_ROOT}/rootfs
+  637    chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs
+  638    jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock --config-file /vm_config.json
+  639  ls
+  640    cat > run_curls1.sh << `EOF`
+  641    curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
+  642    curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
+  643  `EOF`
+  644  ls
+  645  more run_curls1.sh 
+  646  rm run_curls1.sh 
+  647    API_SOCKET="${JAIL_ROOT}/run/api.sock"
+  648    cat > run_curls.sh << `EOF`
+  649    curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
+  650    curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
+  651    TAP_DEV="tap0"
+  652    TAP_IP="172.16.0.1"
+  653    MASK_SHORT="/30"
+  654    ip link del "$TAP_DEV" 2> /dev/null || true
+  655    ip tuntap add dev "$TAP_DEV" mode tap
+  656    ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
+  657    ip link set dev "$TAP_DEV" up
+  658    sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+  659    iptables -P FORWARD ACCEPT
+  660    HOST_IFACE=$(ip -j route list default |jq -r ".[0].dev")
+  661    iptables -t nat -D POSTROUTING -o "$HOST_IFACE" -j MASQUERADE || true
+  662    iptables -t nat -A POSTROUTING -o "$HOST_IFACE" -j MASQUERADE
+  663    curl -X PUT --unix-socket "${API_SOCKET}" --data '{ "iface_id": "net1", "guest_mac": "06:00:AC:10:00:02", "host_dev_name": "tap0" }' "http://localhost/network-interfaces/net1"
+  664    curl -X PUT --unix-socket "${API_SOCKET}" --data '{"vcpu_count": 2, "mem_size_mib": 32768, "smt": false}' "http://localhost/machine-config"
+  665    curl -X PUT --unix-socket "${API_SOCKET}" --data '{"action_type": "InstanceStart"}' "http://localhost/actions"
+  666    KEY_NAME=ubuntu-24.04.id_rsa
+  667    ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
+  668    ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+  669  `EOF`
+  670  ls
+  671  more run_curls.sh 
+  672  chmod +x run_curls.sh 
+  673  ./run_curls.sh 
+  674    rm -rf /srv/jailer/firecracker
+  675    JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
+  676    mkdir -p ${JAIL_ROOT}/rootfs
+  677    cp vmlinux-6.1.102 ${JAIL_ROOT}
+  678    cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs
+  679    cp ubuntu-24.04.id_rsa ${JAIL_ROOT}/rootfs
+  680    chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs
+  681    jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock
+  682  ls /srv/jailer/firecracker/hello-fc/root/
+  683  ls /srv/jailer/firecracker/hello-fc/root/rootfs/
+  684    JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
+  685    cp ${JAIL_ROOT}/rootfs/ubuntu-24.04.ext4 save
+  686    rm -rf /srv/jailer/firecracker
+  687    mkdir -p ${JAIL_ROOT}/rootfs
+  688    if [ -s save ]; then     mv save ${JAIL_ROOT}/rootfs/ubuntu-24.04.ext4;   else     cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs;   fi
+  689    cp vmlinux-6.1.102 ${JAIL_ROOT}
+  690    #cp ubuntu-24.04.id_rsa ${JAIL_ROOT}/rootfs
+  691    chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs
+  692    jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock
+  693  ls
+  694  cat > run_jailer.sh << `EOF`
+  695    JAIL_ROOT="/srv/jailer/firecracker/hello-fc/root"
+  696    cp ${JAIL_ROOT}/rootfs/ubuntu-24.04.ext4 save
+  697    rm -rf /srv/jailer/firecracker
+  698    mkdir -p ${JAIL_ROOT}/rootfs
+  699    if [ -s save ]; then
+  700      mv save ${JAIL_ROOT}/rootfs/ubuntu-24.04.ext4
+  701    else
+  702      cp ubuntu-24.04.ext4 ${JAIL_ROOT}/rootfs
+  703    fi
+  704    cp vmlinux-6.1.102 ${JAIL_ROOT}
+  705    #cp ubuntu-24.04.id_rsa ${JAIL_ROOT}/rootfs
+  706    chown -R fc_user:fc_user ${JAIL_ROOT}/rootfs
+  707    jailer --id hello-fc --uid $(id -u fc_user) --gid $(id -g fc_user) --chroot-base-dir /srv/jailer --exec-file /usr/local/bin/firecracker -- --api-sock /run/api.sock
+  708  `EOF`
+  709  ls
+  710  chmod +x run_jailer.sh 
+  711  ./run_jailer.sh 
+  712  ls
+  713  cd ..
+  714  ls
+  715  cd fc
+  716  ls
+  717  ./run_
+  718  ./run_jailer.sh 
+  719  exit
+  720  ls /srv/jailer/firecracker/hello-fc/root/rootfs/
+  721  ls /srv/jailer/firecracker/hello-fc/root/
+  722  ls -l /srv/jailer/firecracker/hello-fc/root/
+  723  ls -l /srv/jailer/firecracker/hello-fc/root/dev/
+  724  exit
+  725  ./run_jailer.sh 
+  726  exit
+  727  cd fc
+  728  ls
+  729  ./run_curls.sh 
+  730  ssh -i ubuntu-24.04.id_rsa root@172.16.0.2
+  731  ls
+  732  more run_curls.sh 
+  733  vi run_curls.sh 
+  734  ./run_
+  735  ./run_curls.sh 
+  736    rm -rf /srv/jailer/firecracker
+  737  killall firecracker
+  738  ./run_curls.sh 
+  739  exit
+  740  go
+  741  wget https://go.dev/dl/go1.24.2.linux-amd64.tar.gz
+  742  ls
+  743  gunzip go1.24.2.linux-amd64.tar.gz 
+  744  ls
+  745  tar -xf go1.24.2.linux-amd64.tar 
+  746  ls
+  747  cp go/bin/go* /usr/local/bin/
+  748  go version
+  749  export GOROOT=/usr/local/bin
+  750  go version
+  751  ls
+  752  mkdir balancer
+  753  cd balancer/
+  754  ls
+  755  vi main.go
+  756  mkdir balancer
+  757  rm -rf balancer/
+  758  vi main.go 
+  759  mkdir server
+  760  vi server/server.go
+  761  vi server/server.go 
+  762  go mod init balancer
+  763  go mod tidy
+  764  go build
+  765  vi server/server.go 
+  766  ls
+  767  mkdir gp
+  768  export GOPATH=/root/gp
+  769  pwd
+  770  ls
+  771  mv gp ..
+  772  ls
+  773  pwd
+  774  go build
+  775  go mod tidy
+  776  vi main.go 
+  777  vi go.mod 
+  778  vi main.go 
+  779  go build
+  780  env
+  781  ls
+  782  cd ..
+  783  ls
+  784  cd go
+  785  ls
+  786  ls src/
+  787  cd ..
+  788  pwd
+  789  cd go
+  790  ls
+  791  cd ..
+  792  export GOROOT /root/go
+  793  export GOROOT=/root/go
+  794  cd ..
+  795  ls
+  796  cd ~
+  797  ls
+  798  cd balancer/
+  799  ls
+  800  go build
+  801  go mod tidy
+  802  go build
+  803  ls
+  804  vi server/server.go 
+  805  go build
+  806  ls
+  807  vi server/server.go 
+  808  go build
+  809  ./balancer 
+  810  /etc/ssh/sshd_config
+  811  cat /etc/ssh/sshd_config
+  812  vi /etc/ssh/sshd_config
+  813  cat /etc/ssh/sshd_config.d/50-redhat.conf 
+  814  ssh -i $KEY_NAME root@172.16.0.2
+  815  history | grep ssh
+  816  ifconfig
+  817  dnf install ifconfig
+  818  dnf search ifconfig
+  819  dnf install iptables-services
+  820  ifconfig
+  821  dnf install net-tools
+  822  ifcong
+  823  ifconig
+  824  ifconfig 
+  825  systemctl enable iptables
+  826  systemctl start iptables
+  827  iptables-save > /etc/sysconfig/iptables
+  828  more /etc/sysconfig/iptables
+  829  history
+  830  vi /etc/ssh/sshd_config
+  831  ip link add name br0 type bridge
+  832  ip link set br0 up
+  833  ip addr add 172.16.0.1/24 dev br0
+  834  iptables -t nat -A POSTROUTING -o enp0s31f6 -j MASQUERADE
+  835  iptables -A FORWARD -i br0 -o enp0s31f6 -j ACCEPT
+  836  iptables -A FORWARD -i enp0s31f6 -o br0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+  837  iptables -t nat -A PREROUTING -p tcp --dport 2201 -j DNAT --to-destination 172.16.0.2:22
+  838  iptables -t nat -A PREROUTING -p tcp --dport 2202 -j DNAT --to-destination 172.16.0.3:22
+  839  iptables -A INPUT -i br0 -p tcp --dport 22 -j DROP
+  840  iptables -A FORWARD -p tcp -d 172.16.0.2 --dport 22 -j ACCEPT
+  841  iptables -A FORWARD -p tcp -d 172.16.0.3 --dport 22 -j ACCEPT
+  842  iptables-save
+  843  iptables-save > /etc/sysconfig/iptables
+  844  systemctl restart sshd
+  845  echo 1 > /proc/sys/net/ipv4/ip_forward
+  846  echo "net.ipv4.ip_forward = 1" > /etc/sysctl.d/99-ip-forward.conf
+  847  sysctl -p /etc/sysctl.d/99-ip-forward.conf
+  848  ssh -i $KEY_NAME root@172.16.0.2
+  849  killall firecracker
+  850  ls
+  851  screen -S s
+  852  ls
+  853  cd ..
+  854  cd ~
+  855  ls
+  856  cd fc
+  857  ls
+  858  ./run_curls.sh 
+  859  ssh -i $KEY_NAME root@172.16.0.2
+  860  more run_
+  861  more run_curls.sh 
+  862  KEY_NAME=ubuntu-24.04.id_rsa
+  863  ssh -i ubuntu-24.04.id_rsa root@172.16.0.2 
+  864  ls
+  865  more run_curls.sh 
+  866  ssh -i ubuntu-24.04.id_rsa root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
+  867  ssh -i ubuntu-24.04.id_rsa root@172.16.0.2 
+  868  screen -r s
+  869  killall firecracker
+  870  screen -r s
+  871  ls
+  872  rm -rf /srv/jailer/firecracker
+  873  ls
+  874  screen -S s
+  875  ls
+  876  ./run_curls.sh 
+  877  ssh -i ubuntu-24.04.id_rsa root@172.16.0.2 
+  878  killall firecracker
+  879  screen -r s
+  880  ls
+  881  rm -rf /srv/jailer/firecracker
+  882  ./run_jailer.sh 
+  883  ls
+  884  mexit
+  885  exit
+  886  cat /proc/sys/net/ipv4/ip_forward
+  887  ip route | grep default
+  888  more /etc/resolv.conf.
+  889  more /etc/resolv.conf
+  890  iptables -A FORWARD -i br0 -o enp0s31f6 -j ACCEPT
+  891  iptables -t nat -L POSTROUTING -v
+  892  iptables-save > /etc/sysconfig/iptables
+  893  systemctl restart sshd
+  894  ip route
+  895  ip link del tap0 2>/dev/null || true
+  896  ip tuntap add dev tap0 mode tap
+  897  ip link set dev tap0 master br0
+  898  ip link set dev tap0 up
+  899  ip link set br0 up
+  900  ip addr show dev br0  
+  901  curl -X PUT --unix-socket "${API_SOCKET}" --data '{
+  902      "iface_id": "net1",
+  903      "guest_mac": "06:00:AC:10:00:02",
+  904      "host_dev_name": "tap0"
+  905  }' "http://localhost/network-interfaces/net1"
+  906  killall firecracker
+  907  iptables -t nat -F POSTROUTING
+  908  iptables -t nat -A POSTROUTING -s 172.16.0.0/24 -o enp0s31f6 -j MASQUERADE
+  909  iptables -P FORWARD ACCEPT
+  910  iptables -A FORWARD -i br0 -o enp0s31f6 -j ACCEPT
+  911  iptables -A FORWARD -i enp0s31f6 -o br0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+  912  iptables -t nat -A PREROUTING -p tcp --dport 2201 -j DNAT --to-destination 172.16.0.2:22
+  913  iptables -t nat -A PREROUTING -p tcp --dport 2202 -j DNAT --to-destination 172.16.0.3:22
+  914  iptables-save > /etc/sysconfig/iptables
+  915  sudo systemctl restart sshd
+  916  cd fc
+  917  ls
+  918  ./run_curls.sh 
+  919  ssh -i ubuntu-24.04.id_rsa root@172.16.0.2
+  920  iptables -A FORWARD -i br0 -p udp --dport 53 -j ACCEPT
+  921  iptables -A FORWARD -i br0 -p tcp --dport 53 -j ACCEPT
+  922  ssh -i ubuntu-24.04.id_rsa root@172.16.0.2
+  923  cd fc
+  924  ssh -i ubuntu-24.04.id_rsa root@172.16.0.2
+  925  exit
+  926  htop
+  927  exit
+  928  htop
+  929  cd balancer/
+  930  ls
+  931  ./balancer 
+  932  vi main.go 
+  933  vi server/server.go 
+  934  go build
+  935  export GOROOT=/root/go
+  936  go build
+  937  export GOPATH=/root/gp
+  938  go build
+  939  ./balancer 
+  940  vi server/server.go 
+  941  curl http://172.16.0.2:3000
+  942  rm -rf /certs/
+  943  ./balancer 
+  944  iptable
+  945  iptables
+  946  history
+  947  iptables-save
+  948  iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+  949  iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+  950  history | grep save
+  951  iptables-save > /etc/sysconfig/iptables
+  952  ls /etc/iptables
+  953  ./balancer 
+  954  sudo systemctl restart sshd
+  955  ./balancer 
+  956  iptables-save
+  957  iptables -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+  958  iptables -D INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+  959  iptables -I INPUT 5 -p tcp -m tcp --dport 80 -j ACCEPT
+  960  iptables -I INPUT 6 -p tcp -m tcp --dport 443 -j ACCEPT
+
+    1  ip addr add 172.16.0.2/24 dev eth0
+    2  ip a
+    3  ping google.com
+    4  ip a
+    5  ping -c 4 172.16.0.1
+    6  ping google.com
+    7  more /etc/resolv.conf
+    8  vi /etc/sysconfig/network-scripts/ifcfg-eth0
+    9  vi /etc/netplan/
+   10  ls
+   11  ls -l
+   12  ls /etc/netplan/
+   13  host google.com 8.8.8.8
+   14  ss -lntp | grep :53
+   15  tcpdump -i enp0s31f6 port 53
+   16  dig @8.8.8.8 google.com
+   17  nslookup google.com 8.8.8.8
+   18  cat /etc/nsswitch.conf 
+   19  ip route
+   20  ping google.com
+   21  ip route add default via 172.16.0.1
+   22  ping -c 4 google.com
+   23  ip route
+   24  vi .ssh/authorized_keys 
+   25  ip a
+   26  history
+
