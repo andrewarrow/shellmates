@@ -35,7 +35,7 @@ cat > run_jailer.sh << EOF
 set -e
 
 JAIL_ID="hello-fc"
-JAIL_ROOT="/srv/jailer/firecracker//root"
+JAIL_ROOT="/srv/jailer/firecracker/root"
 ROOTFS_NAME="ubuntu-24.04.ext4"
 KERNEL_NAME="vmlinux-6.1.102"
 FC_USER="fc_user"
@@ -96,13 +96,14 @@ EOF
   systemctl enable fcjail.service
   systemctl start fcjail.service
   sleep 2
+  cat > run_curls.sh << 'EOF'
+  JAIL_ROOT="/srv/jailer/firecracker/root"
   API_SOCKET="${JAIL_ROOT}/run/api.sock"
-  cat > run_curls.sh << EOF
-  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
-  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
   TAP_DEV="tap0"
   TAP_IP="172.16.0.1"
   MASK_SHORT="/30"
+  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "kernel_image_path": "vmlinux-6.1.102", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off" }' "http://localhost/boot-source"
+  curl -i -X PUT --unix-socket "${API_SOCKET}" --data '{ "drive_id": "rootfs", "path_on_host": "/rootfs/ubuntu-24.04.ext4", "is_root_device": true, "is_read_only": false }' "http://localhost/drives/rootfs"
   ip link del "$TAP_DEV" 2> /dev/null || true
   ip tuntap add dev "$TAP_DEV" mode tap
   ip addr add "${TAP_IP}${MASK_SHORT}" dev "$TAP_DEV"
@@ -121,7 +122,7 @@ EOF
   KEY_NAME=ubuntu-24.04.id_rsa
   ssh -i $KEY_NAME root@172.16.0.2  "ip route add default via 172.16.0.1 dev eth0"
   ssh -i $KEY_NAME root@172.16.0.2  "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
-EOF
+'EOF'
   chmod +x run_curls.sh
   ./run_curls.sh
 
