@@ -15,8 +15,13 @@ function Dashboard() {
   const [showAddServerModal, setShowAddServerModal] = useState(false)
   const [showEditServerModal, setShowEditServerModal] = useState(false)
   const [showAddSpotModal, setShowAddSpotModal] = useState(false)
+  const [showStripeModal, setShowStripeModal] = useState(false)
   const [servers, setServers] = useState([])
   const [spots, setSpots] = useState([])
+  const [stripeSettings, setStripeSettings] = useState({
+    sk_key: '',
+    pk_key: ''
+  })
   const [newServer, setNewServer] = useState({
     name: '',
     ip_address: '',
@@ -40,7 +45,7 @@ function Dashboard() {
   const [error, setError] = useState(null)
   const [spotsError, setSpotsError] = useState(null)
 
-  // Fetch user's servers and spots on component mount
+  // Fetch user's servers, spots, and stripe settings on component mount
   useEffect(() => {
     const fetchServers = async () => {
       try {
@@ -66,8 +71,23 @@ function Dashboard() {
       }
     }
 
+    const fetchStripeSettings = async () => {
+      try {
+        const response = await axios.get('/api/stripe')
+        if (response.data && !response.data.message) {
+          setStripeSettings({
+            sk_key: response.data.sk_key || '',
+            pk_key: response.data.pk_key || ''
+          })
+        }
+      } catch (err) {
+        console.error('Error fetching stripe settings:', err)
+      }
+    }
+
     fetchServers()
     fetchSpots()
+    fetchStripeSettings()
   }, [])
   
   // Check for URL parameters
@@ -279,6 +299,38 @@ function Dashboard() {
     }
   }
 
+  const handleStripeInputChange = (e) => {
+    const { name, value } = e.target
+    setStripeSettings(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSaveStripeSettings = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await axios.post('/api/stripe', stripeSettings)
+      setStripeSettings(response.data)
+      setShowStripeModal(false)
+    } catch (err) {
+      console.error('Error saving stripe settings:', err)
+      alert('Failed to save Stripe settings')
+    }
+  }
+
+  const handleDeleteStripeSettings = async () => {
+    if (!confirm('Are you sure you want to delete your Stripe settings? This action cannot be undone.')) {
+      return;
+    }
+    
+    try {
+      await axios.delete('/api/stripe')
+      setStripeSettings({ sk_key: '', pk_key: '' })
+      setShowStripeModal(false)
+    } catch (err) {
+      console.error('Error deleting stripe settings:', err)
+      alert('Failed to delete Stripe settings')
+    }
+  }
+
   return (
     <Layout hideNavLink>
       {/* Top Navigation Bar */}
@@ -365,6 +417,15 @@ function Dashboard() {
                   <div className="py-1">
                     <div className="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Account</div>
                     <div className="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Security credentials</div>
+                    <div 
+                      className="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                      onClick={() => {
+                        setShowStripeModal(true);
+                        setShowUserMenu(false);
+                      }}
+                    >
+                      Stripe Settings
+                    </div>
                     <div 
                       className="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                       onClick={handleLogout}
@@ -856,6 +917,93 @@ function Dashboard() {
               </div>
             )}
 
+            {/* Stripe Settings Modal */}
+            {showStripeModal && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium dark:text-white">Stripe Settings</h3>
+                    <button 
+                      onClick={() => setShowStripeModal(false)}
+                      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  
+                  <form onSubmit={handleSaveStripeSettings}>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Stripe Secret Key (sk_)
+                        </label>
+                        <input
+                          type="text"
+                          name="sk_key"
+                          value={stripeSettings.sk_key}
+                          onChange={handleStripeInputChange}
+                          placeholder="sk_test_123..."
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        />
+                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          This key is used to interact with the Stripe API and process payments.
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Stripe Publishable Key (pk_)
+                        </label>
+                        <input
+                          type="text"
+                          name="pk_key"
+                          value={stripeSettings.pk_key}
+                          onChange={handleStripeInputChange}
+                          placeholder="pk_test_123..."
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        />
+                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          This key is used to initialize Stripe elements on your website.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-6 flex justify-between">
+                      {stripeSettings.sk_key || stripeSettings.pk_key ? (
+                        <button
+                          type="button"
+                          onClick={handleDeleteStripeSettings}
+                          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
+                        >
+                          Delete Settings
+                        </button>
+                      ) : (
+                        <div></div>
+                      )}
+                      
+                      <div className="flex space-x-3">
+                        <button
+                          type="button"
+                          onClick={() => setShowStripeModal(false)}
+                          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                        >
+                          Save Settings
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+            
             {/* Edit Spot Modal */}
             {showEditSpotModal && editingSpot && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

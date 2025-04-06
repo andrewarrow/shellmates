@@ -11,6 +11,7 @@ const authRoutes = require('./routes/auth');
 const ec2Routes = require('./routes/ec2');
 const serverRoutes = require('./routes/servers');
 const spotRoutes = require('./routes/spots');
+const stripeRoutes = require('./routes/stripes');
 
 // Database initialization
 const db = require('./database/db');
@@ -28,6 +29,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/ec2', ec2Routes);
 app.use('/api/servers', serverRoutes);
 app.use('/api/spots', spotRoutes);
+app.use('/api/stripe', stripeRoutes);
 
 // Serve static frontend in production
 if (process.env.NODE_ENV === 'production') {

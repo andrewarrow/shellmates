@@ -129,6 +129,28 @@ const db = {
       return stmt.get(username, password, new Date().toISOString());
     }
   },
+  stripes: {
+    findByUserId: (userId) => {
+      const stmt = sqlite.prepare('SELECT * FROM stripes WHERE user_id = ?');
+      return stmt.get(userId);
+    },
+    create: (userId, sk_key, pk_key) => {
+      const stmt = sqlite.prepare(
+        'INSERT INTO stripes (user_id, sk_key, pk_key, created_at) VALUES (?, ?, ?, ?) RETURNING *'
+      );
+      return stmt.get(userId, sk_key, pk_key, new Date().toISOString());
+    },
+    update: (userId, sk_key, pk_key) => {
+      const stmt = sqlite.prepare(
+        'UPDATE stripes SET sk_key = ?, pk_key = ? WHERE user_id = ? RETURNING *'
+      );
+      return stmt.get(sk_key, pk_key, userId);
+    },
+    delete: (userId) => {
+      const stmt = sqlite.prepare('DELETE FROM stripes WHERE user_id = ?');
+      return stmt.run(userId);
+    }
+  },
   servers: {
     findByUserId: (userId) => {
       const stmt = sqlite.prepare('SELECT * FROM servers WHERE user_id = ?');
