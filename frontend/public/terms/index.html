@@ -3,46 +3,133 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terms of Service - Shellmates</title>
-  <link rel="icon" type="image/png" href="/favicon.png">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>Terms of Service - shellmates</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              100: '#d5e9ff',
+              200: '#acc3ff',
+              300: '#83b0ff',
+              400: '#5a8dfc',
+              500: '#316afc',
+              600: '#0847e5',
+              700: '#0035b0',
+              800: '#00238a',
+            },
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body class="bg-gray-100 min-h-screen">
-  <div class="container mx-auto px-4 py-8 max-w-4xl">
-    <a href="/" class="text-blue-600 hover:text-blue-800 mb-4 inline-block">&larr; Back to home</a>
-    
-    <h1 class="text-3xl font-bold mb-6">Terms of Service</h1>
-    
-    <div class="bg-white shadow-md rounded-lg p-6">
-      <h2 class="text-xl font-semibold mb-4">1. Introduction</h2>
-      <p class="mb-4">Welcome to Shellmates. By accessing or using our service, you agree to be bound by these Terms of Service.</p>
-      
-      <h2 class="text-xl font-semibold mb-4">2. Use of Service</h2>
-      <p class="mb-4">Our service provides shell access and server resources. You agree to use these resources responsibly and in accordance with applicable laws.</p>
-      
-      <h2 class="text-xl font-semibold mb-4">3. User Accounts</h2>
-      <p class="mb-4">You are responsible for maintaining the security of your account and password. The company cannot and will not be liable for any loss or damage from your failure to comply with this security obligation.</p>
-      
-      <h2 class="text-xl font-semibold mb-4">4. Acceptable Use</h2>
-      <p class="mb-4">You may not use our services for any illegal purposes or to violate any laws in your jurisdiction.</p>
-      <p class="mb-4">You may not use our services to mine cryptocurrency, run botnets, spam operations, or other resource-intensive operations without prior written consent.</p>
-      
-      <h2 class="text-xl font-semibold mb-4">5. Payment Terms</h2>
-      <p class="mb-4">If you sign up for a paid plan, payment will be charged to your specified payment method at confirmation of purchase.</p>
-      <p class="mb-4">We reserve the right to change our pricing structure at any time. If we do, we will provide notice via email and/or a prominent notice on our site.</p>
-      
-      <h2 class="text-xl font-semibold mb-4">6. Termination</h2>
-      <p class="mb-4">We reserve the right to suspend or terminate your account if you violate these Terms of Service.</p>
-      
-      <h2 class="text-xl font-semibold mb-4">7. Changes to Terms</h2>
-      <p class="mb-4">We reserve the right to modify these terms at any time. If we make changes, we will provide notice of such changes via email and/or a prominent notice on our site.</p>
-      
-      <h2 class="text-xl font-semibold mb-4">8. Contact</h2>
-      <p class="mb-4">Questions about the Terms of Service should be sent to support@shellmates.com.</p>
+<body class="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-200">
+  <div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+      <a href="/" class="text-xl font-bold text-primary-300">shellmates</a>
     </div>
     
-    <div class="mt-8 text-center text-gray-600">
-      <p>&copy; 2025 Shellmates. All rights reserved.</p>
+    <div class="max-w-4xl mx-auto bg-gray-800 rounded-lg shadow-xl p-8">
+      <h1 class="text-3xl font-bold text-primary-300 mb-6">Terms of Service</h1>
+      
+      <div class="space-y-6">
+        <section>
+          <h2 class="text-2xl font-semibold text-primary-400 mb-3">1. Acceptance of Terms</h2>
+          <p>By accessing or using shellmates ("the Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Service.</p>
+        </section>
+        
+        <section>
+          <h2 class="text-2xl font-semibold text-primary-400 mb-3">2. Description of Service</h2>
+          <p>shellmates is a platform that enables users to rent bare metal servers and create micro-clouds by dividing servers into smaller virtual machines (VMs) using Firecracker technology. Users can keep portions of servers for their own use and rent the remainder to other users.</p>
+        </section>
+        
+        <section>
+          <h2 class="text-2xl font-semibold text-primary-400 mb-3">3. User Accounts</h2>
+          <p>To use the Service, you must create an account. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account. You must provide accurate and complete information when creating your account and keep this information updated.</p>
+        </section>
+        
+        <section>
+          <h2 class="text-2xl font-semibold text-primary-400 mb-3">4. User Responsibilities</h2>
+          <p>As a user of shellmates, you agree to:</p>
+          <ul class="list-disc pl-6 mt-2 space-y-2">
+            <li>Use the Service in compliance with all applicable laws and regulations</li>
+            <li>Not use the Service for any illegal or unauthorized purpose</li>
+            <li>Not attempt to gain unauthorized access to any part of the Service</li>
+            <li>Not interfere with or disrupt the integrity or performance of the Service</li>
+            <li>Not engage in any activity that could harm the Service or other users</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-2xl font-semibold text-primary-400 mb-3">5. Server and VM Usage</h2>
+          <p>When renting server space or VMs through shellmates:</p>
+          <ul class="list-disc pl-6 mt-2 space-y-2">
+            <li>You must adhere to the acceptable use policies of both shellmates and the underlying server providers</li>
+            <li>You are responsible for the content and activities hosted on your server or VM</li>
+            <li>You must not use server resources for mining cryptocurrency, running botnets, spam operations, or other resource-intensive activities that may impact other users</li>
+            <li>You must implement reasonable security measures to protect your server or VM from unauthorized access</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-2xl font-semibold text-primary-400 mb-3">6. Payments and Billing</h2>
+          <p>Payment terms for server rentals are as follows:</p>
+          <ul class="list-disc pl-6 mt-2 space-y-2">
+            <li>All fees are charged in advance on a monthly basis</li>
+            <li>Payments are non-refundable unless the Service fails to meet our uptime guarantees</li>
+            <li>We reserve the right to change pricing with 30 days notice</li>
+            <li>Failure to pay may result in suspension or termination of your service</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-2xl font-semibold text-primary-400 mb-3">7. Service Availability and Performance</h2>
+          <p>While we strive to maintain high availability, shellmates cannot guarantee 100% uptime. We will make reasonable efforts to ensure the Service operates smoothly and to provide notice of scheduled maintenance. Performance of individual VMs will depend on the specifications you select and purchase.</p>
+        </section>
+        
+        <section>
+          <h2 class="text-2xl font-semibold text-primary-400 mb-3">8. Intellectual Property</h2>
+          <p>The Service, including all content, features, and functionality, is owned by shellmates and is protected by copyright, trademark, and other intellectual property laws. You may not copy, modify, distribute, or create derivative works based on the Service without explicit permission.</p>
+        </section>
+        
+        <section>
+          <h2 class="text-2xl font-semibold text-primary-400 mb-3">9. Limitation of Liability</h2>
+          <p>shellmates shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or business opportunities, resulting from your use of the Service or any related third-party services.</p>
+        </section>
+        
+        <section>
+          <h2 class="text-2xl font-semibold text-primary-400 mb-3">10. Termination</h2>
+          <p>We reserve the right to suspend or terminate your access to the Service at any time for violation of these Terms, failure to pay, or any other reason we deem appropriate. Upon termination, your right to use the Service will immediately cease.</p>
+        </section>
+        
+        <section>
+          <h2 class="text-2xl font-semibold text-primary-400 mb-3">11. Changes to Terms</h2>
+          <p>We may modify these Terms at any time. We will provide notice of significant changes through the Service or by email. Your continued use of the Service after such modifications constitutes your acceptance of the updated Terms.</p>
+        </section>
+        
+        <section>
+          <h2 class="text-2xl font-semibold text-primary-400 mb-3">12. Governing Law</h2>
+          <p>These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which shellmates is registered, without regard to its conflict of law provisions.</p>
+        </section>
+      </div>
+      
+      <div class="mt-8 pt-6 border-t border-gray-700">
+        <p>Last Updated: April 6, 2025</p>
+        <p class="mt-4">If you have any questions about these Terms, please contact us at support@andrewarrow.dev</p>
+      </div>
+    </div>
+    
+    <div class="mt-8 text-center">
+      <p>© 2025 shellmates. All rights reserved.</p>
+      <div class="flex justify-center space-x-4 mt-2">
+        <a href="/" class="text-gray-400 hover:text-primary-300">Home</a>
+        <a href="/terms" class="text-primary-300">Terms</a>
+        <a href="/privacy" class="text-gray-400 hover:text-primary-300">Privacy</a>
+      </div>
     </div>
   </div>
 </body>

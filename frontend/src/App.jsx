@@ -76,7 +76,20 @@ function App() {
   const { isAuthenticated } = useAuth()
 
   // Terms and Privacy pages are handled by static HTML outside of React
-  // The appropriate HTML files are served directly from /terms/index.html and /privacy/index.html
+  // Create components to redirect to the static pages
+  const TermsPage = () => {
+    useEffect(() => {
+      window.location.href = '/terms/index.html';
+    }, []);
+    return <div className="text-center p-10">Redirecting to Terms of Service...</div>;
+  };
+
+  const PrivacyPage = () => {
+    useEffect(() => {
+      window.location.href = '/privacy/index.html';
+    }, []);
+    return <div className="text-center p-10">Redirecting to Privacy Policy...</div>;
+  };
 
   return (
     <Routes>
@@ -115,6 +128,9 @@ function App() {
         path="/admin"
         element={<AdminPage />}
       />
+      {/* Routes for Terms and Privacy pages */}
+      <Route path="/terms" element={<TermsPage />} />
+      <Route path="/privacy" element={<PrivacyPage />} />
     </Routes>
   )
 }
