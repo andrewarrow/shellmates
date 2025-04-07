@@ -8,18 +8,12 @@ function SplashPage() {
         <Link to="/" className="text-xl font-bold text-primary-300">
           shellmates
         </Link>
-        <div className="flex gap-4">
+        <div>
           <Link 
-            to="/login" 
-            className="px-4 py-2 rounded-md bg-gray-700 text-primary-300 hover:bg-gray-600 transition-colors"
+            to="/icebreaker" 
+            className="px-4 py-2 rounded-md bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:from-purple-600 hover:to-pink-600 shadow-lg transform hover:scale-105 transition-all border border-white"
           >
-            Login
-          </Link>
-          <Link 
-            to="/register" 
-            className="px-4 py-2 rounded-md bg-primary-600 text-white hover:bg-primary-700 transition-colors"
-          >
-            Register
+            Start Icebreak
           </Link>
         </div>
       </div>
@@ -76,19 +70,17 @@ function SplashPage() {
               </div>
             </div>
             
-            <div className="flex flex-col md:flex-row gap-4 justify-center mt-6">
+            <div className="flex flex-col items-center justify-center mt-10 mb-6">
+              <h3 className="text-xl text-primary-300 mb-4">Ready to find your perfect technical match?</h3>
               <Link 
-                to="/login" 
-                className="px-8 py-3 text-lg font-medium rounded-md bg-primary-600 text-white hover:bg-primary-700 transition-colors"
+                to="/icebreaker" 
+                className="px-10 py-4 text-xl font-medium rounded-md bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 transition-all shadow-xl transform hover:scale-105 border-2 border-white"
               >
-                Log In
+                Start Icebreak
               </Link>
-              <Link 
-                to="/register" 
-                className="px-8 py-3 text-lg font-medium rounded-md bg-gray-700 text-primary-300 border border-primary-600 hover:bg-gray-600 transition-colors"
-              >
-                Register
-              </Link>
+              <div className="mt-4 text-gray-400 text-sm">
+                Take our 9-question quiz to find your ideal shellmate
+              </div>
             </div>
           </div>
           
@@ -191,7 +183,15 @@ function SplashPage() {
         </div>
       </div>
       
-      <div className="mt-16">
+      <div className="mt-16 flex flex-col items-center justify-center pb-10">
+        <div className="mb-10">
+          <Link 
+            to="/icebreaker" 
+            className="px-8 py-3 text-lg font-semibold rounded-md bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 shadow-lg transition-all transform hover:scale-105 border border-white"
+          >
+            Take the Icebreaker Quiz
+          </Link>
+        </div>
         <Footer />
       </div>
     </div>

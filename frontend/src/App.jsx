@@ -10,6 +10,7 @@ import Spot from './pages/Spot'
 import RentedSpot from './pages/RentedSpot'
 import BrowseSpots from './pages/BrowseSpots'
 import AdminPage from './pages/AdminPage'
+import IceBreakerPage from './pages/IceBreakerPage'
 
 // Component to handle Stripe redirect and forward to backend
 function StripeRedirect() {
@@ -96,6 +97,7 @@ function App() {
       <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <SplashPage />} />
       <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <LoginPage />} />
       <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" /> : <RegisterPage />} />
+      <Route path="/icebreaker" element={<IceBreakerPage />} />
       <Route 
         path="/dashboard" 
         element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} 
