@@ -6,6 +6,24 @@ import AccountEditModal from '../components/AccountEditModal'
 import SSHKeyModal from '../components/SSHKeyModal'
 import axios from 'axios'
 
+// Function to calculate profile completeness
+const calculateProfileCompleteness = (user) => {
+  if (!user) return 0;
+  
+  const fields = [
+    user.email,
+    user.first_name,
+    user.last_name,
+    user.ssh_key,
+    user.github_url,
+    user.linkedin_url,
+    user.bio
+  ];
+  
+  const filledFields = fields.filter(field => field && field.trim() !== '').length;
+  return Math.round((filledFields / fields.length) * 100);
+}
+
 function Dashboard() {
   const navigate = useNavigate()
   const { currentUser, logout } = useAuth()
@@ -383,601 +401,100 @@ function Dashboard() {
       <main className="flex-1 p-6">
         <div className="max-w-7xl mx-auto">
           
+          {/* Welcome Banner */}
+          <div className="mb-8 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-lg shadow-lg overflow-hidden">
+            <div className="p-8 text-white">
+              <h1 className="text-3xl font-bold mb-4">Welcome to Shellmates!</h1>
+              <p className="text-xl mb-6">Find your perfect tech match and start collaborating today.</p>
+              
+              {currentUser && (
+                <div className="flex items-center space-x-4 mt-2">
+                  <span className="text-lg">👋 Hello, {currentUser.first_name || currentUser.username}!</span>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Profile Completion Section */}
+          <div className="mb-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+            <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+              <h2 className="font-medium text-lg dark:text-white">Complete Your Profile</h2>
+            </div>
+            <div className="p-6">
+              {currentUser && (
+                <>
+                  <div className="mb-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Profile Completion: {calculateProfileCompleteness(currentUser)}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                      <div 
+                        className="bg-blue-600 h-2.5 rounded-full" 
+                        style={{ width: `${calculateProfileCompleteness(currentUser)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-gray-700 dark:text-gray-300 mb-6">
+                    <p>Complete your profile to increase your chances of finding the perfect tech partner!</p>
+                    <ul className="mt-4 space-y-2 list-disc list-inside">
+                      {!currentUser.github_url && (
+                        <li>Add your GitHub profile</li>
+                      )}
+                      {!currentUser.linkedin_url && (
+                        <li>Link your LinkedIn account</li>
+                      )}
+                      {!currentUser.bio && (
+                        <li>Write a bio about yourself</li>
+                      )}
+                      {!currentUser.first_name && (
+                        <li>Add your name</li>
+                      )}
+                      {!currentUser.ssh_key && (
+                        <li>Add your SSH key</li>
+                      )}
+                    </ul>
+                  </div>
+                  
+                  <div className="flex justify-center">
+                    <button
+                      onClick={() => setShowAccountModal(true)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                      Edit Your Profile
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+          
           {/* Dashboard Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* My Servers Card */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Find a Match Card */}
             <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-                <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
-                <h2 className="font-medium dark:text-white">My Servers</h2>
-                <button 
-                  className="text-sm text-blue-300 hover:underline"
-                  onClick={() => setShowAddServerModal(true)}
-                >
-                  Add New +
-                </button>
+              <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                <h2 className="font-medium dark:text-white">Find a Tech Partner</h2>
               </div>
               <div className="p-6 dark:text-gray-200">
-                {loading ? (
-                  <div className="text-center py-4 dark:text-gray-300">Loading...</div>
-                ) : error ? (
-                  <div className="text-center py-4 text-red-500">{error}</div>
-                ) : servers.length === 0 ? (
-                  <div className="text-center py-4 text-gray-500 dark:text-gray-400">No servers added yet</div>
-                ) : (
-                  <div className="space-y-4">
-                    {servers.map(server => (
-                      <div
-                        key={server.id}
-                        className="flex items-start justify-between space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md border-b border-gray-100 dark:border-gray-700 cursor-pointer"
-                        onClick={() => {
-                          navigate(`/server/${server.id}`);
-                        }}
-                      >
-                        <div className="flex items-start space-x-3">
-                          <span className="text-xl mt-1">🖥️</span>
-                          <div>
-                            <div className="font-medium dark:text-white">{server.name}</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-300">IP: {server.ip_address}</div>
-                            <div className="mt-1 space-y-1">
-                              {server.memory && (
-                                <div className="text-xs text-gray-500 dark:text-gray-400">
-                                  <span className="font-medium">Memory:</span> {server.memory}
-                                </div>
-                              )}
-                              {server.cpu_cores && (
-                                <div className="text-xs text-gray-500 dark:text-gray-400">
-                                  <span className="font-medium">CPU:</span> {server.cpu_cores} cores
-                                </div>
-                              )}
-                              {server.hard_drive_size && (
-                                <div className="text-xs text-gray-500 dark:text-gray-400">
-                                  <span className="font-medium">Storage:</span> {server.hard_drive_size}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2">
-                          <button 
-                            className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openEditModal(server);
-                            }}
-                          >
-                            Edit
-                          </button>
-                          <button 
-                            className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/server/${server.id}`);
-                            }}
-                          >
-                            View
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <div className="text-center mb-6">
+                  <div className="text-5xl mb-4">🔍</div>
+                  <p className="text-gray-700 dark:text-gray-300">Browse available tech partners who are looking to collaborate</p>
+                </div>
+                <div className="flex justify-center">
+                  <Link to="/browse-spots" className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-center">
+                    Browse Partners
+                  </Link>
+                </div>
               </div>
             </div>
             
-            {/* Add Server Modal */}
-            {showAddServerModal && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium dark:text-white">Add New Server</h3>
-                    <button 
-                      onClick={() => setShowAddServerModal(false)}
-                      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  
-                  <form onSubmit={handleAddServer}>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Server Name
-                        </label>
-                        <input
-                          type="text"
-                          name="name"
-                          value={newServer.name}
-                          onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                          required
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          IP Address
-                        </label>
-                        <input
-                          type="text"
-                          name="ip_address"
-                          value={newServer.ip_address}
-                          onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                          required
-                        />
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Latitude
-                          </label>
-                          <input
-                            type="text"
-                            name="latitude"
-                            value={newServer.latitude}
-                            onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                          />
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Longitude
-                          </label>
-                          <input
-                            type="text"
-                            name="longitude"
-                            value={newServer.longitude}
-                            onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Memory
-                        </label>
-                        <input
-                          type="text"
-                          name="memory"
-                          value={newServer.memory}
-                          onChange={handleInputChange}
-                          placeholder="e.g. 8GB"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          CPU Cores
-                        </label>
-                        <input
-                          type="number"
-                          name="cpu_cores"
-                          value={newServer.cpu_cores}
-                          onChange={handleInputChange}
-                          placeholder="e.g. 4"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Hard Drive Size
-                        </label>
-                        <input
-                          type="text"
-                          name="hard_drive_size"
-                          value={newServer.hard_drive_size}
-                          onChange={handleInputChange}
-                          placeholder="e.g. 256GB"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="mt-6 flex justify-end space-x-3">
-                      <button
-                        type="button"
-                        onClick={() => setShowAddServerModal(false)}
-                        className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="submit"
-                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-                      >
-                        Add Server
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
-
-            {/* Edit Server Modal */}
-            {showEditServerModal && editingServer && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium">Edit Server</h3>
-                    <button 
-                      onClick={() => {
-                        setShowEditServerModal(false);
-                        setEditingServer(null);
-                      }}
-                      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  
-                  <form onSubmit={handleEditServer}>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Server Name
-                        </label>
-                        <input
-                          type="text"
-                          name="name"
-                          value={editingServer.name}
-                          onChange={handleEditInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                          required
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          IP Address
-                        </label>
-                        <input
-                          type="text"
-                          name="ip_address"
-                          value={editingServer.ip_address}
-                          onChange={handleEditInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                          required
-                        />
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Latitude
-                          </label>
-                          <input
-                            type="text"
-                            name="latitude"
-                            value={editingServer.latitude || ''}
-                            onChange={handleEditInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                          />
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Longitude
-                          </label>
-                          <input
-                            type="text"
-                            name="longitude"
-                            value={editingServer.longitude || ''}
-                            onChange={handleEditInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Memory
-                        </label>
-                        <input
-                          type="text"
-                          name="memory"
-                          value={editingServer.memory || ''}
-                          onChange={handleEditInputChange}
-                          placeholder="e.g. 8GB"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          CPU Cores
-                        </label>
-                        <input
-                          type="number"
-                          name="cpu_cores"
-                          value={editingServer.cpu_cores || ''}
-                          onChange={handleEditInputChange}
-                          placeholder="e.g. 4"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Hard Drive Size
-                        </label>
-                        <input
-                          type="text"
-                          name="hard_drive_size"
-                          value={editingServer.hard_drive_size || ''}
-                          onChange={handleEditInputChange}
-                          placeholder="e.g. 256GB"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="mt-6 flex justify-between">
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteServer(editingServer.id)}
-                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
-                      >
-                        Delete Server
-                      </button>
-                      
-                      <div className="flex space-x-3">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setShowEditServerModal(false);
-                            setEditingServer(null);
-                          }}
-                          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-                        >
-                          Save Changes
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
-
-            {/* Add Spot Modal removed - now in SingleServer component */}
-
-            {/* Stripe Settings Modal */}
-            {showStripeModal && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium dark:text-white">Stripe Settings</h3>
-                    <button 
-                      onClick={() => setShowStripeModal(false)}
-                      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  
-                  <form onSubmit={handleSaveStripeSettings}>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Stripe Secret Key (sk_)
-                        </label>
-                        <input
-                          type="text"
-                          name="sk_key"
-                          value={stripeSettings.sk_key}
-                          onChange={handleStripeInputChange}
-                          placeholder="sk_test_123..."
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                          required
-                        />
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                          This key is used to interact with the Stripe API and process payments.
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Stripe Publishable Key (pk_)
-                        </label>
-                        <input
-                          type="text"
-                          name="pk_key"
-                          value={stripeSettings.pk_key}
-                          onChange={handleStripeInputChange}
-                          placeholder="pk_test_123..."
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                          required
-                        />
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                          This key is used to initialize Stripe elements on your website.
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Buy URL
-                        </label>
-                        <input
-                          type="text"
-                          name="buy_url"
-                          value={stripeSettings.buy_url}
-                          onChange={handleStripeInputChange}
-                          placeholder="https://buy.stripe.com/your-product-page"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                          URL for customers to purchase your product directly from Stripe.
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-6 flex justify-between">
-                      {stripeSettings.sk_key || stripeSettings.pk_key ? (
-                        <button
-                          type="button"
-                          onClick={handleDeleteStripeSettings}
-                          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
-                        >
-                          Delete Settings
-                        </button>
-                      ) : (
-                        <div></div>
-                      )}
-                      
-                      <div className="flex space-x-3">
-                        <button
-                          type="button"
-                          onClick={() => setShowStripeModal(false)}
-                          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-                        >
-                          Save Settings
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
-            
-            {/* Edit Spot Modal */}
-            {showEditSpotModal && editingSpot && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium">Edit Spot</h3>
-                    <button 
-                      onClick={() => {
-                        setShowEditSpotModal(false);
-                        setEditingSpot(null);
-                      }}
-                      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  
-                  <form onSubmit={handleEditSpot}>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Select Server
-                        </label>
-                        <select
-                          name="server_id"
-                          value={editingSpot.server_id}
-                          onChange={handleEditSpotInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                          required
-                        >
-                          <option value="">Select a server...</option>
-                          {servers.map(server => (
-                            <option key={server.id} value={server.id}>
-                              {server.name} ({server.ip_address})
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Memory
-                        </label>
-                        <input
-                          type="text"
-                          name="memory"
-                          value={editingSpot.memory || ''}
-                          onChange={handleEditSpotInputChange}
-                          placeholder="e.g. 8GB"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          CPU Cores
-                        </label>
-                        <input
-                          type="number"
-                          name="cpu_cores"
-                          value={editingSpot.cpu_cores || ''}
-                          onChange={handleEditSpotInputChange}
-                          placeholder="e.g. 4"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Hard Drive Size
-                        </label>
-                        <input
-                          type="text"
-                          name="hard_drive_size"
-                          value={editingSpot.hard_drive_size || ''}
-                          onChange={handleEditSpotInputChange}
-                          placeholder="e.g. 256GB"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="mt-6 flex justify-between">
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteSpot(editingSpot.id)}
-                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
-                      >
-                        Delete Spot
-                      </button>
-                      
-                      <div className="flex space-x-3">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setShowEditSpotModal(false);
-                            setEditingSpot(null);
-                          }}
-                          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-                        >
-                          Save Changes
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
-            
             {/* My Spots Card */}
             <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-              <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
-                <h2 className="font-medium dark:text-white">My Rented Spots</h2>
-                <Link to="/browse-spots" className="text-sm text-blue-300 hover:underline">
-                  Browse Spots
-                </Link>
+              <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                <h2 className="font-medium dark:text-white">My Connections</h2>
               </div>
               <div className="p-6 dark:text-gray-200">
                 {spotsLoading ? (
@@ -985,7 +502,13 @@ function Dashboard() {
                 ) : spotsError ? (
                   <div className="text-center py-4 text-red-500">{spotsError}</div>
                 ) : spots.length === 0 ? (
-                  <div className="text-center py-4 text-gray-500 dark:text-gray-400">No spots rented yet</div>
+                  <div className="text-center py-12">
+                    <div className="text-5xl mb-4">👥</div>
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">You haven't connected with anyone yet</p>
+                    <Link to="/browse-spots" className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
+                      Find Partners
+                    </Link>
+                  </div>
                 ) : (
                   <div className="space-y-4">
                     {spots.map(spot => (
@@ -995,40 +518,21 @@ function Dashboard() {
                         onClick={() => navigate(`/rented-spot/${spot.guid}`)}
                       >
                         <div className="flex items-start space-x-3">
-                          <span className="text-xl mt-1">☁️</span>
+                          <span className="text-xl mt-1">👤</span>
                           <div>
                             <div className="font-medium dark:text-white">{spot.server_name}</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-300">IP: {spot.ip_address}</div>
-                            <div className="mt-1 space-y-1">
-                              {spot.memory && (
-                                <div className="text-xs text-gray-500 dark:text-gray-400">
-                                  <span className="font-medium">Memory:</span> {spot.memory}
-                                </div>
-                              )}
-                              {spot.cpu_cores && (
-                                <div className="text-xs text-gray-500 dark:text-gray-400">
-                                  <span className="font-medium">CPU:</span> {spot.cpu_cores} cores
-                                </div>
-                              )}
-                              {spot.hard_drive_size && (
-                                <div className="text-xs text-gray-500 dark:text-gray-400">
-                                  <span className="font-medium">Storage:</span> {spot.hard_drive_size}
-                                </div>
-                              )}
-                            </div>
+                            <div className="text-sm text-gray-600 dark:text-gray-300">Connection established</div>
                           </div>
                         </div>
-                        <div className="flex space-x-2">
-                          <button 
-                            className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/rented-spot/${spot.guid}`);
-                            }}
-                          >
-                            View
-                          </button>
-                        </div>
+                        <button 
+                          className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/rented-spot/${spot.guid}`);
+                          }}
+                        >
+                          View
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -1036,28 +540,559 @@ function Dashboard() {
               </div>
             </div>
             
-            {/* CloudWatch Metrics */}
-            <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+            {/* Resources Card */}
+            <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden md:col-span-2">
               <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                <h2 className="font-medium dark:text-white">Getting Started</h2>
+                <h2 className="font-medium dark:text-white">Resources & Getting Started</h2>
               </div>
-              <div className="p-6 flex justify-center items-center h-48 dark:text-gray-300">
-                <div className="text-center text-gray-500 dark:text-gray-400">
-                  <div>Do you want to rent the server and be the sysop?&nbsp;
-    <a href="https://www.hetzner.com/?ref=shellmates" className="text-sm text-blue-300 hover:underline">Hetzner</a> <a href="https://www.ovhcloud.com/?ref=shellmates" className="text-sm text-blue-300 hover:underline">OVH</a> <a href="https://www.liquidweb.com/?ref=shellmates" className="text-sm text-blue-300 hover:underline">Liquid Web</a>
-
-    </div>
-                  <div className="text-3xl mb-2">☯️</div>
-                  <div>Or do you want to rent just a VM spot and be the tenant.&nbsp;
-                  <Link to="/browse-spots" className="text-sm text-blue-300 hover:underline">
-                    Browse Spots
-                  </Link>
+              <div className="p-6 dark:text-gray-200">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="text-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="text-3xl mb-2">📝</div>
+                    <h3 className="font-medium mb-2 dark:text-white">Complete Your Profile</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Add details about your skills and interests</p>
+                    <button 
+                      onClick={() => setShowAccountModal(true)}
+                      className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded text-sm"
+                    >
+                      Edit Profile
+                    </button>
+                  </div>
+                  
+                  <div className="text-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="text-3xl mb-2">🔑</div>
+                    <h3 className="font-medium mb-2 dark:text-white">Set Up SSH Access</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Add your SSH key for secure connections</p>
+                    <button 
+                      onClick={() => setShowSSHKeyModal(true)}
+                      className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded text-sm"
+                    >
+                      Add SSH Key
+                    </button>
+                  </div>
+                  
+                  <div className="text-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="text-3xl mb-2">💰</div>
+                    <h3 className="font-medium mb-2 dark:text-white">Set Up Payments</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Configure Stripe for transactions</p>
+                    <button 
+                      onClick={() => setShowStripeModal(true)}
+                      className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded text-sm"
+                    >
+                      Stripe Settings
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
-            
           </div>
+          
+          {/* Add Server Modal */}
+          {showAddServerModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-medium dark:text-white">Add New Server</h3>
+                  <button 
+                    onClick={() => setShowAddServerModal(false)}
+                    className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    ✕
+                  </button>
+                </div>
+                
+                <form onSubmit={handleAddServer}>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Server Name
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={newServer.name}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        IP Address
+                      </label>
+                      <input
+                        type="text"
+                        name="ip_address"
+                        value={newServer.ip_address}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Latitude
+                        </label>
+                        <input
+                          type="text"
+                          name="latitude"
+                          value={newServer.latitude}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Longitude
+                        </label>
+                        <input
+                          type="text"
+                          name="longitude"
+                          value={newServer.longitude}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Memory
+                      </label>
+                      <input
+                        type="text"
+                        name="memory"
+                        value={newServer.memory}
+                        onChange={handleInputChange}
+                        placeholder="e.g. 8GB"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        CPU Cores
+                      </label>
+                      <input
+                        type="number"
+                        name="cpu_cores"
+                        value={newServer.cpu_cores}
+                        onChange={handleInputChange}
+                        placeholder="e.g. 4"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Hard Drive Size
+                      </label>
+                      <input
+                        type="text"
+                        name="hard_drive_size"
+                        value={newServer.hard_drive_size}
+                        onChange={handleInputChange}
+                        placeholder="e.g. 256GB"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 flex justify-end space-x-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddServerModal(false)}
+                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                    >
+                      Add Server
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Edit Server Modal */}
+          {showEditServerModal && editingServer && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-medium">Edit Server</h3>
+                  <button 
+                    onClick={() => {
+                      setShowEditServerModal(false);
+                      setEditingServer(null);
+                    }}
+                    className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    ✕
+                  </button>
+                </div>
+                
+                <form onSubmit={handleEditServer}>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Server Name
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={editingServer.name}
+                        onChange={handleEditInputChange}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        IP Address
+                      </label>
+                      <input
+                        type="text"
+                        name="ip_address"
+                        value={editingServer.ip_address}
+                        onChange={handleEditInputChange}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Latitude
+                        </label>
+                        <input
+                          type="text"
+                          name="latitude"
+                          value={editingServer.latitude || ''}
+                          onChange={handleEditInputChange}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Longitude
+                        </label>
+                        <input
+                          type="text"
+                          name="longitude"
+                          value={editingServer.longitude || ''}
+                          onChange={handleEditInputChange}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Memory
+                      </label>
+                      <input
+                        type="text"
+                        name="memory"
+                        value={editingServer.memory || ''}
+                        onChange={handleEditInputChange}
+                        placeholder="e.g. 8GB"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        CPU Cores
+                      </label>
+                      <input
+                        type="number"
+                        name="cpu_cores"
+                        value={editingServer.cpu_cores || ''}
+                        onChange={handleEditInputChange}
+                        placeholder="e.g. 4"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Hard Drive Size
+                      </label>
+                      <input
+                        type="text"
+                        name="hard_drive_size"
+                        value={editingServer.hard_drive_size || ''}
+                        onChange={handleEditInputChange}
+                        placeholder="e.g. 256GB"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 flex justify-between">
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteServer(editingServer.id)}
+                      className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
+                    >
+                      Delete Server
+                    </button>
+                    
+                    <div className="flex space-x-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowEditServerModal(false);
+                          setEditingServer(null);
+                        }}
+                        className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Add Spot Modal removed - now in SingleServer component */}
+
+          {/* Stripe Settings Modal */}
+          {showStripeModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-medium dark:text-white">Stripe Settings</h3>
+                  <button 
+                    onClick={() => setShowStripeModal(false)}
+                    className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    ✕
+                  </button>
+                </div>
+                
+                <form onSubmit={handleSaveStripeSettings}>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Stripe Secret Key (sk_)
+                      </label>
+                      <input
+                        type="text"
+                        name="sk_key"
+                        value={stripeSettings.sk_key}
+                        onChange={handleStripeInputChange}
+                        placeholder="sk_test_123..."
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      />
+                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        This key is used to interact with the Stripe API and process payments.
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Stripe Publishable Key (pk_)
+                      </label>
+                      <input
+                        type="text"
+                        name="pk_key"
+                        value={stripeSettings.pk_key}
+                        onChange={handleStripeInputChange}
+                        placeholder="pk_test_123..."
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      />
+                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        This key is used to initialize Stripe elements on your website.
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Buy URL
+                      </label>
+                      <input
+                        type="text"
+                        name="buy_url"
+                        value={stripeSettings.buy_url}
+                        onChange={handleStripeInputChange}
+                        placeholder="https://buy.stripe.com/your-product-page"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      />
+                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        URL for customers to purchase your product directly from Stripe.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 flex justify-between">
+                    {stripeSettings.sk_key || stripeSettings.pk_key ? (
+                      <button
+                        type="button"
+                        onClick={handleDeleteStripeSettings}
+                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
+                      >
+                        Delete Settings
+                      </button>
+                    ) : (
+                      <div></div>
+                    )}
+                    
+                    <div className="flex space-x-3">
+                      <button
+                        type="button"
+                        onClick={() => setShowStripeModal(false)}
+                        className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                      >
+                        Save Settings
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+          
+          {/* Edit Spot Modal */}
+          {showEditSpotModal && editingSpot && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-medium">Edit Spot</h3>
+                  <button 
+                    onClick={() => {
+                      setShowEditSpotModal(false);
+                      setEditingSpot(null);
+                    }}
+                    className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    ✕
+                  </button>
+                </div>
+                
+                <form onSubmit={handleEditSpot}>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Select Server
+                      </label>
+                      <select
+                        name="server_id"
+                        value={editingSpot.server_id}
+                        onChange={handleEditSpotInputChange}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      >
+                        <option value="">Select a server...</option>
+                        {servers.map(server => (
+                          <option key={server.id} value={server.id}>
+                            {server.name} ({server.ip_address})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Memory
+                      </label>
+                      <input
+                        type="text"
+                        name="memory"
+                        value={editingSpot.memory || ''}
+                        onChange={handleEditSpotInputChange}
+                        placeholder="e.g. 8GB"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        CPU Cores
+                      </label>
+                      <input
+                        type="number"
+                        name="cpu_cores"
+                        value={editingSpot.cpu_cores || ''}
+                        onChange={handleEditSpotInputChange}
+                        placeholder="e.g. 4"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Hard Drive Size
+                      </label>
+                      <input
+                        type="text"
+                        name="hard_drive_size"
+                        value={editingSpot.hard_drive_size || ''}
+                        onChange={handleEditSpotInputChange}
+                        placeholder="e.g. 256GB"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 flex justify-between">
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteSpot(editingSpot.id)}
+                      className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
+                    >
+                      Delete Spot
+                    </button>
+                    
+                    <div className="flex space-x-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowEditSpotModal(false);
+                          setEditingSpot(null);
+                        }}
+                        className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
       </main>
 
