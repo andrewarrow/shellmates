@@ -1,8 +1,5 @@
 # shellmates
 
-# video demo
-[![Video Demo](https://i.imgur.com/FxoS0dI.png)](https://www.youtube.com/watch?v=MNcnoMVRC68)
-
 ## How shellmates Works
 
 The first date for your next startup - meet your technical co-founder.
@@ -26,6 +23,9 @@ With shellmates, you're guaranteed to find someone who can contribute real code,
 Sharing a server is just the beginning. As you collaborate on infrastructure, you'll naturally start discussing other projects and ideas. Many of our shellmates have gone on to found successful startups together.
 
 The best technical co-founder relationships are built on trust, shared experiences, and proven collaboration - exactly what shellmates helps you establish from day one.
+
+# video demo
+[![Video Demo](https://i.imgur.com/FxoS0dI.png)](https://www.youtube.com/watch?v=MNcnoMVRC68)
 
 ## Development
 
