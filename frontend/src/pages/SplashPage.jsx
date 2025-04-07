@@ -31,6 +31,9 @@ function SplashPage() {
             <div className="max-w-3xl mx-auto mb-8">
               <div className="bg-gray-700 rounded-lg p-6 text-left">
                 <h2 className="text-2xl font-semibold text-primary-300 mb-4">How shellmates Works</h2>
+                <p className="text-gray-300 mb-3">
+                  For teams of two, a single powerful bare metal server is all you need during the early phases. It's cost-effective and handles any load while you focus on building your product.
+                </p>
                 <ul className="space-y-3 text-gray-300">
                   <li className="flex items-start">
                     <span className="text-primary-600 font-bold mr-2">1.</span>
@@ -138,6 +141,16 @@ function SplashPage() {
             <div className="bg-gray-800 text-white p-8 mt-12 rounded-lg">
               <h2 className="text-2xl font-semibold text-center mb-6">Why Technical Co-Founders Thrive on shellmates</h2>
               <div className="max-w-4xl mx-auto text-gray-300">
+                <div className="mb-6">
+                  <h3 className="text-xl font-semibold text-primary-300 mb-2">Perfect for Teams of Two</h3>
+                  <p className="mb-3">
+                    When starting out, one bare metal server is the best choice for a team of 2. During the prototyping and product-market fit phase, this single beefy server will handle any load you could possibly need while costing 90% less than equivalent cloud servers.
+                  </p>
+                  <p>
+                    You don't need to worry about availability zones, geo-location, backups, or other enterprise concerns yet. Those become important after you get funding and scale, but for now, focus on building your product.
+                  </p>
+                </div>
+                
                 <div className="mb-6">
                   <h3 className="text-xl font-semibold text-primary-300 mb-2">Build on a Solid Foundation</h3>
                   <p className="mb-3">
