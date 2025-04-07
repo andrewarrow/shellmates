@@ -1,18 +1,31 @@
 # shellmates
 
-Rent bare metal servers and create your own micro-cloud with friends.
-
-Split costs, maximize resources, and build a community of developers.
-
 # video demo
 [![Video Demo](https://i.imgur.com/FxoS0dI.png)](https://www.youtube.com/watch?v=MNcnoMVRC68)
 
 ## How shellmates Works
 
-1. Rent a powerful bare metal server from providers like Hetzner or OVH at prices starting from $34.50/month
-2. We help you setup Firecracker VMs to divide your server into smaller VMs
-3. Keep what you need and rent out the rest to other developers at fair prices
-4. Save up to 90% compared to cloud providers like AWS while building relationships with other developers
+The first date for your next startup - meet your technical co-founder.
+
+Share a server, build together, and find your perfect technical match.
+How shellmates Works
+
+ 1. Rent a powerful bare metal server from providers like Hetzner or OVH - your first project together
+ 2. We help you split the server into two VMs - one for each technical co-founder
+ 3. Collaborate on server management and build your first project on shared infrastructure
+ 4. From shellmates to co-founders - launch your startup with someone whose technical skills you already trust
+
+Managing a shared server provides real insight into how you and your potential co-founder handle technical decisions, solve problems, and collaborate on infrastructure.
+
+This practical collaboration reveals compatibility in ways that resumes and coffee chats never could. Find out if you're truly in sync before committing to building a company together.
+
+Unlike typical co-founder matching platforms, we ensure both partners are technical. No more "idea person seeking coder" - just technical people seeking other technical people.
+
+With shellmates, you're guaranteed to find someone who can contribute real code, not just business plans. Build your MVP together on shared infrastructure before seeking non-technical partners.
+
+Sharing a server is just the beginning. As you collaborate on infrastructure, you'll naturally start discussing other projects and ideas. Many of our shellmates have gone on to found successful startups together.
+
+The best technical co-founder relationships are built on trust, shared experiences, and proven collaboration - exactly what shellmates helps you establish from day one.
 
 ## Development
 
