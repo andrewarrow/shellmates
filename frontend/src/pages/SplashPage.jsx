@@ -11,7 +11,7 @@ function SplashPage() {
         <div>
           <Link 
             to="/icebreaker" 
-            className="px-4 py-2 rounded-md bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:from-purple-600 hover:to-pink-600 shadow-lg transform hover:scale-105 transition-all border border-white"
+            className="px-4 py-2 rounded-md bg-purple-600 text-white font-semibold hover:bg-purple-700 shadow-lg transform hover:scale-105 transition-all"
           >
             Start Icebreak
           </Link>
@@ -74,7 +74,7 @@ function SplashPage() {
               <h3 className="text-xl text-primary-300 mb-4">Ready to find your perfect technical match?</h3>
               <Link 
                 to="/icebreaker" 
-                className="px-10 py-4 text-xl font-medium rounded-md bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 transition-all shadow-xl transform hover:scale-105 border-2 border-white"
+                className="px-10 py-4 text-xl font-medium rounded-md bg-purple-600 text-white hover:bg-purple-700 transition-all shadow-xl transform hover:scale-105"
               >
                 Start Icebreak
               </Link>
@@ -187,7 +187,7 @@ function SplashPage() {
         <div className="mb-10">
           <Link 
             to="/icebreaker" 
-            className="px-8 py-3 text-lg font-semibold rounded-md bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 shadow-lg transition-all transform hover:scale-105 border border-white"
+            className="px-8 py-3 text-lg font-semibold rounded-md bg-purple-600 text-white hover:bg-purple-700 shadow-lg transition-all transform hover:scale-105"
           >
             Take the Icebreaker Quiz
           </Link>
