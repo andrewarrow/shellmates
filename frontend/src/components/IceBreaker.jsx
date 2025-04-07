@@ -99,14 +99,17 @@ function IceBreaker() {
   
   // Auto-scroll to the component when loaded or questions change
   useEffect(() => {
-    // Use a more direct approach to scrolling
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    
-    // Also try to scroll to our ref
-    if (topRef.current) {
-      topRef.current.scrollIntoView({ behavior: 'auto', block: 'start' });
-    }
+    // Add a small delay to avoid scrolling until animation completes
+    setTimeout(() => {
+      // Only scroll if we're changing questions, not on initial load
+      if (currentQuestionIndex > 0 || isCompleted) {
+        // Adjust scrolling to account for the sticky header (approx 150px)
+        window.scrollTo({
+          top: topRef.current ? topRef.current.offsetTop - 180 : 0,
+          behavior: 'smooth'
+        });
+      }
+    }, 100);
   }, [currentQuestionIndex, isCompleted])
   
   const handleAnswer = (answer) => {
