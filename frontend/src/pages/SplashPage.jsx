@@ -28,10 +28,10 @@ function SplashPage() {
           <div className="p-8 text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-primary-300 mb-4">shellmates!</h1>
             <p className="text-xl text-gray-300 mb-4">
-              Rent bare metal servers and create your own micro-cloud with friends.
+              The first date for your next startup - meet your technical co-founder.
             </p>
             <p className="text-lg text-gray-300 mb-6">
-              Split costs, maximize resources, and build a community of developers.
+              Share a server, build together, and find your perfect technical match.
             </p>
             
             <div className="max-w-3xl mx-auto mb-8">
@@ -40,19 +40,19 @@ function SplashPage() {
                 <ul className="space-y-3 text-gray-300">
                   <li className="flex items-start">
                     <span className="text-primary-600 font-bold mr-2">1.</span>
-                    <span>Rent a powerful bare metal server from providers like Hetzner or OVH at prices starting from $34.50/month</span>
+                    <span>Rent a powerful bare metal server from providers like Hetzner or OVH - your first project together</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-primary-600 font-bold mr-2">2.</span>
-                    <span>We help you setup Firecracker VMs to divide your server into smaller VMs</span>
+                    <span>We help you split the server into two VMs - one for each technical co-founder</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-primary-600 font-bold mr-2">3.</span>
-                    <span>Keep what you need and rent out the rest to other developers at fair prices</span>
+                    <span>Collaborate on server management and build your first project on shared infrastructure</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-primary-600 font-bold mr-2">4.</span>
-                    <span>Save up to 90% compared to cloud providers like AWS while building relationships with other developers</span>
+                    <span>From shellmates to co-founders - launch your startup with someone whose technical skills you already trust</span>
                   </li>
                 </ul>
               </div>
@@ -62,16 +62,16 @@ function SplashPage() {
               <h2 className="text-2xl font-semibold text-primary-300 mb-4">Why Choose shellmates?</h2>
               <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                 <div className="bg-gray-700 rounded-lg shadow p-4">
-                  <h3 className="text-lg font-semibold text-primary-400 mb-2">Cost Efficiency</h3>
-                  <p className="text-gray-300">Split a $34.50 server into two $17.25 VMs or make a profit renting them at $25 each</p>
+                  <h3 className="text-lg font-semibold text-primary-400 mb-2">Technical Match</h3>
+                  <p className="text-gray-300">Both partners must be technical - build with someone who speaks your language</p>
                 </div>
                 <div className="bg-gray-700 rounded-lg shadow p-4">
-                  <h3 className="text-lg font-semibold text-primary-400 mb-2">Community</h3>
-                  <p className="text-gray-300">Connect with other developers who share your server - put faces to IPs</p>
+                  <h3 className="text-lg font-semibold text-primary-400 mb-2">Real Collaboration</h3>
+                  <p className="text-gray-300">Work on actual code and infrastructure together before committing to a startup</p>
                 </div>
                 <div className="bg-gray-700 rounded-lg shadow p-4">
-                  <h3 className="text-lg font-semibold text-primary-400 mb-2">Flexibility</h3>
-                  <p className="text-gray-300">Be a landlord, tenant, or both - create the perfect VM for your needs</p>
+                  <h3 className="text-lg font-semibold text-primary-400 mb-2">Cost Benefits</h3>
+                  <p className="text-gray-300">Cut your server costs in half while finding your perfect co-founder match</p>
                 </div>
               </div>
             </div>
@@ -93,7 +93,7 @@ function SplashPage() {
           </div>
           
           <div className="bg-primary-700 text-white p-8">
-            <h2 className="text-2xl font-semibold text-center mb-6">Bare Metal Servers You Can Split</h2>
+            <h2 className="text-2xl font-semibold text-center mb-6">Start Your Co-Founder Journey With These Servers</h2>
             <div className="grid md:grid-cols-3 gap-6 mb-8">
               <div className="text-center bg-primary-800 rounded-lg p-4">
                 <h3 className="text-xl font-semibold mb-2"><a className="link hover:underline" href="https://hetzner.com/?ref=shellmates">Hetzner</a></h3>
@@ -112,74 +112,77 @@ function SplashPage() {
               </div>
             </div>
             
-            <h2 className="text-2xl font-semibold text-center mb-6">Available Spots from Our Community</h2>
+            <h2 className="text-2xl font-semibold text-center mb-6">Meet Your Potential Co-Founders</h2>
             <div className="grid md:grid-cols-3 gap-6">
               <Link to="/spots/c8f3c470-f353-4804-bd5c-a5c30bba7dbb" className="bg-primary-800 rounded-lg p-4 flex flex-col items-center">
                 <div className="w-20 h-20 rounded-full bg-primary-300 mb-3 overflow-hidden">
                   <img src="https://avatars.githubusercontent.com/u/127054?v=4" alt="Andrew A." className="w-full h-full object-cover" />
                 </div>
-                <h3 className="font-semibold">Andrew A. offers:</h3>
-                <p className="text-center">32GB RAM, 2 cores, 200GB SSD</p>
-                <p className="text-primary-300 mt-1">$18.07/month USD - Germany</p>
+                <h3 className="font-semibold">Andrew A.</h3>
+                <p className="text-center">Backend Dev & DevOps Engineer</p>
+                <p className="text-center mt-1 text-xs">Looking for frontend partner to build new SaaS product</p>
+                <p className="text-primary-300 mt-1">$18.07/month - Germany</p>
               </Link>
               <div className="bg-primary-800 rounded-lg p-4 flex flex-col items-center">
                 <div className="w-20 h-20 rounded-full bg-primary-300 mb-3 overflow-hidden">
                   <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="David T." className="w-full h-full object-cover" />
                 </div>
-                <h3 className="font-semibold">David T. offers:</h3>
-                <p className="text-center">16GB RAM, 4 cores, 128GB HDD</p>
+                <h3 className="font-semibold">David T.</h3>
+                <p className="text-center">Full-Stack Developer</p>
+                <p className="text-center mt-1 text-xs">Looking for ML/AI expert to build data analysis platform</p>
                 <p className="text-primary-300 mt-1">$22/month - San Francisco</p>
               </div>
               <div className="bg-primary-800 rounded-lg p-4 flex flex-col items-center">
                 <div className="w-20 h-20 rounded-full bg-primary-300 mb-3 overflow-hidden">
                   <img src="https://randomuser.me/api/portraits/women/36.jpg" alt="Mia L." className="w-full h-full object-cover" />
                 </div>
-                <h3 className="font-semibold">Mia L. offers:</h3>
-                <p className="text-center">8GB RAM, 1 core, 64GB SSD</p>
+                <h3 className="font-semibold">Mia L.</h3>
+                <p className="text-center">Mobile App Developer</p>
+                <p className="text-center mt-1 text-xs">Seeking backend partner to build e-commerce solution</p>
                 <p className="text-primary-300 mt-1">$8/month - Tokyo</p>
               </div>
             </div>
             
             <div className="bg-gray-800 text-white p-8 mt-12 rounded-lg">
-              <h2 className="text-2xl font-semibold text-center mb-6">Technical Details</h2>
+              <h2 className="text-2xl font-semibold text-center mb-6">Why Technical Co-Founders Thrive on shellmates</h2>
               <div className="max-w-4xl mx-auto text-gray-300">
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-primary-300 mb-2">Firecracker Technology</h3>
+                  <h3 className="text-xl font-semibold text-primary-300 mb-2">Build on a Solid Foundation</h3>
                   <p className="mb-3">
-                    Our platform runs on <a href="https://firecracker-microvm.github.io/" className="text-primary-400 hover:underline">Firecracker</a>, an open-source virtualization technology developed by AWS for serverless computing. Firecracker enables us to create lightweight micro-VMs that boot in under 125ms and have a minimal memory footprint.
+                    Our platform runs on <a href="https://firecracker-microvm.github.io/" className="text-primary-400 hover:underline">Firecracker</a>, an open-source virtualization technology developed by AWS. This gives you and your co-founder a professional-grade environment to work on projects together from day one.
                   </p>
                   <p>
-                    Firecracker VMs provide strong isolation with a reduced attack surface compared to traditional VMs, while maintaining excellent performance characteristics that approach bare metal speeds.
+                    Building your startup partnership around a shared infrastructure project creates deeper technical bonds than coffee meetings or hackathons can provide.
                   </p>
                 </div>
                 
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-primary-300 mb-2">Security Architecture</h3>
+                  <h3 className="text-xl font-semibold text-primary-300 mb-2">Test Your Compatibility</h3>
                   <p className="mb-3">
-                    We employ Firecracker's built-in jailer component, which leverages Linux namespaces, cgroups, and seccomp-bpf to create an additional security boundary. The jailer runs each VM with minimum privileges in a chroot environment, providing defense-in-depth against potential vulnerabilities.
+                    Managing a shared server provides real insight into how you and your potential co-founder handle technical decisions, solve problems, and collaborate on infrastructure.
                   </p>
                   <p>
-                    This multi-layered security approach means your workloads run in isolation from both the host system and other VMs, protecting your data and applications from potential noisy neighbor issues or security breaches.
+                    This practical collaboration reveals compatibility in ways that resumes and coffee chats never could. Find out if you're truly in sync before committing to building a company together.
                   </p>
                 </div>
                 
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-primary-300 mb-2">Operating System Environment</h3>
+                  <h3 className="text-xl font-semibold text-primary-300 mb-2">All Technical, No Business Fluff</h3>
                   <p className="mb-3">
-                    Our host systems run <span className="font-semibold">Rocky Linux 9</span>, an enterprise-grade, community-driven Linux distribution that provides long-term stability and security updates. Rocky Linux is binary-compatible with Red Hat Enterprise Linux, offering enterprise-level reliability.
+                    Unlike typical co-founder matching platforms, we ensure <span className="font-semibold">both partners are technical</span>. No more "idea person seeking coder" - just technical people seeking other technical people.
                   </p>
                   <p>
-                    Guest VMs run <span className="font-semibold">Ubuntu 24.04 LTS</span>, providing a familiar, modern environment with long-term support. This combination gives you the security of an enterprise-grade host OS with the flexibility and wide software compatibility of Ubuntu for your applications.
+                    With shellmates, you're guaranteed to find someone who can contribute real code, not just business plans. Build your MVP together on shared infrastructure before seeking non-technical partners.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="text-xl font-semibold text-primary-300 mb-2">Resource Allocation</h3>
+                  <h3 className="text-xl font-semibold text-primary-300 mb-2">From Server Mates to Co-Founders</h3>
                   <p className="mb-3">
-                    Each VM is allocated dedicated CPU cores, memory, and storage resources with guaranteed performance. Unlike traditional cloud providers that often oversubscribe resources, your allocated resources are yours alone, with no hidden throttling or noisy neighbor effects.
+                    Sharing a server is just the beginning. As you collaborate on infrastructure, you'll naturally start discussing other projects and ideas. Many of our shellmates have gone on to found successful startups together.
                   </p>
                   <p>
-                    Network virtualization ensures your VM gets fair bandwidth allocation while maintaining isolation from other tenants' network traffic for both security and performance reasons.
+                    The best technical co-founder relationships are built on trust, shared experiences, and proven collaboration - exactly what shellmates helps you establish from day one.
                   </p>
                 </div>
               </div>
